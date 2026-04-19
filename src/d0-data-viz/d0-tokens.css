@@ -1,0 +1,32 @@
+/* D0 Data Viz — CSS Design Tokens */
+:root {
+  /* Chart */
+  --d0-chart-bg: var(--color-bg-panel, #222);
+  --d0-chart-grid: rgba(184, 115, 51, 0.1);
+  --d0-chart-text: var(--color-text-muted, #a09880);
+  --d0-chart-accent: var(--color-accent, #b87333);
+
+  /* Metric */
+  --d0-metric-trend-up: var(--color-success, #27ae60);
+  --d0-metric-trend-down: var(--color-error, #c0392b);
+
+  /* Timeline */
+  --d0-timeline-line: rgba(184, 115, 51, 0.3);
+  --d0-timeline-dot: var(--color-accent, #b87333);
+
+  /* CheckpointBar (ADR: ui-timeline-checkpoint-bar-001) */
+  --d0-checkpoint-bar-height: 48px;
+  --d0-checkpoint-node-size: 12px;
+  --d0-checkpoint-node-active-size: 16px;
+  --d0-checkpoint-line-color: rgba(184, 115, 51, 0.3);
+  --d0-checkpoint-tooltip-bg: rgba(34, 34, 34, 0.98);
+  --d0-checkpoint-tooltip-border: rgba(184, 115, 51, 0.3);
+
+  /* Checkpoint Colors by Component Type */
+  --d0-checkpoint-brass: #b87333;
+  --d0-checkpoint-teal: #5f9ea0;
+  --d0-checkpoint-gold: #daa520;
+  --d0-checkpoint-purple: #9370db;
+  --d0-checkpoint-red: #cd5c5c;
+  --d0-checkpoint-gray: #2f4f4f;
+}

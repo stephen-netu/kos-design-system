@@ -1,0 +1,155 @@
+/* N4 Adaptive Manifold — Design Tokens
+ * Prefix: --n4-*
+ * Consumed by AdaptiveManifold.svelte and SuggestionIndicator.svelte
+ */
+
+:root {
+  /* ── Node rendering ─────────────────────────────────────────────────────── */
+  --n4-node-width: 120px;
+  --n4-node-height: 28px;
+  --n4-node-radius: 4px;
+  --n4-node-bg: #222;
+  --n4-node-bg-hover: #2a2a2a;
+  --n4-node-bg-selected: color-mix(in srgb, var(--color-accent, #b87333) 12%, #222);
+  --n4-node-border: rgba(184, 115, 51, 0.15);
+  --n4-node-border-hover: rgba(184, 115, 51, 0.35);
+  --n4-node-border-selected: var(--color-accent, #b87333);
+  --n4-node-text: var(--color-text-primary, #e8e0d0);
+  --n4-node-text-muted: var(--color-text-secondary, #a09880);
+  --n4-node-id-font: var(--font-mono, 'JetBrains Mono', monospace);
+  --n4-node-id-size: 10px;
+  --n4-node-label-size: 11px;
+  --n4-node-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --n4-node-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --n4-node-shadow-selected: 0 0 12px var(--color-accent-glow, rgba(184, 115, 51, 0.2));
+
+  /* ── Edge rendering ─────────────────────────────────────────────────────── */
+  --n4-edge-width: 1.5px;
+  --n4-edge-color: rgba(184, 115, 51, 0.25);
+  --n4-edge-color-hover: rgba(184, 115, 51, 0.55);
+  --n4-edge-color-active: var(--color-accent, #b87333);
+  --n4-edge-dash-length: 6px;
+  --n4-edge-dash-gap: 3px;
+  --n4-edge-arrow-size: 6px;
+
+  /* ── Canvas ─────────────────────────────────────────────────────────────── */
+  --n4-canvas-bg: var(--color-bg-canvas, #1a1a1a);
+  --n4-canvas-grid-color: rgba(184, 115, 51, 0.04);
+  --n4-canvas-grid-size: 24px;
+  --n4-canvas-padding: 40px;
+
+  /* ── Scatter grid (fallback topology) ───────────────────────────────────── */
+  --n4-scatter-gap: 8px;
+  --n4-scatter-chip-bg: var(--color-bg-panel, #222);
+  --n4-scatter-chip-border: var(--border-default, rgba(184, 115, 51, 0.15));
+  --n4-scatter-chip-accent: var(--color-accent, #b87333);
+
+  /* ── Suggestion indicator ───────────────────────────────────────────────── */
+  --n4-suggestion-bg: color-mix(in srgb, var(--color-accent, #b87333) 8%, var(--color-bg-panel, #222));
+  --n4-suggestion-border: rgba(184, 115, 51, 0.25);
+  --n4-suggestion-text: var(--color-text-secondary, #a09880);
+  --n4-suggestion-accent: var(--color-accent, #b87333);
+  --n4-suggestion-radius: var(--radius-md, 6px);
+  --n4-suggestion-padding: 6px 10px;
+  --n4-suggestion-font-size: var(--text-xs, 11px);
+
+  /* ── Transition ─────────────────────────────────────────────────────────── */
+  --n4-transition-duration: 400ms;
+  --n4-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Node status accents ─────────────────────────────────────────────────── */
+  --n4-node-active: var(--color-accent, #b87333);
+  --n4-node-idle: var(--color-text-secondary, #a09880);
+  --n4-node-blocked: var(--color-status-warning, #f39c12);
+  --n4-node-completed: var(--color-text-secondary, #a09880);
+  --n4-node-critical: var(--color-status-error, #c0392b);
+
+  /* ── Kind accents (overridden by consuming apps) ───────────────────────── */
+  --n4-kind-task: var(--color-accent, #b87333);
+  --n4-kind-agent: var(--color-expert-sovereign, #b87333);
+  --n4-kind-signal: var(--color-status-info, #2980b9);
+  --n4-kind-capability: var(--color-accent-secondary, #d4a574);
+  --n4-kind-intent: var(--color-expert-atelier, #b87333);
+  --n4-kind-subtask: color-mix(in srgb, var(--color-accent, #b87333) 60%, transparent);
+  --n4-kind-note: var(--color-text-primary, #e8e0d0);
+  --n4-kind-concept: var(--color-accent-secondary, #d4a574);
+  --n4-kind-claim: var(--color-status-success, #27ae60);
+  --n4-kind-grove: color-mix(in srgb, var(--color-accent, #b87333) 75%, #5a7a3a);
+  --n4-kind-member: var(--color-text-secondary, #a09880);
+  --n4-kind-daemon: var(--color-accent, #b87333);
+  --n4-kind-spark: var(--color-status-warning, #f39c12);
+
+  /* ── Easing curves ─────────────────────────────────────────────────────── */
+  --n4-ease-settle: cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --n4-ease-morph: cubic-bezier(0.34, 1.56, 0.64, 1.0);
+  --n4-ease-arrive: cubic-bezier(0.22, 1.0, 0.36, 1.0);
+  --n4-ease-pulse: linear;
+
+  /* ── Animation durations ───────────────────────────────────────────────── */
+  --n4-morph-duration: 600ms;
+  --n4-arrive-duration: 250ms;
+  --n4-depart-duration: 200ms;
+  --n4-focus-duration: 150ms;
+  --n4-pulse-duration: 400ms;
+
+  /* ── Phase ambient theming ──────────────────────────────────── */
+  --n4-phase-seed-background: #1a1a1a;
+  --n4-phase-seed-brightness: 0.4;
+  --n4-phase-seed-indicator-intensity: 0.3;
+  --n4-phase-seed-pulse-speed: 4s;
+  --n4-phase-seed-saturation: 0.6;
+
+  --n4-phase-sprout-background: #1a1c1a;
+  --n4-phase-sprout-brightness: 0.7;
+  --n4-phase-sprout-indicator-intensity: 0.7;
+  --n4-phase-sprout-pulse-speed: 2.5s;
+  --n4-phase-sprout-saturation: 0.85;
+
+  --n4-phase-go-background: #1c1a18;
+  --n4-phase-go-brightness: 1.0;
+  --n4-phase-go-indicator-intensity: 1.0;
+  --n4-phase-go-pulse-speed: 1.5s;
+  --n4-phase-go-saturation: 1.0;
+
+  --n4-phase-consult-background: #1b1a1c;
+  --n4-phase-consult-brightness: 0.85;
+  --n4-phase-consult-indicator-intensity: 0.85;
+  --n4-phase-consult-pulse-speed: 2s;
+  --n4-phase-consult-saturation: 0.9;
+
+  --n4-phase-weed-background: #1c1b18;
+  --n4-phase-weed-brightness: 0.65;
+  --n4-phase-weed-indicator-intensity: 0.6;
+  --n4-phase-weed-pulse-speed: 2.5s;
+  --n4-phase-weed-saturation: 0.75;
+
+  --n4-phase-freeze-background: #1a1a1e;
+  --n4-phase-freeze-brightness: 0.2;
+  --n4-phase-freeze-indicator-intensity: 0.1;
+  --n4-phase-freeze-pulse-speed: 8s;
+  --n4-phase-freeze-saturation: 0.2;
+
+  --n4-phase-compost-background: #1a1a1a;
+  --n4-phase-compost-brightness: 0.25;
+  --n4-phase-compost-indicator-intensity: 0.15;
+  --n4-phase-compost-pulse-speed: 6s;
+  --n4-phase-compost-saturation: 0.3;
+
+  --n4-phase-prune-background: #1c1a1a;
+  --n4-phase-prune-brightness: 0.2;
+  --n4-phase-prune-indicator-intensity: 0.1;
+  --n4-phase-prune-pulse-speed: 8s;
+  --n4-phase-prune-saturation: 0.2;
+}
+
+/* ── Accessibility: reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --n4-morph-duration: 0ms;
+    --n4-arrive-duration: 0ms;
+    --n4-depart-duration: 0ms;
+    --n4-focus-duration: 0ms;
+    --n4-pulse-duration: 0ms;
+    --n4-transition-duration: 0ms;
+  }
+}

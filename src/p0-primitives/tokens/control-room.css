@@ -1,0 +1,309 @@
+/* @kos/design-system — Control Room Theme
+   "Industrial-grade functionalism" aesthetic.
+   Brutalist architecture × Command & Control telemetry.
+   
+   Principles:
+   - Monolithic blocks, no rounded corners
+   - Strict 8px grid alignment
+   - High contrast: phosphor on charcoal
+   - Binary status language (SYSTEM_BUSY, not "Loading...")
+   - Monospace everything, all-caps chrome
+   - No fades — snap/blink transitions only */
+
+:root[data-theme="control-room"] {
+  /* --- Backgrounds — Matte military finishes --- */
+  --color-bg-app: #0a0a0a;           /* Deep matte — main terminal bg */
+  --color-bg-canvas: #111111;        /* Slightly elevated — workspace surface */
+  --color-bg-panel: #141414;         /* Panel containers */
+  --color-bg-panel-elevated: #1a1a1a; /* Elevated dialogs, modals */
+  --color-bg-inset: #080808;         /* Inset wells, input fields */
+  
+  /* Card backgrounds — high contrast for data density */
+  --color-card-bg: #0f0f0f;
+  --color-card-bg-alt: #151515;
+  --color-card-border: #2a2a2a;
+
+  /* --- Text — Phosphor on glass aesthetic --- */
+  --color-text-primary: #e8e8e8;     /* Bright phosphor white */
+  --color-text-secondary: #888888;   /* Dimmed readouts */
+  --color-text-tertiary: #555555;    /* Inactive metadata */
+  --color-text-muted: #333333;     /* Ghost text */
+  --color-text-inverse: #0a0a0a;   /* For light backgrounds */
+  
+  /* Card text (when cards have different bg) */
+  --color-card-text-primary: #e8e8e8;
+  --color-card-text-secondary: #888888;
+  --color-card-text-tertiary: #555555;
+
+  /* --- Accent — Warning/Status only --- */
+  --color-accent: #00ff41;           /* Terminal green — primary action */
+  --color-accent-hover: #33ff66;     /* Brighter on hover */
+  --color-accent-active: #00cc33;      /* Depressed state */
+  --color-accent-glow: rgba(0, 255, 65, 0.3);
+  
+  /* Status colors — binary state language */
+  --color-status-active: #00ff41;    /* SYSTEM_READY */
+  --color-status-busy: #ffd700;      /* SYSTEM_BUSY */
+  --color-status-alert: #ff3131;     /* SYSTEM_FAULT */
+  --color-status-warn: #ff8c00;      /* DEGRADED */
+  --color-status-info: #00bfff;      /* INFO (rare use) */
+  
+  /* --- Semantic (presence) --- */
+  --color-online: #00ff41;
+  --color-offline: #333333;
+  --color-away: #ffd700;
+  --color-busy: #ff3131;
+
+  /* --- Epistemic (ASSAY) — harsh binary states --- */
+  --epistemic-cleared: #00ff41;
+  --epistemic-cleared-glow: rgba(0, 255, 65, 0.2);
+  --epistemic-blocked: #ff3131;
+  --epistemic-blocked-glow: rgba(255, 49, 49, 0.2);
+  --epistemic-pending: #ffd700;
+  --epistemic-pending-glow: rgba(255, 215, 0, 0.2);
+  --epistemic-degraded: #555555;
+  --epistemic-degraded-glow: rgba(85, 85, 85, 0.15);
+
+  /* --- Allay stages — grayscale with terminal highlight --- */
+  --epistemic-stage-0: #1a1a1a;      /* Propose — dark */
+  --epistemic-stage-1: #333333;      /* Parse — dim */
+  --epistemic-stage-2: #666666;      /* Authorize — mid */
+  --epistemic-stage-3: #999999;      /* Execute — bright */
+  --epistemic-stage-4: #00ff41;       /* Trace — active */
+  --epistemic-stage-5: #ffd700;       /* Replicate — complete */
+
+  /* --- Expert identity — monochrome with single accent --- */
+  --expert-atelier: #00ff41;         /* Knowledge — terminal green */
+  --expert-agora: #ffd700;           /* Communication — hazard yellow */
+  --expert-ryu: #ff8c00;             /* Task — amber */
+  --expert-sovereign: #00bfff;       /* Kernel — ice blue */
+  --expert-agent: #888888;           /* Agent — neutral */
+
+  /* --- Borders — Heavy, architectural --- */
+  --border-width-thin: 1px;
+  --border-width-default: 2px;
+  --border-width-thick: 2px;         /* For active states, indicators */
+  --border-width-heavy: 3px;         /* For structural emphasis */
+  --border-subtle: 1px solid #1a1a1a;
+  --border-default: 2px solid #2a2a2a;
+  --border-heavy: 3px solid #333333;
+  --border-focus: 2px solid #00ff41;  /* Terminal green focus */
+  --border-alert: 2px solid #ff3131;
+  --border-warning: 2px solid #ffd700;
+  --divider-color: #1a1a1a;
+
+  /* --- Grid patterns — subtle telemetry lines --- */
+  --grid-line: rgba(0, 255, 65, 0.04);   /* Faint phosphor grid */
+  --grid-dot: rgba(0, 255, 65, 0.08);
+  --grid-major: rgba(0, 255, 65, 0.12);  /* Major divisions */
+
+  /* --- Typography — Monospace only --- */
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+  --font-data: 'OCR-A', 'JetBrains Mono', monospace; /* For serial numbers, IDs */
+  --font-sans: var(--font-mono);      /* Override — everything mono */
+  --font-serif: var(--font-mono);     /* Override — everything mono */
+  --font-display: var(--font-mono);  /* Override — everything mono */
+
+  /* Type scale — tight, compact */
+  --text-2xs: 0.5rem;     /* 8px — micro indicators, arrows */
+  --text-xs: 0.625rem;    /* 10px — metadata only */
+  --text-sm: 0.75rem;     /* 12px — timestamps, coordinates */
+  --text-base: 0.875rem;  /* 14px — body/data */
+  --text-lg: 1rem;        /* 16px — section headers */
+  --text-xl: 1.125rem;    /* 18px — panel titles */
+  --text-2xl: 1.25rem;    /* 20px — major headers */
+  --text-3xl: 1.5rem;     /* 24px — system labels */
+
+  /* --- Spacing — Strict 8px grid --- */
+  --space-1: 0.5rem;      /* 8px */
+  --space-2: 1rem;        /* 16px */
+  --space-3: 1.5rem;      /* 24px */
+  --space-4: 2rem;        /* 32px */
+  --space-6: 3rem;        /* 48px */
+  --space-8: 4rem;        /* 64px */
+
+  /* --- Border radius — ZERO --- */
+  --radius-none: 0;
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-full: 0;
+  
+  /* Clipped corners (alternative to radius) */
+  --clip-corner-sm: polygon(
+    0 4px, 4px 0,
+    calc(100% - 4px) 0, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 0 calc(100% - 4px)
+  );
+  --clip-corner-md: polygon(
+    0 8px, 8px 0,
+    calc(100% - 8px) 0, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 0 calc(100% - 8px)
+  );
+
+  /* --- Shadows — None. Use borders for depth. --- */
+  --shadow-none: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  /* --- Shadow/Glow — Minimal, functional --- */
+  --shadow-active: 0 0 8px var(--color-accent-glow);
+  --shadow-warning: 0 0 8px rgba(255, 215, 0, 0.4);
+  
+  /* --- Overlay colors for scanlines, glass effects --- */
+  --color-overlay-scanline: rgba(0, 0, 0, 0.1);
+  --color-overlay-glass: rgba(10, 10, 10, 0.85);
+
+  /* --- Transitions — Snap/blink only --- */
+  --transition-instant: 0ms;
+  --transition-fast: 50ms step-end;
+  --transition-normal: 100ms step-end;
+  --transition-slow: 150ms step-end;
+  
+  /* --- Animation speeds --- */
+  --animation-speed-flicker: 0.15s;
+  --animation-speed-pulse: 1s;
+  --animation-speed-blink: 0.5s;
+  
+  /* --- Opacity variants for status colors --- */
+  --color-status-active-10: rgba(0, 255, 65, 0.1);
+  --color-status-active-30: rgba(0, 255, 65, 0.3);
+  --color-status-busy-10: rgba(255, 215, 0, 0.1);
+  --color-status-busy-30: rgba(255, 215, 0, 0.3);
+  --color-status-alert-10: rgba(255, 49, 49, 0.1);
+  --color-status-alert-30: rgba(255, 49, 49, 0.3);
+  --color-status-warn-10: rgba(255, 140, 0, 0.1);
+  --color-status-warn-30: rgba(255, 140, 0, 0.3);
+  
+  /* --- Hazard pattern sizing tokens --- */
+  --hazard-stripe-width: 20px;
+  --hazard-stripe-band: 10px;
+  --hazard-alt-stripe-width: 16px;
+  --hazard-alt-stripe-band: 8px;
+  
+  /* --- Component sizing tokens --- */
+  --size-hazard-divider-height: 4px;
+  --size-grid-gap-subtle: 1px;
+  --size-status-bar-height: 2px;
+  --size-border-left-heavy: 3px;
+  --size-network-link-width: 2px;
+  --size-network-link-height: 24px;
+  
+  /* CRT flicker animation - applied via class */
+}
+
+/* Apply flicker to overlay elements */
+[data-theme="control-room"] .crt-flicker::before {
+  animation: flicker var(--animation-speed-flicker) infinite;
+}
+
+/* --- Hazard Pattern Utility ---
+ * Uses theme tokens for full self-containment
+ */
+[data-theme="control-room"] .hazard-stripes {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-bg-app),
+    var(--color-bg-app) var(--hazard-stripe-band),
+    var(--color-status-busy) var(--hazard-stripe-band),
+    var(--color-status-busy) var(--hazard-stripe-width)
+  );
+}
+
+[data-theme="control-room"] .hazard-stripes-alt {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-bg-canvas),
+    var(--color-bg-canvas) var(--hazard-alt-stripe-band),
+    var(--color-status-warn) var(--hazard-alt-stripe-band),
+    var(--color-status-warn) var(--hazard-alt-stripe-width)
+  );
+}
+
+/* --- CRT Scanline Overlay --- */
+[data-theme="control-room"] .crt-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--color-overlay-scanline),
+    var(--color-overlay-scanline) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* --- Phosphor Glow Effect --- */
+[data-theme="control-room"] .phosphor-glow {
+  text-shadow: 0 0 4px var(--color-accent-glow);
+}
+
+/* --- All Caps Chrome --- */
+[data-theme="control-room"] .chrome-label,
+[data-theme="control-room"] .panel-header,
+[data-theme="control-room"] .section-title,
+[data-theme="control-room"] button,
+[data-theme="control-room"] .btn {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* --- Status Badge Patterns --- */
+[data-theme="control-room"] .badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid currentColor;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+[data-theme="control-room"] .badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-right: 0.375rem;
+  background: currentColor;
+}
+
+[data-theme="control-room"] .badge--active {
+  color: var(--color-status-active);
+  border-color: var(--color-status-active);
+}
+
+[data-theme="control-room"] .badge--busy {
+  color: var(--color-status-busy);
+  border-color: var(--color-status-busy);
+  animation: pulse var(--animation-speed-pulse) step-end infinite;
+}
+
+[data-theme="control-room"] .badge--alert {
+  color: var(--color-status-alert);
+  border-color: var(--color-status-alert);
+  animation: blink var(--animation-speed-blink) step-end infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+}

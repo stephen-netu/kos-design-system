@@ -1,0 +1,140 @@
+/* @kos/design-system — canonical design tokens
+   Source of truth for all CSS custom properties.
+   All LEAP apps consume these via `import '@kos/design-system'`.
+   Palette: brass/copper dark theme. NEVER blue as primary. */
+
+:root {
+  /* --- Backgrounds --- */
+  --color-bg-app: #141414;
+  --color-bg-canvas: #1a1a1a;
+  --color-bg-panel: #222222;
+  --color-bg-panel-elevated: #2a2a2a;
+  --color-card-bg: #252525;
+  --color-card-bg-warm: #2a2520;
+  --color-card-bg-cool: #202528;
+
+  /* --- Text --- */
+  --color-text-primary: #f2efe9;
+  --color-text-secondary: #a09880;
+  --color-text-tertiary: #706858;
+  --color-text-muted: #5a5245;
+  --color-text-inverse: #141414;
+  --color-card-text-primary: #e8e0d0;
+  --color-card-text-secondary: #a09880;
+  --color-card-text-tertiary: #706858;
+
+  /* --- Accent (brass/copper) --- */
+  --color-accent: #b87333;
+  --color-accent-hover: #d4956a;
+  --color-accent-active: #8a5626;
+  --color-accent-glow: rgba(184, 115, 51, 0.3);
+  --color-accent-muted: rgba(184, 115, 51, 0.2);
+  --color-accent-subtle: rgba(184, 115, 51, 0.15);
+  --color-accent-faint: rgba(184, 115, 51, 0.08);
+  --color-accent-amber: #d4956a;
+  --color-accent-copper: #b87333;
+  --color-accent-rust: #8a5626;
+  --color-accent-sage: #6b8a6b;
+
+  /* --- Status --- */
+  --color-success: #27ae60;
+  --color-warning: #f39c12;
+  --color-error: #c0392b;
+  --color-info: #2980b9;
+
+  /* --- Semantic (presence) --- */
+  --color-online: #4ade80;
+  --color-offline: #6b7280;
+  --color-away: #fbbf24;
+  --color-busy: #ef4444;
+  --color-typing: #fbbf24;
+
+  /* --- Epistemic (ASSAY clearance states) --- */
+  --epistemic-cleared: #27ae60;            /* green — matches --color-success */
+  --epistemic-cleared-glow: rgba(39, 174, 96, 0.2);
+  --epistemic-blocked: #c0392b;            /* red — matches --color-error */
+  --epistemic-blocked-glow: rgba(192, 57, 43, 0.2);
+  --epistemic-pending: #f39c12;            /* amber — matches --color-warning */
+  --epistemic-pending-glow: rgba(243, 156, 18, 0.2);
+  --epistemic-degraded: #6b7280;           /* grey */
+  --epistemic-degraded-glow: rgba(107, 114, 128, 0.15);
+
+  /* --- Allay stages (0=grey → 5=gold) --- */
+  --epistemic-stage-0: #4a4a4a;            /* Propose — dark grey */
+  --epistemic-stage-1: #6b7280;            /* Parse — muted grey */
+  --epistemic-stage-2: #d4956a;            /* Authorize — amber (--color-accent-amber) */
+  --epistemic-stage-3: #b87333;            /* Execute — copper (--color-accent-copper) */
+  --epistemic-stage-4: #c9973a;            /* Trace — brass */
+  --epistemic-stage-5: #d4a843;            /* Replicate — gold */
+  --epistemic-stage-5-glow: rgba(212, 168, 67, 0.25);
+
+  /* --- Expert identity colors --- */
+  --expert-atelier: #b87333;               /* copper — knowledge surfaces */
+  --expert-agora: #6b8a6b;                 /* sage — communication (--color-accent-sage) */
+  --expert-ryu: #d4956a;                   /* amber — task execution (--color-accent-amber) */
+  --expert-sovereign: #c9973a;             /* brass — kernel */
+  --expert-agent: #2980b9;                 /* info — agent (--color-info) */
+
+  /* --- Borders --- */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: #333333;
+  --border-hover: #444444;
+  --border-focus: #b87333;
+  --divider-color: #2a2a2a;
+
+  /* --- Grid (canvas patterns) --- */
+  --grid-line: rgba(184, 115, 51, 0.06);
+  --grid-dot: rgba(184, 115, 51, 0.12);
+
+  /* --- Typography --- */
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  --font-serif: 'Crimson Pro', Georgia, serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* --- Spacing --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* --- Border radius --- */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 15px rgba(184, 115, 51, 0.15);
+  --shadow-glow-lg: 0 0 30px rgba(184, 115, 51, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  /* --- Transitions --- */
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 350ms ease;
+  --transition-bounce: 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}

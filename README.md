@@ -1,6 +1,6 @@
 # @kos/design-system
 
-KOS LEAP Design System — Legendary UI components with brass/copper aesthetic.
+KOS Design System — a convenient way to keep LEAP apps somewhat neat and tidy.
 
 ## Installation
 
@@ -60,7 +60,8 @@ All values are CSS custom properties:
 - **n2-manifold-disk**: Poincare disk projection
 - **n3-force-graph**: Force-directed graph layout
 - **n4-adaptive-manifold**: Adaptive manifold visualization
+- ...random things I have yet to organize into my weird hexagonal architectural nonsense
 
 ## License
 
-MIT
+MIT, or whatever. They're just style sheets at the end of the day. Top-down business, watch for cascades.

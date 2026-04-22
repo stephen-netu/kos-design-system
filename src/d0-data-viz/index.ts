@@ -48,6 +48,10 @@ export { default as StorageMap } from './StorageMap.svelte';
 export { default as CheckpointBar } from './CheckpointBar.svelte';
 export { default as CheckpointPill } from './CheckpointPill.svelte';
 
+// New from NNJAS port
+export { default as ConnectionHealth } from './ConnectionHealth.svelte';
+// Types (QualityMetrics, QualitySample, QualityLevel) exported from t0-transport
+
 // Theme Integration
 export {
   CHECKPOINT_CSS_VARS,

@@ -7,6 +7,12 @@ export { default as KanbanBoard } from './kanban/KanbanBoard.svelte';
 export { default as KanbanColumn } from './kanban/KanbanColumn.svelte';
 export { default as KanbanCard } from './kanban/KanbanCard.svelte';
 
+// New from NNJAS port
+export { default as SnapPanel } from './SnapPanel.svelte';
+export { default as VirtualGrid } from './VirtualGrid.svelte';
+export type { PanelPosition, PanelMode, PanelSnap } from './SnapPanel.svelte';
+export type { GridItem } from './VirtualGrid.svelte';
+
 // Grove & Accord
 export { default as MemberBadge } from './grove/MemberBadge.svelte';
 export { default as MemberList } from './grove/MemberList.svelte';

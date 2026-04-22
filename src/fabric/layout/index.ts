@@ -15,3 +15,7 @@ export { default as KanbanColumn } from './KanbanColumn.svelte';
 export { default as KanbanCard } from './KanbanCard.svelte';
 export type { CardData } from './KanbanCard.svelte';
 export type { ColumnData } from './KanbanColumn.svelte';
+
+// Collapsible Panel
+export { default as CollapsiblePanel } from './CollapsiblePanel.svelte';
+export type { PanelPosition, PanelMode, PanelSnap } from './CollapsiblePanel.svelte';

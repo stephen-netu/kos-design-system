@@ -13,8 +13,8 @@
  */
 
 // Layout
-export { GlassBox, KanbanBoard, KanbanColumn, KanbanCard } from './layout';
-export type { CardData, ColumnData } from './layout';
+export { GlassBox, KanbanBoard, KanbanColumn, KanbanCard, CollapsiblePanel } from './layout';
+export type { CardData, ColumnData, PanelPosition, PanelMode, PanelSnap } from './layout';
 
 // Navigation
 export { ActivityRail } from './navigation';

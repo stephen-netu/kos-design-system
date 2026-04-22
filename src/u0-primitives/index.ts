@@ -18,6 +18,14 @@ export * from './assay-badge/index.js';
 export * from './allay-gauge/index.js';
 export * from './expert-badge/index.js';
 
+// New from NNJAS port
+export { default as VerticalToolbar } from './VerticalToolbar.svelte';
+export { default as AccordionSection } from './AccordionSection.svelte';
+export { default as LockIndicator } from './LockIndicator.svelte';
+export type { ToolbarItem } from './VerticalToolbar.svelte';
+export type { AccordionSectionProps } from './AccordionSection.svelte';
+export type { LockUser, LockState } from './LockIndicator.svelte';
+
 // Re-export types
 export type {
   ButtonProps,

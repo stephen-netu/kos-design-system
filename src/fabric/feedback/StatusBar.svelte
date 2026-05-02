@@ -13,7 +13,7 @@
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type IconComponent = any;
 
-  export type ViewMode = 'spatial' | 'file' | 'graph' | 'kanban' | 'browser' | 'sovereign' | 'agora' | 'atelier' | 'loge' | 'mir';
+  export type ViewMode = 'spatial' | 'file' | 'graph' | 'kanban' | 'browser' | 'exile' | 'research' | 'sovereign' | 'agora' | 'atelier' | 'loge' | 'mir';
   export type ConnectionState = 'connected' | 'connecting' | 'failed' | 'reconnecting';
 
   interface Props {
@@ -54,6 +54,8 @@
     graph: Network,
     kanban: Columns2,
     browser: Globe,
+    exile: Cpu,
+    research: Sparkles,
     sovereign: Cpu,
     agora: Wifi,
     atelier: LayoutGrid,
@@ -67,6 +69,8 @@
     graph: 'Graph',
     kanban: 'Kanban',
     browser: 'Browser',
+    exile: 'Exile',
+    research: 'Research',
     sovereign: 'Sovereign',
     agora: 'Agora',
     atelier: 'Atelier',

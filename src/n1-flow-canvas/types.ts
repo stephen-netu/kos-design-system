@@ -2,6 +2,10 @@
 // Pure TypeScript — no Svelte, no DOM dependencies
 // S-02: all collections use Map/Array with deterministic ordering (no Set/Object spread iteration)
 
+import type { Point, Size } from '../p0-primitives/types/geometry';
+
+export type { Point, Size };
+
 // === Graph Primitives ===
 
 export interface GraphNode {
@@ -89,14 +93,4 @@ export interface EdgeRevealState {
 /** Stagger delay per BFS wave step (ms). Deterministic — no Math.random. */
 export const EDGE_REVEAL_STAGGER_MS = 30;
 
-// === Geometry (shared with n0, re-exported for convenience) ===
-
-export interface Point {
-  x: number;
-  y: number;
-}
-
-export interface Size {
-  width: number;
-  height: number;
-}
+// === Geometry (imported from p0-primitives, re-exported for convenience) ===

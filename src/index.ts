@@ -22,6 +22,9 @@ export * from './u0-primitives';
 // L0 Layout — Layout compositions
 export * from './l0-layout';
 
+// S0 Lifecycle — Component lifecycle phases (constrain → layout → interact → render)
+export * from './s0-lifecycle';
+
 // S0 State — Store primitives (Svelte 5 runes)
 export * from './s0-state';
 

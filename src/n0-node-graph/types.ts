@@ -1,6 +1,10 @@
 // N0 Node Graph — Schema Layer Types
 // Pure TypeScript — no Svelte, no DOM dependencies
 
+import type { Point, Size } from '../p0-primitives/types/geometry';
+
+export type { Point, Size };
+
 // === Scoped Port Types ===
 
 export type PortScope = 'realm' | 'grove' | 'accord' | 'system' | 'app';
@@ -79,18 +83,8 @@ export interface ValidationResult {
 
 // === Geometry ===
 
-export interface Point {
-  x: number;
-  y: number;
-}
-
 export interface Transform {
   x: number;
   y: number;
   scale: number;
-}
-
-export interface Size {
-  width: number;
-  height: number;
 }

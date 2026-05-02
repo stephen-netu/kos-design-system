@@ -3,6 +3,7 @@
 // Keep in sync with component $props() definitions.
 
 export * from './plugin-types';
+export * from './geometry';
 
 import type { Snippet } from 'svelte';
 

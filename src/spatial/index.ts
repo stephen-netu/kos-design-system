@@ -7,6 +7,9 @@ export * from './lod-types.js';
 export * from './camera-types.js';
 export * from './content-proportional-bsp.js';
 
+// S0-lifecycle store implementations
+export { ForceSimulation } from './ForceSimulation.svelte.js';
+
 // Components are imported directly:
 //   import ZoneTiler from '@kos/design-system/spatial/ZoneTiler.svelte';
 //   import ForceCanvas from '@kos/design-system/spatial/ForceCanvas.svelte';

@@ -26,6 +26,7 @@
     "./spatial/LodRenderer.svelte": "./src/spatial/LodRenderer.svelte",
     "./spatial/SnapZoomCamera.svelte": "./src/spatial/SnapZoomCamera.svelte",
     "./spatial/BspTilingCanvas.svelte": "./src/spatial/BspTilingCanvas.svelte",
+    "./s0-lifecycle": "./src/s0-lifecycle/index.ts",
     "./s0-state": "./src/s0-state/index.ts",
     "./t0-transport": "./src/t0-transport/index.ts",
     "./f0-forms": "./src/f0-forms/index.ts",

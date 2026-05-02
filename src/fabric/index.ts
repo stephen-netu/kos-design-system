@@ -29,7 +29,7 @@ export { CommandBar, KeyboardShortcuts } from './input';
 export type { ShortcutBinding, ShortcutGroup } from './input';
 
 // AI
-export { ChatPanel } from './ai';
+export { ChatPanel, ResearchPanel } from './ai';
 export type { Message, Citation, ContextCard } from './ai';
 
 // Feedback

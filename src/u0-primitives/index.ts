@@ -26,6 +26,22 @@ export type { ToolbarItem } from './VerticalToolbar.svelte';
 export type { AccordionSectionProps } from './AccordionSection.svelte';
 export type { LockUser, LockState } from './LockIndicator.svelte';
 
+// RSVP Speed Reading
+export { default as RsvpReader } from './rsvp/RsvpReader.svelte';
+export * from './rsvp/rsvp-utils';
+
+// Command Palette — Slash commands for LEAP chat
+export { CommandPalette, commandStore } from './command-palette';
+export type {
+  CommandSchema,
+  CommandParameter,
+  CommandResult,
+  CommandContext,
+  InvocationContext,
+  CommandUIState,
+  ActiveCommandSession,
+} from './command-palette';
+
 // Re-export types
 export type {
   ButtonProps,

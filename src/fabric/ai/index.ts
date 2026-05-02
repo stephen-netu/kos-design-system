@@ -8,4 +8,5 @@
  */
 
 export { default as ChatPanel } from './ChatPanel.svelte';
+export { default as ResearchPanel } from './ResearchPanel.svelte';
 export type { Message, Citation, ContextCard } from './ChatPanel.svelte';

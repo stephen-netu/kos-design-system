@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Tabs, type Tab } from '@kos/design-system/u0-primitives';
+  import { Tabs, type Tab } from '../u0-primitives';
   import MermaidDiagram from './MermaidDiagram.svelte';
   import MarkmapDiagram from './MarkmapDiagram.svelte';
   import type { DiagramPanelItem, RenderOptions } from './types';

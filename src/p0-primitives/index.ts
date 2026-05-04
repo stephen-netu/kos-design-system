@@ -4,3 +4,8 @@
 
 export * from './types/index';
 export * from './utils/index';
+
+// Theme system
+export { default as ThemeProvider } from './ThemeProvider.svelte';
+export type { ThemeMode, ThemeConfig } from './ThemeProvider.svelte';
+export { createTheme, defaultLightTheme, defaultDarkTheme, brassAccentTheme } from './theme';

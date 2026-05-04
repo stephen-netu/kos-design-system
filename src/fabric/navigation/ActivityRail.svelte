@@ -46,7 +46,15 @@
     ondropstreamcard?: (item: RailItem, data: { content: string; contentType: string; source: string }) => void;
   }
 
-  const props: Props = $props();
+  let {
+    appItems,
+    viewItems,
+    panelItems,
+    activeAppId,
+    onitemclick,
+    onopenhelp,
+    ondropstreamcard,
+  }: Props = $props();
 
   const ICON_MAP: Record<string, IconComponent> = {
     'layout-grid': LayoutGrid,
@@ -94,7 +102,7 @@
   function handleDrop(item: RailItem, e: DragEvent) {
     e.preventDefault();
     dropTargetId = null;
-    if (!props.ondropstreamcard || item.type !== 'app') return;
+    if (!ondropstreamcard || item.type !== 'app') return;
 
     try {
       const data = e.dataTransfer?.getData('application/json');
@@ -102,7 +110,7 @@
       const payload = JSON.parse(data);
       if (payload.type !== 'stream-card') return;
 
-      props.ondropstreamcard(
+      ondropstreamcard(
         item,
         { content: payload.content, contentType: payload.contentType, source: payload.source }
       );
@@ -117,7 +125,7 @@
 
   <!-- App buttons -->
   <div class="rail-section rail-apps">
-    {#each props.appItems as item (item.id)}
+    {#each appItems as item (item.id)}
       {@const Icon = getIcon(item.iconName)}
       <button
         class="rail-btn"
@@ -126,7 +134,7 @@
         class:disabled={item.disabled}
         title={item.title ?? item.label}
         aria-label={item.label}
-        onclick={() => props.onitemclick(item)}
+        onclick={() => onitemclick(item)}
         ondragover={(e) => handleDragOver(item, e)}
         ondragleave={handleDragLeave}
         ondrop={(e) => handleDrop(item, e)}
@@ -140,7 +148,7 @@
 
   <!-- View buttons -->
   <div class="rail-section">
-    {#each props.viewItems as item (item.id)}
+    {#each viewItems as item (item.id)}
       {@const Icon = getIcon(item.iconName)}
       <button
         class="rail-btn"
@@ -148,7 +156,7 @@
         class:disabled={item.disabled}
         title={item.label}
         aria-label={item.label}
-        onclick={() => props.onitemclick(item)}
+        onclick={() => onitemclick(item)}
       >
         <Icon size={18} />
       </button>
@@ -157,7 +165,7 @@
 
   <!-- Panel toggles -->
   <div class="rail-section rail-panels">
-    {#each props.panelItems as item (item.id)}
+    {#each panelItems as item (item.id)}
       {@const Icon = getIcon(item.iconName)}
       <button
         class="rail-btn"
@@ -165,7 +173,7 @@
         class:disabled={item.disabled}
         title={item.label}
         aria-label={item.label}
-        onclick={() => props.onitemclick(item)}
+        onclick={() => onitemclick(item)}
       >
         <Icon size={18} />
       </button>
@@ -178,7 +186,7 @@
     class="rail-btn"
     title="Keyboard shortcuts (?)"
     aria-label="Keyboard shortcuts"
-    onclick={() => props.onopenhelp?.()}
+    onclick={() => onopenhelp?.()}
   >
     <HelpCircle size={18} />
   </button>

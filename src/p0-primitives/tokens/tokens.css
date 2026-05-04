@@ -137,4 +137,53 @@
   --transition-slow: 350ms ease;
   --transition-bounce: 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Semantic Color Roles (OpenUI-inspired) --- */
+  /* Map legacy colors to semantic roles */
+  --color-bg-primary: var(--color-bg-app);
+  --color-bg-secondary: var(--color-bg-canvas);
+  --color-bg-tertiary: var(--color-bg-panel);
+  --color-bg-elevated: var(--color-bg-panel-elevated);
+  
+  --color-fg-primary: var(--color-text-primary);
+  --color-fg-secondary: var(--color-text-secondary);
+  --color-fg-tertiary: var(--color-text-tertiary);
+  --color-fg-muted: var(--color-text-muted);
+  --color-fg-inverse: var(--color-text-inverse);
+  
+  /* Accent variations */
+  --color-accent-hover: #d4956a;
+  --color-accent-active: #8a5626;
+  --color-accent-subtle: rgba(184, 115, 51, 0.1);
+  
+  /* Feedback semantic mapping */
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-error: var(--color-error);
+  --color-status-info: var(--color-info);
+
+  /* --- Animation / Duration (OpenUI-inspired) --- */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+  
+  /* Easing functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Z-index scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  --z-glass-box: 9000;
 }

@@ -38,6 +38,7 @@
     "./n4-adaptive-manifold": "./src/n4-adaptive-manifold/index.ts",
     "./n4-tokens.css": "./src/n4-adaptive-manifold/n4-tokens.css",
     "./v0-diagrams": "./src/v0-diagrams/index.ts",
+    "./g0-generative": "./src/g0-generative/index.ts",
     "./entity-graph-view": "./src/entity-graph-view/index.ts",
     "./tokens.css": "./src/p0-primitives/tokens/tokens.css",
     "./tokens/control-room.css": "./src/p0-primitives/tokens/control-room.css",
@@ -45,7 +46,7 @@
     "./n0-tokens.css": "./src/n0-node-graph/n0-tokens.css",
     "./base.css": "./src/base.css",
     "./tokens.json": "./src/p0-primitives/tokens/tokens.json",
-    "./map": "./src/g0-geo/index.ts",
+    "./map": "./src/map/index.ts",
     "./g0-geo": "./src/g0-geo/index.ts",
     "./x0-enchanted-blocks": "./src/x0-enchanted-blocks/index.ts",
     "./editor": "./src/editor/index.ts",
@@ -72,7 +73,8 @@
     "./fabric/feedback/ToastContainer.svelte": "./src/fabric/feedback/ToastContainer.svelte",
     "./fabric/feedback/StatusBar.svelte": "./src/fabric/feedback/StatusBar.svelte",
     "./fabric/ai": "./src/fabric/ai/index.ts",
-    "./fabric/ai/ChatPanel.svelte": "./src/fabric/ai/ChatPanel.svelte"
+    "./fabric/ai/ChatPanel.svelte": "./src/fabric/ai/ChatPanel.svelte",
+    "./fabric/ai/ResearchPanel.svelte": "./src/fabric/ai/ResearchPanel.svelte"
   },
   "peerDependencies": {
     "@tauri-apps/api": "^2",

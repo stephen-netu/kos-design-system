@@ -4,6 +4,7 @@ export { default as Button } from './button/Button.svelte';
 export { default as Input } from './input/Input.svelte';
 export { default as Card } from './card/Card.svelte';
 export { default as Badge } from './badge/Badge.svelte';
+export { default as ValidityBadge } from './badge/ValidityBadge.svelte';
 export { default as Avatar } from './avatar/Avatar.svelte';
 export { default as Toggle } from './toggle/Toggle.svelte';
 export { default as Tooltip } from './tooltip/Tooltip.svelte';

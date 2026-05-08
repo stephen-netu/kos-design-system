@@ -49,3 +49,6 @@ export type {
   WritingPhase,
   BlockOrigin,
 } from './block-writer/index.js';
+
+// Validity Score Display
+export { default as ValidityScoreDisplay } from './ValidityScoreDisplay.svelte';

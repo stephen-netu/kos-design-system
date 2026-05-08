@@ -1,0 +1,83 @@
+:root {
+  /* --- Validity Score Colors (KVE - Knowledge Validity Engine) ---
+     Used for displaying document validity scores from v0-kve-scanner
+     Score ranges: 0-1000 (permille)
+     - 900-1000: High validity (green)
+     - 700-899: Medium validity (amber)  
+     - 500-699: Low validity (orange)
+     - 0-499: Critical validity (red)
+  */
+  
+  /* High Validity (900-1000) */
+  --validity-high: #27ae60;
+  --validity-high-light: #2ecc71;
+  --validity-high-dark: #229954;
+  --validity-high-glow: rgba(39, 174, 96, 0.25);
+  --validity-high-bg: rgba(39, 174, 96, 0.12);
+  --validity-high-border: rgba(39, 174, 96, 0.3);
+  
+  /* Medium Validity (700-899) */
+  --validity-medium: #f39c12;
+  --validity-medium-light: #f1c40f;
+  --validity-medium-dark: #d68910;
+  --validity-medium-glow: rgba(243, 156, 18, 0.25);
+  --validity-medium-bg: rgba(243, 156, 18, 0.12);
+  --validity-medium-border: rgba(243, 156, 18, 0.3);
+  
+  /* Low Validity (500-699) */
+  --validity-low: #e67e22;
+  --validity-low-light: #eb984e;
+  --validity-low-dark: #ba4a00;
+  --validity-low-glow: rgba(230, 126, 34, 0.25);
+  --validity-low-bg: rgba(230, 126, 34, 0.12);
+  --validity-low-border: rgba(230, 126, 34, 0.3);
+  
+  /* Critical Validity (0-499) */
+  --validity-critical: #c0392b;
+  --validity-critical-light: #e74c3c;
+  --validity-critical-dark: #a93226;
+  --validity-critical-glow: rgba(192, 57, 43, 0.25);
+  --validity-critical-bg: rgba(192, 57, 43, 0.12);
+  --validity-critical-border: rgba(192, 57, 43, 0.3);
+  
+  /* No Score / Unknown */
+  --validity-unknown: #6b7280;
+  --validity-unknown-light: #9ca3af;
+  --validity-unknown-dark: #4b5563;
+  --validity-unknown-bg: rgba(107, 114, 128, 0.12);
+  --validity-unknown-border: rgba(107, 114, 128, 0.3);
+  
+  /* Validity Score Display */
+  --validity-score-font: var(--font-mono);
+  --validity-score-size: var(--text-2xl);
+  --validity-score-weight: 700;
+  
+  /* Validity Progress Bar */
+  --validity-progress-height: 0.5rem;
+  --validity-progress-bg: var(--color-bg-panel);
+  --validity-progress-border-radius: var(--radius-full);
+}
+
+/* Utility classes for validity states */
+.validity-high { color: var(--validity-high); }
+.validity-medium { color: var(--validity-medium); }
+.validity-low { color: var(--validity-low); }
+.validity-critical { color: var(--validity-critical); }
+.validity-unknown { color: var(--validity-unknown); }
+
+.bg-validity-high { background: var(--validity-high-bg); }
+.bg-validity-medium { background: var(--validity-medium-bg); }
+.bg-validity-low { background: var(--validity-low-bg); }
+.bg-validity-critical { background: var(--validity-critical-bg); }
+.bg-validity-unknown { background: var(--validity-unknown-bg); }
+
+.border-validity-high { border-color: var(--validity-high-border); }
+.border-validity-medium { border-color: var(--validity-medium-border); }
+.border-validity-low { border-color: var(--validity-low-border); }
+.border-validity-critical { border-color: var(--validity-critical-border); }
+.border-validity-unknown { border-color: var(--validity-unknown-border); }
+
+.shadow-validity-high { box-shadow: 0 0 12px var(--validity-high-glow); }
+.shadow-validity-medium { box-shadow: 0 0 12px var(--validity-medium-glow); }
+.shadow-validity-low { box-shadow: 0 0 12px var(--validity-low-glow); }
+.shadow-validity-critical { box-shadow: 0 0 12px var(--validity-critical-glow); }

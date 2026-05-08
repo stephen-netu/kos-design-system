@@ -4,6 +4,7 @@
 // CSS imports
 import './base.css';
 import './p0-primitives/tokens/tokens.css';
+import './p0-primitives/tokens/validity-tokens.css';
 import './p0-primitives/tokens/control-room.css';
 import './n0-node-graph/n0-tokens.css';
 import './d0-data-viz/d0-tokens.css';

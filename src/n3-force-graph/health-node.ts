@@ -7,12 +7,17 @@
 
 import type { ForceGraphNode, HealthNodeConfig } from './types.js';
 import { healthToColor, healthToGlow } from './types.js';
+import { getCanvasTheme } from '../p0-primitives/canvas-theme';
 
 const DEFAULTS: Required<HealthNodeConfig> = {
   baseRadius: 6,
   pulseEnabled: true,
   pulseAmplitude: 0.02,
 };
+
+// Capture theme at render creation time so color lookups happen once,
+// not on every frame tick.
+const theme = getCanvasTheme();
 
 // Global tick counter for deterministic pulse — incremented by the ForceGraph
 // component on each engine tick. Avoids Date.now() / performance.now() in render.
@@ -69,39 +74,39 @@ export function createHealthNodeRenderer(
       ctx.fill();
       ctx.shadowColor = 'transparent';
       ctx.shadowBlur = 0;
-    }
+      }
 
-    // Node circle
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
-    ctx.fill();
-
-    // Border
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-    ctx.lineWidth = 1 / globalScale;
-    ctx.stroke();
-
-    // Label (below node, only when zoomed in enough)
-    if (globalScale >= 0.6) {
-      const fontSize = Math.max(10, 12 / globalScale);
-      ctx.font = `${fontSize}px var(--font-mono, 'JetBrains Mono', monospace)`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillStyle = '#e8e0d0';
-
-      const label = node.label.length > 20 ? node.label.slice(0, 18) + '…' : node.label;
-      ctx.fillText(label, x, y + radius + 4 / globalScale);
-    }
-
-    // Type indicator: app nodes get a ring, ADR nodes get a diamond
-    if (node.type === 'app') {
+      // Node circle
       ctx.beginPath();
-      ctx.arc(x, y, radius + 1.5 / globalScale, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#b87333'; // brass
-      ctx.lineWidth = 2 / globalScale;
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      // Border
+      ctx.strokeStyle = theme.nodeBorder;
+      ctx.lineWidth = 1 / globalScale;
       ctx.stroke();
-    }
+
+      // Label (below node, only when zoomed in enough)
+      if (globalScale >= 0.6) {
+        const fontSize = Math.max(10, 12 / globalScale);
+        ctx.font = `${fontSize}px var(--font-mono, 'JetBrains Mono', monospace)`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = theme.nodeText;
+
+        const label = node.label.length > 20 ? node.label.slice(0, 18) + '…' : node.label;
+        ctx.fillText(label, x, y + radius + 4 / globalScale);
+      }
+
+      // Type indicator: app nodes get a ring, ADR nodes get a diamond
+      if (node.type === 'app') {
+        ctx.beginPath();
+        ctx.arc(x, y, radius + 1.5 / globalScale, 0, 2 * Math.PI);
+        ctx.strokeStyle = theme.nodeBorder;
+        ctx.lineWidth = 2 / globalScale;
+        ctx.stroke();
+      }
   };
 }
 

@@ -6,10 +6,11 @@
   // S-05: Force simulation has cooldownTicks + cooldownTime bounds.
   //       Component destroys graph instance on unmount.
 
-  import { onMount, onDestroy } from 'svelte';
-  import type { ForceGraphData, ForceGraphNode, ForceGraphLink, HealthNodeConfig, AnimatedEdgeConfig, TooltipPosition } from './types.js';
-  import { createHealthNodeRenderer, createHealthNodeAreaPaint, advancePulseTick } from './health-node.js';
-  import { createAnimatedEdgeRenderer } from './animated-edge.js';
+import { onMount, onDestroy } from 'svelte';
+import type { ForceGraphData, ForceGraphNode, ForceGraphLink, HealthNodeConfig, AnimatedEdgeConfig, TooltipPosition } from './types.js';
+import { createHealthNodeRenderer, createHealthNodeAreaPaint, advancePulseTick } from './health-node.js';
+import { createAnimatedEdgeRenderer } from './animated-edge.js';
+import { getCanvasTheme } from '../p0-primitives/canvas-theme';
 
   // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -40,20 +41,20 @@
     linkDistance?: number;
   }
 
-  let {
-    data,
-    width = 800,
-    height = 600,
-    nodeConfig,
-    edgeConfig,
-    backgroundColor = '#1a1a1a',
-    onNodeClick,
-    onNodeHover,
-    onLinkClick,
-    cooldownTicks = 300,
-    chargeStrength = -120,
-    linkDistance = 80,
-  }: Props = $props();
+let {
+     data,
+     width = 800,
+     height = 600,
+     nodeConfig,
+     edgeConfig,
+     backgroundColor = getCanvasTheme().bg,
+     onNodeClick,
+     onNodeHover,
+     onLinkClick,
+     cooldownTicks = 300,
+     chargeStrength = -120,
+     linkDistance = 80,
+   }: Props = $props();
 
   // ── Internal state ──────────────────────────────────────────────────────────
 

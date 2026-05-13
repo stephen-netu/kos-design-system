@@ -84,8 +84,8 @@
   --border-width-default: 2px;
   --border-width-thick: 2px;         /* For active states, indicators */
   --border-width-heavy: 3px;         /* For structural emphasis */
-  --border-subtle: 1px solid #1a1a1a;
-  --border-default: 2px solid #2a2a2a;
+--border-subtle: 1px solid #1a1a1a;
+   --border-default: 2px solid #444c56;
   --border-heavy: 3px solid #333333;
   --border-focus: 2px solid #00ff41;  /* Terminal green focus */
   --border-alert: 2px solid #ff3131;

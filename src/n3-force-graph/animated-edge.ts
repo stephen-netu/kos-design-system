@@ -7,6 +7,7 @@
 
 import type { ForceGraphNode, ForceGraphLink, AnimatedEdgeConfig } from './types.js';
 import { getPulseTick } from './health-node.js';
+import { getCanvasTheme } from '../p0-primitives/canvas-theme';
 
 const DEFAULTS: Required<AnimatedEdgeConfig> = {
   dashLength: 8,
@@ -30,51 +31,51 @@ const DEFAULTS: Required<AnimatedEdgeConfig> = {
  * ```
  */
 export function createAnimatedEdgeRenderer(
-  config?: AnimatedEdgeConfig,
-): (link: ForceGraphLink, ctx: CanvasRenderingContext2D, globalScale: number) => void {
-  const { dashLength, gapLength, marchSpeed } = { ...DEFAULTS, ...config };
+   config?: AnimatedEdgeConfig,
+ ): (link: ForceGraphLink, ctx: CanvasRenderingContext2D, globalScale: number) => void {
+   const { dashLength, gapLength, marchSpeed } = { ...DEFAULTS, ...config };
 
-  return (link: ForceGraphLink, ctx: CanvasRenderingContext2D, globalScale: number) => {
-    // force-graph mutates source/target to resolved node objects at runtime
-    const source = link.source as unknown as ForceGraphNode;
-    const target = link.target as unknown as ForceGraphNode;
+   return (link: ForceGraphLink, ctx: CanvasRenderingContext2D, globalScale: number) => {
+     // force-graph mutates source/target to resolved node objects at runtime
+     const source = link.source as unknown as ForceGraphNode;
+     const target = link.target as unknown as ForceGraphNode;
 
-    const sx = source.x ?? 0;
-    const sy = source.y ?? 0;
-    const tx = target.x ?? 0;
-    const ty = target.y ?? 0;
+     const sx = source.x ?? 0;
+     const sy = source.y ?? 0;
+     const tx = target.x ?? 0;
+     const ty = target.y ?? 0;
 
-    ctx.save();
+     ctx.save();
 
-    const mode = link.mode ?? 'wired';
+     const mode = link.mode ?? 'wired';
 
-    switch (mode) {
-      case 'active': {
-        // Marching-ants: animated dash offset driven by pulse tick
-        const offset = getPulseTick() * marchSpeed;
-        ctx.setLineDash([dashLength / globalScale, gapLength / globalScale]);
-        ctx.lineDashOffset = -offset / globalScale;
-        ctx.strokeStyle = '#b87333'; // brass — active flow
-        ctx.lineWidth = 2 / globalScale;
-        break;
-      }
-      case 'stub': {
-        // Dashed static: connection exists but unwired
-        ctx.setLineDash([4 / globalScale, 6 / globalScale]);
-        ctx.lineDashOffset = 0;
-        ctx.strokeStyle = '#5a4a30'; // muted brass
-        ctx.lineWidth = 1 / globalScale;
-        break;
-      }
-      case 'wired':
-      default: {
-        // Solid: fully connected
-        ctx.setLineDash([]);
-        ctx.strokeStyle = '#706858'; // tertiary text color
-        ctx.lineWidth = 1.5 / globalScale;
-        break;
-      }
-    }
+     switch (mode) {
+       case 'active': {
+         // Marching-ants: animated dash offset driven by pulse tick
+         const offset = getPulseTick() * marchSpeed;
+         ctx.setLineDash([dashLength / globalScale, gapLength / globalScale]);
+         ctx.lineDashOffset = -offset / globalScale;
+         ctx.strokeStyle = getCanvasTheme().nodeBorder;
+         ctx.lineWidth = 2 / globalScale;
+         break;
+       }
+       case 'stub': {
+         // Dashed static: connection exists but unwired
+         ctx.setLineDash([4 / globalScale, 6 / globalScale]);
+         ctx.lineDashOffset = 0;
+         ctx.strokeStyle = 'rgba(88, 166, 255, 0.15)'; // accent subtle
+         ctx.lineWidth = 1 / globalScale;
+         break;
+       }
+       case 'wired':
+       default: {
+         // Solid: fully connected
+         ctx.setLineDash([]);
+         ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)'; // border subtle
+         ctx.lineWidth = 1.5 / globalScale;
+         break;
+       }
+     }
 
     // Draw line
     ctx.beginPath();

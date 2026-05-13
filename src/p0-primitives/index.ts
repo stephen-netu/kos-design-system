@@ -4,6 +4,7 @@
 
 export * from './types/index';
 export * from './utils/index';
+export { getCanvasTheme } from './canvas-theme';
 
 // Theme system
 export { default as ThemeProvider } from './ThemeProvider.svelte';

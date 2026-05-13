@@ -10,6 +10,7 @@
   import { GraphState } from './graph-state.svelte.js';
   import { runLayout } from './layout.js';
   import { EDGE_REVEAL_STAGGER_MS } from './types.js';
+   import { getCanvasTheme } from '../p0-primitives/canvas-theme';
 
   // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -82,18 +83,9 @@
     }
   }
 
-  // ── Design tokens ──────────────────────────────────────────────────────────
+  // ── Design tokens (runtime theme-aware) ──────────────────────────────────
 
-  const COLORS = {
-    bg:          '#1a1a1a',
-    node:        '#2a2a2a',
-    nodeBorder:  '#b87333',
-    nodeHover:   '#3a3a3a',
-    nodeText:    '#e8e0d0',
-    edgeLine:    '#b87333',
-    edgeFade:    '#5a4a30',
-    focus:       '#d4943a',
-  };
+  const COLORS = getCanvasTheme();
 
   const NODE_RADIUS = 4;
   const FONT = '12px var(--font-mono, monospace)';

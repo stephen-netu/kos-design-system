@@ -1,0 +1,23 @@
+when:
+  branch: main
+  event: push
+
+steps:
+  install:
+    image: node:20
+    commands:
+      - npm ci
+
+  check:
+    image: node:20
+    commands:
+      - npx svelte-check --tsconfig ./tsconfig.json
+
+  release:
+    image: node:20
+    secrets: [npm_token]
+    commands:
+      - npm run build
+      - npm version patch --no-git-tag-version
+      - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+      - npm publish --access public

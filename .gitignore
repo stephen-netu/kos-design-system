@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# SvelteKit build
+.svelte-kit/
+
+# Test results
+test-results/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# The canonical .gears/ lives at the KOS workspace root (KOS/.gears/<project>/).
+# No .gears/ should ever exist inside a peer repo.
+.gears/

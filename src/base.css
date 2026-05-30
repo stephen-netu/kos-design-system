@@ -1,0 +1,138 @@
+/* @kos/design-system — Base styles */
+/* Reset, scrollbars, focus, selection, layout utilities */
+/* Component styles belong in their own .svelte files, not here */
+
+@import './p0-primitives/tokens/tokens.css';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
+  color-scheme: dark;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* --- Scrollbars --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* --- Focus Management --- */
+:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+
+
+/* --- Selection --- */
+::selection {
+  background-color: var(--color-accent-subtle);
+  color: var(--color-accent-hover);
+}
+
+/* --- Layout Utilities ---
+   NOTE on visibility vs {#if} for persistent-state components:
+   - Use CSS visibility:hidden for lightweight toggleable chrome (toolbars, sidebars).
+     The component stays mounted; layout is preserved.
+   - Use {#if} conditional rendering for HEAVY stateful components (CodeMirror editors,
+     canvas renderers, maps). These_allocate significant DOM節點/memory; hidden trees
+     from 10+ editor instances cause unnecessary layout recalculation.
+   Rule of thumb: if the component creates >50 DOM nodes or holds GPU resources,
+   use {#if}. Otherwise visibility:hidden is fine. */
+.ds-stack { display: flex; flex-direction: column; }
+.ds-stack-1 { gap: var(--space-1); }
+.ds-stack-2 { gap: var(--space-2); }
+.ds-stack-3 { gap: var(--space-3); }
+.ds-stack-4 { gap: var(--space-4); }
+.ds-stack-5 { gap: var(--space-5); }
+.ds-stack-6 { gap: var(--space-6); }
+
+.ds-flex { display: flex; }
+.ds-flex-row { flex-direction: row; }
+.ds-flex-col { flex-direction: column; }
+.ds-items-center { align-items: center; }
+.ds-justify-between { justify-content: space-between; }
+.ds-justify-center { justify-content: center; }
+.ds-flex-wrap { flex-wrap: wrap; }
+
+.ds-grid { display: grid; }
+
+.ds-canvas-grid {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.ds-canvas-dots {
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* --- Typography Utilities --- */
+/* NOTE: bare element selectors (h1-h6, p, code, pre, a) are intentional.
+   This library ships as global CSS; consumers opt in by importing base.css.
+   If scoped typography is needed, use the .ds-text-* utility classes instead. */
+
+.ds-text-h1 { font-size: var(--text-4xl); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+.ds-text-h2 { font-size: var(--text-3xl); font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
+.ds-text-h3 { font-size: var(--text-2xl); font-weight: 600; line-height: 1.3; }
+.ds-text-h4 { font-size: var(--text-xl); font-weight: 500; line-height: 1.4; }
+.ds-text-h5 { font-size: var(--text-lg); font-weight: 500; line-height: 1.4; }
+.ds-text-h6 { font-size: var(--text-base); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-secondary); }
+
+.ds-text-body { font-size: var(--text-base); line-height: 1.6; color: var(--color-text-secondary); }
+.ds-text-sm { font-size: var(--text-sm); }
+.ds-text-xs { font-size: var(--text-xs); }
+.ds-text-muted { color: var(--color-text-muted); }
+
+.ds-text-code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-bg-panel-elevated);
+  padding: 0.2em 0.4em;
+  color: var(--color-accent-hover);
+}
+
+/* --- Accessibility --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

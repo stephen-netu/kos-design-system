@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# Pre-commit hook — topological enforcement gate
+#
+# Blocks .gears/ and .realm/ from being committed inside this peer repo.
+# These directories belong at the KOS workspace root only.
+#
+# Canonical locations:
+#   KOS/.gears/<project>/adr/  — project-scoped ADRs
+#   KOS/.gears/_realm/         — cross-project docs
+#   KOS/.realm/                — runtime state (locks, sockets, pids)
+#
+# See: realm-doc-topology-001
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+
+# Block .gears/ inside this peer repo
+STRAY=$(git diff --cached --name-only --diff-filter=A 2>/dev/null | grep -E '^\.gears/' || true)
+if [[ -n "$STRAY" ]]; then
+    echo ""
+    echo "TOPOLOGY VIOLATION: .gears/ staged inside $(basename "$REPO_ROOT")."
+    echo ""
+    echo "$STRAY" | sed 's/^/  /'
+    echo ""
+    echo "Canonical location: KOS/.gears/$(basename "$REPO_ROOT")/adr/ (or KOS/.gears/_realm/ for cross-project)."
+    echo "See: realm-doc-topology-001"
+    echo ""
+    exit 1
+fi
+
+# Block .realm/ inside this peer repo
+STRAY=$(git diff --cached --name-only --diff-filter=A 2>/dev/null | grep -E '^\.realm/' || true)
+if [[ -n "$STRAY" ]]; then
+    echo ""
+    echo "TOPOLOGY VIOLATION: .realm/ staged inside $(basename "$REPO_ROOT")."
+    echo ""
+    echo "$STRAY" | sed 's/^/  /'
+    echo ""
+    echo "Canonical location: KOS/.realm/ (workspace root only)."
+    echo "See: realm-doc-topology-001"
+    echo ""
+    exit 1
+fi
+
+exit 0

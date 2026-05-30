@@ -1,0 +1,6 @@
+:root {
+  --v0-diagram-bg: var(--color-bg-panel);
+  --v0-diagram-border: var(--border-subtle);
+  --v0-diagram-title-color: var(--color-text-secondary);
+  --v0-diagram-padding: var(--space-4);
+}

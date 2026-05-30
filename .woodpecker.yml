@@ -1,7 +1,3 @@
-when:
-  branch: main
-  event: push
-
 steps:
   install:
     image: node:20

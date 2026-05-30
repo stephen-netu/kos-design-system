@@ -15,7 +15,9 @@ steps:
 
   release:
     image: node:20
-    secrets: [npm_token]
+    environment:
+      NPM_TOKEN:
+        from_secret: npm_token
     commands:
       - npm run build
       - npm version patch --no-git-tag-version

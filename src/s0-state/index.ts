@@ -22,10 +22,8 @@ export {
 export { default as SyncStatus } from './SyncStatus.svelte';
 export type { SyncStatusState, SyncStatusAction } from './SyncStatus.svelte';
 
-// Modal stack management
-export { modalStackStore } from './modal-stack-store.svelte';
+// Modal stack management — subpath only (module-scope singleton)
 export type { ModalData } from './modal-stack-store.svelte';
 
-// Theme management
-export { themeStore, initThemeStore } from './ThemeStore.svelte';
+// Theme management — subpath only (module-scope singleton)
 export type { ThemeName } from './ThemeStore.svelte';

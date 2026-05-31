@@ -11,6 +11,5 @@ export { default as ThemeProvider } from './ThemeProvider.svelte';
 export type { ThemeMode, ThemeConfig } from './ThemeProvider.svelte';
 export { createTheme, defaultLightTheme, defaultDarkTheme, brassAccentTheme } from './theme';
 
-// ThemeStore — reactive singleton for programmatic theme control
-export { themeStore, initThemeStore } from '../s0-state/ThemeStore.svelte';
+// ThemeStore — types only; singleton is subpath-only to avoid module-scope side effect
 export type { ThemeName } from '../s0-state/ThemeStore.svelte';

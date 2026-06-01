@@ -1,4 +1,4 @@
-import { EditorState, type Transaction, type TransactionSpec } from '@codemirror/state';
+import { ChangeSet, EditorState, Transaction, type Transaction as TTransaction } from '@codemirror/state';
 
 export interface ExpansionDictionary {
     [abbreviation: string]: string;
@@ -12,42 +12,40 @@ const BUILT_IN_EXPANSIONS: Record<string, string> = {
     'async': 'asynchronous',
 };
 
-function findExpansion(
-    tr: Transaction,
+function buildExpansionChanges(
+    tr: TTransaction,
     dictionary: Record<string, string>,
-): TransactionSpec | null {
+): { from: number; to: number; insert: string }[] | null {
     if (!tr.docChanged) return null;
 
+    const newDoc = tr.newDoc;
     const changes: { from: number; to: number; insert: string }[] = [];
-    const doc = tr.newDoc;
 
-    tr.changes.iterChanges((fromA, toA) => {
-        const inserted = doc.sliceString(fromA, toA);
-        if (inserted !== ' ' && inserted !== '\t') return;
+    tr.changes.iterChanges((_fromA, _toA, fromB, toB, inserted) => {
+        const insertedStr = inserted.toString();
+        if (insertedStr !== ' ' && insertedStr !== '\t') return;
 
-        const line = doc.lineAt(fromA);
-        let wordStart = fromA;
+        const line = newDoc.lineAt(fromB);
+        let wordStart = fromB;
         while (wordStart > line.from) {
-            const ch = doc.sliceString(wordStart - 1, wordStart);
+            const ch = newDoc.sliceString(wordStart - 1, wordStart);
             if (/\s/.test(ch)) break;
             wordStart--;
         }
 
-        const precedingWord = doc.sliceString(wordStart, fromA);
+        const precedingWord = newDoc.sliceString(wordStart, fromB);
         const expansion = dictionary[precedingWord];
         if (!expansion) return;
 
-        const trailingSpace = inserted === ' ' ? ' ' : '\t';
+        const trailingSpace = insertedStr === ' ' ? ' ' : '\t';
         changes.push({
             from: wordStart,
-            to: toA,
+            to: toB,
             insert: expansion + trailingSpace,
         });
     });
 
-    if (changes.length === 0) return null;
-
-    return { changes, sequential: true };
+    return changes.length > 0 ? changes : null;
 }
 
 export function expansion(dictionary?: ExpansionDictionary) {
@@ -55,9 +53,21 @@ export function expansion(dictionary?: ExpansionDictionary) {
         ? { ...dictionary, ...BUILT_IN_EXPANSIONS }
         : BUILT_IN_EXPANSIONS;
 
-    return EditorState.transactionFilter.of((tr: Transaction): TransactionSpec | readonly TransactionSpec[] => {
-        const result = findExpansion(tr, table);
-        if (result) return [result];
-        return [];
+    return EditorState.transactionFilter.of((tr: TTransaction) => {
+        const expansionChanges = buildExpansionChanges(tr, table);
+        if (!expansionChanges) return tr;
+
+        const newDocLen = tr.newDoc.length;
+        const expansionCS = ChangeSet.of(expansionChanges, newDocLen);
+        const composed = tr.changes.compose(expansionCS);
+
+        return Transaction.create(
+            tr.startState,
+            composed,
+            tr.selection,
+            tr.effects,
+            tr.annotations,
+            tr.scrollIntoView,
+        );
     });
 }

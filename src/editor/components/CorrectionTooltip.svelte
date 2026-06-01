@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
-    import type { Completion } from '../extensions/autocomplete';
 
     interface Suggestion {
         word: string;

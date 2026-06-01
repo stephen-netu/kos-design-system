@@ -7,9 +7,8 @@ export interface SpellCheckDictionary {
     addWord(word: string): void;
 }
 
-function extractWords(doc: { text: string; lineAt(pos: number): { from: number; to: number; text: string } }): { word: string; from: number; to: number }[] {
+function extractWords(text: string): { word: string; from: number; to: number }[] {
     const words: { word: string; from: number; to: number }[] = [];
-    const text = doc.text;
     let i = 0;
     while (i < text.length) {
         if (/[a-zA-Z]/.test(text[i])) {
@@ -28,7 +27,7 @@ function extractWords(doc: { text: string; lineAt(pos: number): { from: number; 
 export function spellcheck(dictionary: SpellCheckDictionary) {
     const lintSource: LintSource = (view: EditorView): Diagnostic[] => {
         const diagnostics: Diagnostic[] = [];
-        const words = extractWords(view.state.doc);
+        const words = extractWords(view.state.doc.text);
 
         for (const { word, from, to } of words) {
             if (word.length > 1 && !dictionary.check(word)) {

@@ -21,6 +21,8 @@
   import { writeFile, readFile } from '../tauri';
   import { vaultStore } from '../stores/vaultStore.svelte';
   import FindReplaceDialog from './FindReplaceDialog.svelte';
+  import { autoFormat } from './extensions/autoformat';
+  import { expansion } from './extensions/expansion';
 
   interface Props {
     filePath: string | null;
@@ -216,6 +218,8 @@
       markdown(),
       atelierTheme,
       saveKeymap,
+      autoFormat(),
+      expansion(),
       EditorView.updateListener.of((update) => {
         if (update.docChanged) {
           content = update.state.doc.toString();

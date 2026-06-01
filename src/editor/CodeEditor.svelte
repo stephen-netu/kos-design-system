@@ -10,6 +10,8 @@
   import { LanguageDescription } from '@codemirror/language';
   import { languages } from '@codemirror/language-data';
   import type { Extension } from '@codemirror/state';
+  import { autoFormat } from './extensions/autoformat';
+  import { expansion } from './extensions/expansion';
 
   interface Props {
     content: string;
@@ -120,6 +122,8 @@
           onEscape,
           langExtension,
           logeTheme,
+          autoFormat(),
+          expansion(),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               skipSync = true;

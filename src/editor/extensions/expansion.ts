@@ -37,7 +37,7 @@ function findExpansion(
         const expansion = dictionary[precedingWord];
         if (!expansion) return;
 
-        const trailingSpace = inserted === ' ' ? '' : '';
+        const trailingSpace = inserted === ' ' ? ' ' : '\t';
         changes.push({
             from: wordStart,
             to: toA,

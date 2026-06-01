@@ -113,7 +113,9 @@
     "./fabric/ai/ChatPanel.svelte": "./dist/fabric/ai/ChatPanel.svelte",
     "./fabric/ai/ResearchPanel.svelte": "./dist/fabric/ai/ResearchPanel.svelte"
   },
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "peerDependencies": {
     "@tauri-apps/api": "^2",
     "svelte": "^5.0.0"
@@ -125,6 +127,7 @@
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.5",
+    "@codemirror/autocomplete": "^6.18.0",
     "@codemirror/commands": "^6.10.0",
     "@codemirror/lang-markdown": "^6.2.0",
     "@codemirror/language": "^6.10.0",
@@ -144,6 +147,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
+    "@codemirror/autocomplete": "^6.20.1",
     "@lucide/svelte": "^1.17.0",
     "@playwright/test": "^1.60.0",
     "@sveltejs/package": "^2.5.7",

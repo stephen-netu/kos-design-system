@@ -12,6 +12,8 @@
   import type { Extension } from '@codemirror/state';
   import { autoFormat } from './extensions/autoformat';
   import { expansion } from './extensions/expansion';
+  import { autocomplete } from './extensions/autocomplete';
+  import type { CompletionSource } from './extensions/autocomplete';
 
   interface Props {
     content: string;
@@ -20,9 +22,10 @@
     isActive: boolean;
     onContentChange?: (content: string) => void;
     onBlur?: () => void;
+    completionSource?: CompletionSource;
   }
 
-  let { content, source = '', isActive, onContentChange, onBlur }: Props = $props();
+  let { content, source = '', isActive, onContentChange, onBlur, completionSource }: Props = $props();
 
   let container: HTMLElement | null = $state(null);
   let view: EditorView | null = null;
@@ -124,6 +127,7 @@
           logeTheme,
           autoFormat(),
           expansion(),
+          ...(completionSource ? [autocomplete({ source: completionSource })] : []),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               skipSync = true;

@@ -23,6 +23,8 @@
   import FindReplaceDialog from './FindReplaceDialog.svelte';
   import { autoFormat } from './extensions/autoformat';
   import { expansion } from './extensions/expansion';
+  import { autocomplete } from './extensions/autocomplete';
+  import type { CompletionSource } from './extensions/autocomplete';
 
   interface Props {
     filePath: string | null;
@@ -31,9 +33,10 @@
     onSave?: () => void;
     onClose?: () => void;
     onExternalChange?: (newContent: string) => void;
+    completionSource?: CompletionSource;
   }
 
-  let { filePath, initialContent, onChange, onSave, onClose, onExternalChange }: Props = $props();
+  let { filePath, initialContent, onChange, onSave, onClose, onExternalChange, completionSource }: Props = $props();
 
   let content = $state(untrack(() => initialContent));
   let isDirty = $state(false);
@@ -220,6 +223,7 @@
       saveKeymap,
       autoFormat(),
       expansion(),
+      ...(completionSource ? [autocomplete({ source: completionSource })] : []),
       EditorView.updateListener.of((update) => {
         if (update.docChanged) {
           content = update.state.doc.toString();

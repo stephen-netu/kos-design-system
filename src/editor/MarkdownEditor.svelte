@@ -24,7 +24,9 @@
   import { autoFormat } from './extensions/autoformat';
   import { expansion } from './extensions/expansion';
   import { autocomplete } from './extensions/autocomplete';
+  import { spellcheck } from './extensions/spellcheck';
   import type { CompletionSource } from './extensions/autocomplete';
+  import type { SpellCheckDictionary } from './extensions/spellcheck';
 
   interface Props {
     filePath: string | null;
@@ -34,9 +36,10 @@
     onClose?: () => void;
     onExternalChange?: (newContent: string) => void;
     completionSource?: CompletionSource;
+    spellCheckDictionary?: SpellCheckDictionary;
   }
 
-  let { filePath, initialContent, onChange, onSave, onClose, onExternalChange, completionSource }: Props = $props();
+  let { filePath, initialContent, onChange, onSave, onClose, onExternalChange, completionSource, spellCheckDictionary }: Props = $props();
 
   let content = $state(untrack(() => initialContent));
   let isDirty = $state(false);
@@ -224,6 +227,7 @@
       autoFormat(),
       expansion(),
       ...(completionSource ? [autocomplete({ source: completionSource })] : []),
+      ...(spellCheckDictionary ? [spellcheck(spellCheckDictionary)] : []),
       EditorView.updateListener.of((update) => {
         if (update.docChanged) {
           content = update.state.doc.toString();

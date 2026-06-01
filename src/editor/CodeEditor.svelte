@@ -13,7 +13,9 @@
   import { autoFormat } from './extensions/autoformat';
   import { expansion } from './extensions/expansion';
   import { autocomplete } from './extensions/autocomplete';
+  import { spellcheck } from './extensions/spellcheck';
   import type { CompletionSource } from './extensions/autocomplete';
+  import type { SpellCheckDictionary } from './extensions/spellcheck';
 
   interface Props {
     content: string;
@@ -23,9 +25,10 @@
     onContentChange?: (content: string) => void;
     onBlur?: () => void;
     completionSource?: CompletionSource;
+    spellCheckDictionary?: SpellCheckDictionary;
   }
 
-  let { content, source = '', isActive, onContentChange, onBlur, completionSource }: Props = $props();
+  let { content, source = '', isActive, onContentChange, onBlur, completionSource, spellCheckDictionary }: Props = $props();
 
   let container: HTMLElement | null = $state(null);
   let view: EditorView | null = null;
@@ -128,6 +131,7 @@
           autoFormat(),
           expansion(),
           ...(completionSource ? [autocomplete({ source: completionSource })] : []),
+          ...(spellCheckDictionary ? [spellcheck(spellCheckDictionary)] : []),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               skipSync = true;

@@ -1,5 +1,12 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import type { CompletionSource, Completion } from '../editor/extensions/types.js';
+
+  export interface AutocompleteConfig {
+    source: CompletionSource;
+    maxVisible?: number;
+    minChars?: number;
+  }
 
   export interface Props {
     value?: string;
@@ -12,6 +19,7 @@
     name?: string;
     iconLeading?: Snippet;
     iconTrailing?: Snippet;
+    autocomplete?: AutocompleteConfig;
   }
 
   let {
@@ -24,20 +32,70 @@
     id,
     name,
     iconLeading,
-    iconTrailing
+    iconTrailing,
+    autocomplete,
   }: Props = $props();
 
   let isFocused = $state(false);
   let showPassword = $state(false);
+  let completions = $state<Completion[]>([]);
+  let showCompletions = $state(false);
+  let selectedIndex = $state(0);
 
   let currentType = $derived(type === 'password' && showPassword ? 'text' : type);
+  let maxVisible = $derived(autocomplete?.maxVisible ?? 8);
+  let minChars = $derived(autocomplete?.minChars ?? 1);
+
+  async function fetchCompletions(query: string) {
+    if (!autocomplete || query.length < minChars) {
+      completions = [];
+      showCompletions = false;
+      return;
+    }
+    const results = await autocomplete.source.complete(query);
+    completions = results.slice(0, maxVisible);
+    selectedIndex = 0;
+    showCompletions = completions.length > 0;
+  }
+
+  function applyCompletion(completion: Completion) {
+    value = completion.label;
+    completions = [];
+    showCompletions = false;
+  }
+
+  function handleInput() {
+    fetchCompletions(value);
+  }
 
   function handleFocus() {
     isFocused = true;
+    if (value.length >= minChars) {
+      fetchCompletions(value);
+    }
   }
 
   function handleBlur() {
     isFocused = false;
+    setTimeout(() => {
+      showCompletions = false;
+    }, 150);
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (!showCompletions) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, completions.length - 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, 0);
+    } else if (e.key === 'Enter' && completions[selectedIndex]) {
+      e.preventDefault();
+      applyCompletion(completions[selectedIndex]);
+    } else if (e.key === 'Escape') {
+      showCompletions = false;
+    }
   }
 
   function togglePassword() {
@@ -45,14 +103,15 @@
   }
 </script>
 
-<div 
-  class="ds-input-wrapper {className}"
-  class:is-focused={isFocused}
-  class:is-disabled={disabled}
-  class:has-error={error}
-  class:has-leading={!!iconLeading}
-  class:has-trailing={!!iconTrailing || type === 'password'}
->
+<div class="ds-input-container">
+  <div
+    class="ds-input-wrapper {className}"
+    class:is-focused={isFocused}
+    class:is-disabled={disabled}
+    class:has-error={error}
+    class:has-leading={!!iconLeading}
+    class:has-trailing={!!iconTrailing || type === 'password'}
+  >
   {#if iconLeading}
     <div class="ds-input-icon leading">
       {@render iconLeading()}
@@ -68,8 +127,14 @@
     {disabled}
     aria-invalid={error ? 'true' : undefined}
     aria-disabled={disabled ? 'true' : undefined}
+    aria-autocomplete={autocomplete ? 'list' : undefined}
+    aria-expanded={showCompletions ? 'true' : 'false'}
+    aria-activedescendant={showCompletions ? `autocomplete-option-${selectedIndex}` : undefined}
+    autocomplete="off"
     onfocus={handleFocus}
     onblur={handleBlur}
+    oninput={handleInput}
+    onkeydown={handleKeydown}
     class="ds-input-element"
   />
 
@@ -101,9 +166,42 @@
   
   <!-- Animated bottom border glow -->
   <div class="ds-input-glow"></div>
+  </div>
+
+  {#if showCompletions && autocomplete}
+    <ul
+      class="ds-input-autocomplete"
+      role="listbox"
+      id="autocomplete-list"
+    >
+      {#each completions as completion, i}
+        <li
+          id="autocomplete-option-{i}"
+          role="option"
+          aria-selected={i === selectedIndex}
+          class:selected={i === selectedIndex}
+          onclick={() => applyCompletion(completion)}
+          class="ds-input-autocomplete__item"
+        >
+          {#if completion.type}
+            <span class="ds-input-autocomplete__type">{completion.type}</span>
+          {/if}
+          <span class="ds-input-autocomplete__label">{completion.label}</span>
+          {#if completion.detail}
+            <span class="ds-input-autocomplete__detail">{completion.detail}</span>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+  {/if}
 </div>
 
 <style>
+  .ds-input-container {
+    position: relative;
+    width: 100%;
+  }
+
   .ds-input-wrapper {
     position: relative;
     display: flex;
@@ -235,5 +333,75 @@
   @media (prefers-reduced-motion: reduce) {
     .ds-input-wrapper { transition: none; }
     .ds-input-glow { transition: none; }
+  }
+
+  /* Autocomplete suggestion list */
+  .ds-input-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    list-style: none;
+    margin: 4px 0 0 0;
+    padding: 4px 0;
+    background: var(--color-bg-panel, #1a1a1a);
+    border: 1px solid var(--border-default, #2a2a2a);
+    border-radius: var(--radius-md, 6px);
+    box-shadow: var(--shadow-lg, 0 4px 12px rgba(0, 0, 0, 0.4));
+    max-height: 240px;
+    overflow-y: auto;
+  }
+
+  .ds-input-autocomplete__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 8px);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: var(--text-sm, 13px);
+    color: var(--color-text-primary, #f5f2eb);
+  }
+
+  .ds-input-autocomplete__item:hover,
+  .ds-input-autocomplete__item.selected {
+    background: var(--color-accent, #b87333);
+    color: #fff;
+  }
+
+  .ds-input-autocomplete__type {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1px 5px;
+    border-radius: var(--radius-sm, 3px);
+    background: var(--color-bg-panel-elevated, #252525);
+    color: var(--color-text-tertiary, #6b6b6b);
+    flex-shrink: 0;
+  }
+
+  .ds-input-autocomplete__item:hover .ds-input-autocomplete__type,
+  .ds-input-autocomplete__item.selected .ds-input-autocomplete__type {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .ds-input-autocomplete__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ds-input-autocomplete__detail {
+    font-size: 11px;
+    color: var(--color-text-tertiary, #6b6b6b);
+    flex-shrink: 0;
+  }
+
+  .ds-input-autocomplete__item:hover .ds-input-autocomplete__detail,
+  .ds-input-autocomplete__item.selected .ds-input-autocomplete__detail {
+    color: rgba(255, 255, 255, 0.7);
   }
 </style>

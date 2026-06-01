@@ -132,6 +132,10 @@
     "@codemirror/lang-markdown": "^6.2.0",
     "@codemirror/language": "^6.10.0",
     "@codemirror/language-data": "^6.5.2",
+    "@codemirror/lint": "^6.8.0",
+    "@codemirror/search": "^6.6.0",
+    "@codemirror/language": "^6.10.0",
+    "@codemirror/language-data": "^6.5.2",
     "@codemirror/search": "^6.6.0",
     "@codemirror/state": "6.6.0",
     "@codemirror/view": "6.40.0",
@@ -148,6 +152,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "@codemirror/autocomplete": "^6.20.1",
+    "@codemirror/lint": "^6.9.5",
     "@lucide/svelte": "^1.17.0",
     "@playwright/test": "^1.60.0",
     "@sveltejs/package": "^2.5.7",

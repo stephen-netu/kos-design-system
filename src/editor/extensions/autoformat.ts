@@ -32,8 +32,9 @@ function findReplacements(tr: Transaction): TransactionSpec | null {
 }
 
 export function autoFormat() {
-    return EditorState.transactionFilter.of((tr: Transaction) => {
+    return EditorState.transactionFilter.of((tr: Transaction): TransactionSpec | readonly TransactionSpec[] => {
         const result = findReplacements(tr);
-        return result || tr;
+        if (result) return [result];
+        return [];
     });
 }

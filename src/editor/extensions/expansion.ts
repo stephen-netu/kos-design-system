@@ -55,8 +55,9 @@ export function expansion(dictionary?: ExpansionDictionary) {
         ? { ...dictionary, ...BUILT_IN_EXPANSIONS }
         : BUILT_IN_EXPANSIONS;
 
-    return EditorState.transactionFilter.of((tr: Transaction) => {
+    return EditorState.transactionFilter.of((tr: Transaction): TransactionSpec | readonly TransactionSpec[] => {
         const result = findExpansion(tr, table);
-        return result || tr;
+        if (result) return [result];
+        return [];
     });
 }

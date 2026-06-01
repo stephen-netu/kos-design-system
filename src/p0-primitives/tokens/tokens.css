@@ -32,10 +32,38 @@
   --color-accent: var(--accent-primary, #b87333);
   --color-accent-hover: var(--accent-hover, #d4892f);
   --color-accent-active: var(--accent-active, #8a5526);
-  --color-accent-glow: var(--accent-glow, rgba(184, 115, 51, 0.28));
-  --color-accent-muted: var(--accent-muted, rgba(184, 115, 51, 0.16));
-  --color-accent-subtle: var(--accent-subtle, rgba(184, 115, 51, 0.08));
-  --color-accent-faint: var(--accent-faint, rgba(184, 115, 51, 0.04));
+   --color-accent-glow: var(--accent-glow, rgba(184, 115, 51, 0.28));
+   --color-accent-muted: var(--accent-muted, rgba(184, 115, 51, 0.16));
+   --color-accent-subtle: var(--accent-subtle, rgba(184, 115, 51, 0.08));
+   --color-accent-faint: var(--accent-faint, rgba(184, 115, 51, 0.04));
+
+   /* Overlay levels — white opacity ramps for borders, backgrounds, hover states */
+   --overlay-white-02: rgba(255, 255, 255, 0.02);
+   --overlay-white-03: rgba(255, 255, 255, 0.03);
+   --overlay-white-04: rgba(255, 255, 255, 0.04);
+   --overlay-white-06: rgba(255, 255, 255, 0.06);
+   --overlay-white-08: rgba(255, 255, 255, 0.08);
+   --overlay-white-10: rgba(255, 255, 255, 0.10);
+   --overlay-white-18: rgba(255, 255, 255, 0.18);
+   --overlay-white-22: rgba(255, 255, 255, 0.22);
+   --overlay-white-25: rgba(255, 255, 255, 0.25);
+
+   /* Overlay levels — accent color opacity ramps */
+   --overlay-accent-06: rgba(184, 115, 51, 0.06);
+   --overlay-accent-08: rgba(184, 115, 51, 0.08);
+   --overlay-accent-12: rgba(184, 115, 51, 0.12);
+   --overlay-accent-18: rgba(184, 115, 51, 0.18);
+   --overlay-accent-30: rgba(184, 115, 51, 0.30);
+   --overlay-accent-45: rgba(184, 115, 51, 0.45);
+   --overlay-accent-50: rgba(184, 115, 51, 0.50);
+   --overlay-accent-55: rgba(184, 115, 51, 0.55);
+
+   /* Overlay levels — status color opacity ramps */
+   --overlay-success-06: rgba(79, 168, 162, 0.06);
+   --overlay-error-06: rgba(193, 74, 74, 0.06);
+
+   /* Cell background for band/offer tables */
+   --color-bg-cell: #121518;
 
   /* --- Telemetry palette --- */
   --color-cyan: #4fa8a2;               /* Online / OK */
@@ -173,7 +201,12 @@
   --color-bg-secondary: var(--color-bg-canvas);
   --color-bg-tertiary: var(--color-bg-panel);
   --color-bg-elevated: var(--color-bg-panel-elevated);
-  --color-bg-hover: rgba(255, 255, 255, 0.06);
+   --color-bg-hover: rgba(255, 255, 255, 0.06);
+
+   /* --- Surface extensions (cross-app) --- */
+   --color-bg-input: var(--color-bg-inset);
+   --color-bg-muted: #1c2025;
+   --color-bg-surface: #222222;
 
   --color-fg-primary: var(--color-text-primary);
   --color-fg-secondary: var(--color-text-secondary);

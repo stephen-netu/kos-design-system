@@ -1,13 +1,19 @@
+when:
+  branch: main
+  event: push
+
 steps:
   install:
     image: node:20
     commands:
-      - npm ci
+      - corepack enable
+      - corepack prepare pnpm@latest --activate
+      - pnpm install --frozen-lockfile
 
   check:
     image: node:20
     commands:
-      - npx svelte-check --tsconfig ./tsconfig.json
+      - pnpm check
 
   release:
     image: node:20
@@ -15,7 +21,7 @@ steps:
       NPM_TOKEN:
         from_secret: npm_token
     commands:
-      - npm run build
+      - pnpm build
       - npm version patch --no-git-tag-version
       - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
       - npm publish --access public

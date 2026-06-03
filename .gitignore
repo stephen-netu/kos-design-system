@@ -35,3 +35,4 @@ npm-debug.log*
 # The canonical .gears/ lives at the KOS workspace root (KOS/.gears/<project>/).
 # No .gears/ should ever exist inside a peer repo.
 .gears/
+pnpm-lock.yaml

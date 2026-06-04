@@ -1,5 +1,11 @@
 name: CI
 
+# RUNNER: Beast Gitea runner labels are ubuntu-latest / ubuntu-22.04 / ubuntu-20.04
+# (Docker mode — fixed by Beast admin, cannot be changed). Workflows target ubuntu-22.04.
+#
+# Checkout: uses inline git rather than actions/checkout@v4 to bypass the act
+# action-cache checksum corruption seen in prior Docker runs (task 2761, 2026-06-03).
+
 on:
   push:
     branches: [main]
@@ -9,7 +15,13 @@ jobs:
   check-and-release:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        run: |
+          git init .
+          git remote add origin "${{ github.server_url }}/${{ github.repository }}.git"
+          git config http.extraheader "Authorization: Bearer ${{ github.token }}"
+          git fetch --depth=1 origin "${{ github.sha }}"
+          git checkout FETCH_HEAD
       - name: install-deps
         run: npm ci
       - name: svelte-check

@@ -165,7 +165,10 @@
 
 <div
   class="theme-provider"
+  class:mode-dark={themeStore.theme === 'dark'}
+  class:mode-light={themeStore.theme === 'light'}
   data-theme={themeStore.theme}
+  data-theme-mode={themeStore.theme}
   style={customStyles}
 >
   {@render children()}

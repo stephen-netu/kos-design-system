@@ -4,7 +4,7 @@
 
 - **Repo**: `/Users/netu/Projects/KOS/design-system`
 - **Type**: Svelte 5 component library and design token system
-- **Role**: Shared UI foundation for all KOS applications. Published to npm as `@kos/design-system`.
+- **Role**: Shared UI foundation for all KOS applications. Published to npm as `@stephen-netu/design-system`.
 
 ## KOS Context
 
@@ -18,7 +18,7 @@
 - **Format**: Component library — NOT a Tauri app, NOT a standalone application
 - **No Rust backend** — this is a pure frontend library with no IPC, no sidecar, no `src-tauri/`
 - **Package manager**: pnpm
-- **Published as**: `@kos/design-system` on npm
+- **Published as**: `@stephen-netu/design-system` on npm
 
 ## UI/UX Conventions
 

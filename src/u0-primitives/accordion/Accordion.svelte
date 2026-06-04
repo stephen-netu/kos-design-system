@@ -173,4 +173,13 @@
   .accordion-item.disabled .accordion-header:hover {
     background: transparent;
   }
+
+  .accordion-panel {
+    display: block;
+  }
+
+  .accordion-content {
+    padding: var(--space-4, 1rem);
+    padding-top: 0;
+  }
 </style>

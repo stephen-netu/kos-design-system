@@ -4,7 +4,7 @@ This file provides the KOS architecture essentials for agents working in this re
 
 ## Identity
 
-**Design System** — Svelte 5 component library and design token system for KOS apps. Published as `@kos/design-system`. Not a Tauri app — it is a library. No Rust backend, no IPC.
+**Design System** — Svelte 5 component library and design token system for KOS apps. Published as `@stephen-netu/design-system`. Not a Tauri app — it is a library. No Rust backend, no IPC.
 
 ## KOS Ecosystem
 

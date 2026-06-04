@@ -2,36 +2,60 @@
 #
 # Pre-push hook — topology enforcement + cargo check (peer version)
 #
-# 1. Blocks .gears/ and .realm/ from being pushed from inside this peer repo.
-# 2. Runs `cargo check --locked` if a Cargo.toml exists in the repo root
-#    (safe no-op for pure-TypeScript/Svelte repos).
+# 1. Blocks push if .gears/ or .realm/ exist on disk inside this peer repo.
+#    Checks the filesystem, not the staging area (which is empty at push time).
+# 2. Runs `cargo check --locked` if a Cargo.toml exists in the repo root or src-tauri/.
+#    Safe no-op for pure-TypeScript/Svelte repos.
 #
 # Installed by: kos-repos install-peer-hooks <repo>
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# REPO_ROOT = this peer repo's root (one level up from .githooks/)
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PEER_NAME="$(basename "$REPO_ROOT")"
 
-# ── Topology gate ──────────────────────────────────────────────────────────────
-STRAY=$(git diff --cached --name-only --diff-filter=A 2>/dev/null | grep -E '^\.gears/|\.realm/' || true)
-if [[ -n "$STRAY" ]]; then
+# ── Topology gate: physical directory check ────────────────────────────────────
+# At push time the staging area is empty — git diff --cached is always empty.
+# Must check the filesystem instead.
+if [[ -d "$REPO_ROOT/.gears" ]]; then
     echo ""
-    echo "TOPOLOGY VIOLATION: .gears/ or .realm/ staged inside $(basename "$REPO_ROOT")."
+    echo "PUSH BLOCKED — TOPOLOGY VIOLATION: .gears/ exists inside $PEER_NAME."
     echo ""
-    echo "$STRAY" | sed 's/^/  /'
+    echo "  $REPO_ROOT/.gears"
     echo ""
-    echo "Move files to the KOS workspace root, unstage, and retry."
+    echo ".gears/ belongs only at the KOS workspace root. Delete it and retry."
+    echo "See: realm-doc-topology-001"
+    echo ""
+    exit 1
+fi
+if [[ -d "$REPO_ROOT/.realm" ]]; then
+    echo ""
+    echo "PUSH BLOCKED — TOPOLOGY VIOLATION: .realm/ exists inside $PEER_NAME."
+    echo ""
+    echo "  $REPO_ROOT/.realm"
+    echo ""
+    echo ".realm/ belongs only at the KOS workspace root. Delete it and retry."
     echo "See: realm-doc-topology-001"
     echo ""
     exit 1
 fi
 
-# ── Cargo check (only if this repo has a Cargo.toml) ───────────────────────────
+# ── Cargo check ────────────────────────────────────────────────────────────────
+# Root Cargo.toml (e.g. sovereign-candle, sonda backend)
+# src-tauri/Cargo.toml (Tauri peer apps: agora, ryu, atelier, loge, mir, etc.)
+CARGO_DIR=""
 if [[ -f "$REPO_ROOT/Cargo.toml" ]]; then
-    echo "Running cargo check --locked..."
-    if ! cargo check --locked 2>&1; then
+    CARGO_DIR="$REPO_ROOT"
+elif [[ -f "$REPO_ROOT/src-tauri/Cargo.toml" ]]; then
+    CARGO_DIR="$REPO_ROOT/src-tauri"
+fi
+
+if [[ -n "$CARGO_DIR" ]]; then
+    echo "Running cargo check --locked in $CARGO_DIR..."
+    if ! (cd "$CARGO_DIR" && cargo check --locked) 2>&1; then
         echo ""
-        echo "CARGO CHECK FAILED — push blocked. Fix compilation errors before pushing."
+        echo "PUSH BLOCKED — CARGO CHECK FAILED. Fix compilation errors before pushing."
         echo "Bypass (NOT RECOMMENDED): git push --no-verify"
         echo ""
         exit 1

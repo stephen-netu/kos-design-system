@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Post-commit hook — TOS task auto-completion (peer version)
+#
+# Attempts to auto-complete a TOS task from the commit message.
+# Safe no-op if realm-substrate is not installed.
+#
+# Installed by: kos-repos install-peer-hooks <repo>
+
+set -euo pipefail
+
+realm-substrate task complete-from-commit HEAD 2>/dev/null || true

@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Pre-push hook — topology enforcement + cargo check (peer version)
+#
+# 1. Blocks .gears/ and .realm/ from being pushed from inside this peer repo.
+# 2. Runs `cargo check --locked` if a Cargo.toml exists in the repo root
+#    (safe no-op for pure-TypeScript/Svelte repos).
+#
+# Installed by: kos-repos install-peer-hooks <repo>
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+
+# ── Topology gate ──────────────────────────────────────────────────────────────
+STRAY=$(git diff --cached --name-only --diff-filter=A 2>/dev/null | grep -E '^\.gears/|\.realm/' || true)
+if [[ -n "$STRAY" ]]; then
+    echo ""
+    echo "TOPOLOGY VIOLATION: .gears/ or .realm/ staged inside $(basename "$REPO_ROOT")."
+    echo ""
+    echo "$STRAY" | sed 's/^/  /'
+    echo ""
+    echo "Move files to the KOS workspace root, unstage, and retry."
+    echo "See: realm-doc-topology-001"
+    echo ""
+    exit 1
+fi
+
+# ── Cargo check (only if this repo has a Cargo.toml) ───────────────────────────
+if [[ -f "$REPO_ROOT/Cargo.toml" ]]; then
+    echo "Running cargo check --locked..."
+    if ! cargo check --locked 2>&1; then
+        echo ""
+        echo "CARGO CHECK FAILED — push blocked. Fix compilation errors before pushing."
+        echo "Bypass (NOT RECOMMENDED): git push --no-verify"
+        echo ""
+        exit 1
+    fi
+fi
+
+exit 0

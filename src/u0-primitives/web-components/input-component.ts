@@ -1,9 +1,9 @@
 /**
  * KosInput Web Component
- * 
+ *
  * Web Component wrapper for the KosInput Svelte component.
  * Enables usage of KosInput in vanilla JS, React, or other frameworks.
- * 
+ *
  * @package @kos/design-system/u0-primitives
  */
 import { mount } from 'svelte';
@@ -19,6 +19,8 @@ class KosInput extends HTMLElement {
     'required'
   ];
 
+  private svelteRoot: HTMLElement | null = null;
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -29,21 +31,21 @@ class KosInput extends HTMLElement {
   }
 
   disconnectedCallback() {
-    if (this.svelteComponent) {
-      this.svelteComponent.$destroy();
+    if (this.svelteRoot) {
+      this.svelteRoot.innerHTML = '';
+      this.svelteRoot = null;
     }
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
-    if (oldValue !== newValue && this.svelteComponent) {
-      this.svelteComponent.$set(this.getComponentProps());
+    if (oldValue !== newValue) {
+      this.render();
     }
   }
 
   getComponentProps(): Record<string, unknown> {
     const props: Record<string, unknown> = {};
 
-    // String attributes
     if (this.hasAttribute('type')) {
       props.type = this.getAttribute('type') ?? 'text';
     }
@@ -54,7 +56,6 @@ class KosInput extends HTMLElement {
       props.placeholder = this.getAttribute('placeholder') ?? '';
     }
 
-    // Boolean attributes
     if (this.hasAttribute('disabled')) {
       props.disabled = true;
     }
@@ -69,20 +70,20 @@ class KosInput extends HTMLElement {
   }
 
   render() {
-    // Clean up existing component
-    if (this.svelteComponent) {
-      this.svelteComponent.$destroy();
-    }
-
     if (!this.shadowRoot) return;
 
-    // Create new Svelte component instance
-    this.svelteComponent = mount(Input, {
-      target: this.shadowRoot,
+    if (this.svelteRoot) {
+      this.svelteRoot.innerHTML = '';
+    }
+
+    this.svelteRoot = document.createElement('div');
+    this.shadowRoot.appendChild(this.svelteRoot);
+
+    mount(Input, {
+      target: this.svelteRoot,
       props: this.getComponentProps()
     });
 
-    // Add basic styling
     if (!this.shadowRoot.querySelector('style')) {
       const style = document.createElement('style');
       style.textContent = `
@@ -96,15 +97,11 @@ class KosInput extends HTMLElement {
       this.shadowRoot.appendChild(style);
     }
   }
-
-  private svelteComponent: { $destroy: () => void; $set: (props: Record<string, unknown>) => void } | null = null;
 }
 
-// Define the custom element
 if (!customElements.get('kos-input')) {
   customElements.define('kos-input', KosInput);
 }
 
-// Export for use in ES modules
 export { KosInput };
 export default KosInput;

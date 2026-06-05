@@ -4,7 +4,7 @@
   // Falls back to plain text if no language matches.
 
   import { onMount, onDestroy } from 'svelte';
-  import { EditorView, keymap } from '@codemirror/view';
+  import { EditorView, keymap, type ViewUpdate } from '@codemirror/view';
   import { EditorState } from '@codemirror/state';
   import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
   import { LanguageDescription } from '@codemirror/language';
@@ -132,7 +132,7 @@
           expansion(),
           ...(completionSource ? [autocomplete({ source: completionSource })] : []),
           ...(spellCheckDictionary ? [spellcheck(spellCheckDictionary)] : []),
-          EditorView.updateListener.of((update) => {
+          EditorView.updateListener.of((update: ViewUpdate) => {
             if (update.docChanged) {
               skipSync = true;
               onContentChange?.(update.state.doc.toString());

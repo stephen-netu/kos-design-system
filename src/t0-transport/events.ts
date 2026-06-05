@@ -1,7 +1,5 @@
 // Event bus utilities for Tauri event streams
 
-import { listen, emit as tauriEmit, type UnlistenFn } from '@tauri-apps/api/event';
-
 export interface EventBusOptions {
   debug?: boolean;
 }
@@ -10,6 +8,11 @@ export interface EventBus {
   on<T>(event: string, handler: (payload: T) => void): Promise<() => void>;
   once<T>(event: string, handler: (payload: T) => void): Promise<() => void>;
   emit<T>(event: string, payload?: T): Promise<void>;
+}
+
+async function getTauriEvents() {
+  const mod = await import('@tauri-apps/api/event');
+  return { listen: mod.listen, emit: mod.emit };
 }
 
 /**
@@ -22,7 +25,8 @@ export function createEventBus(options?: EventBusOptions): EventBus {
     event: string,
     handler: (payload: T) => void
   ): Promise<() => void> {
-    const unlisten = await listen<T>(event, (e) => {
+    const { listen } = await getTauriEvents();
+    const unlisten = await listen<T>(event, (e: { payload: T }) => {
       if (debug) console.log(`[event] ${event}:`, e.payload);
       handler(e.payload);
     });
@@ -33,7 +37,8 @@ export function createEventBus(options?: EventBusOptions): EventBus {
     event: string,
     handler: (payload: T) => void
   ): Promise<() => void> {
-    const unlisten = await listen<T>(event, (e) => {
+    const { listen } = await getTauriEvents();
+    const unlisten = await listen<T>(event, (e: { payload: T }) => {
       if (debug) console.log(`[event] ${event} (once):`, e.payload);
       handler(e.payload);
       unlisten();
@@ -43,6 +48,7 @@ export function createEventBus(options?: EventBusOptions): EventBus {
 
   async function emit<T>(event: string, payload?: T): Promise<void> {
     if (debug) console.log('[event] emit %s:', event, payload);
+    const { emit: tauriEmit } = await getTauriEvents();
     await tauriEmit(event, payload);
   }
 

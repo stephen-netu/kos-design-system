@@ -1,11 +1,14 @@
 // Type-safe invoke wrapper for Tauri commands
 
-import { invoke as tauriInvoke } from '@tauri-apps/api/core';
-
 export interface CommandDefinition<T = unknown, R = unknown> {
   name: string;
   payload?: T;
   response?: R;
+}
+
+async function getTauriInvoke() {
+  const mod = await import('@tauri-apps/api/core');
+  return mod.invoke;
 }
 
 /**
@@ -16,6 +19,7 @@ export async function invoke<R, T extends Record<string, unknown> = Record<strin
   payload?: T
 ): Promise<R> {
   try {
+    const tauriInvoke = await getTauriInvoke();
     return await tauriInvoke<R>(command, payload ? { ...payload } : undefined);
   } catch (error) {
     throw new Error(`Invoke failed: ${command} — ${error}`);

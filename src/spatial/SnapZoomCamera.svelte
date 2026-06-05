@@ -73,17 +73,21 @@
     if (wheelRafId !== null) cancelAnimationFrame(wheelRafId);
   });
 
+  function getEventOffset(e: PointerEvent | WheelEvent): { x: number; y: number } {
+    if (e.type === 'pointerdown' || e.type === 'pointermove' || e.type === 'pointerup' || e.type === 'mousedown' || e.type === 'mousemove' || e.type === 'mouseup' || e.type === 'click') {
+      const pe = e as PointerEvent;
+      return { x: pe.offsetX, y: pe.offsetY };
+    }
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
   function makeInteractionContext(e: PointerEvent | WheelEvent): InteractionContext {
     const type = e.type;
     let wasConsumed = false;
-    const posX = 'offsetX' in e ? (e as PointerEvent).offsetX : (() => {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      return e.clientX - rect.left;
-    })();
-    const posY = 'offsetY' in e ? (e as PointerEvent).offsetY : (() => {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      return e.clientY - rect.top;
-    })();
+    const offset = getEventOffset(e);
+    const posX = offset.x;
+    const posY = offset.y;
     return {
       event: {
         type,

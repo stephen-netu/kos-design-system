@@ -1,9 +1,9 @@
 /**
  * KosButton Web Component
- * 
+ *
  * Web Component wrapper for the KosButton Svelte component.
  * Enables usage of KosButton in vanilla JS, React, or other frameworks.
- * 
+ *
  * @package @kos/design-system/u0-primitives
  */
 import { mount } from 'svelte';
@@ -18,6 +18,8 @@ class KosButton extends HTMLElement {
     'children'
   ];
 
+  private svelteRoot: HTMLElement | null = null;
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -28,21 +30,21 @@ class KosButton extends HTMLElement {
   }
 
   disconnectedCallback() {
-    if (this.svelteComponent) {
-      this.svelteComponent.$destroy();
+    if (this.svelteRoot) {
+      this.svelteRoot.innerHTML = '';
+      this.svelteRoot = null;
     }
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
-    if (oldValue !== newValue && this.svelteComponent) {
-      this.svelteComponent.$set(this.getComponentProps());
+    if (oldValue !== newValue) {
+      this.render();
     }
   }
 
   getComponentProps(): Record<string, unknown> {
     const props: Record<string, unknown> = {};
 
-    // Boolean attributes
     if (this.hasAttribute('disabled')) {
       props.disabled = true;
     }
@@ -50,7 +52,6 @@ class KosButton extends HTMLElement {
       props.loading = true;
     }
 
-    // String attributes
     if (this.hasAttribute('variant')) {
       props.variant = this.getAttribute('variant') ?? 'primary';
     }
@@ -58,7 +59,6 @@ class KosButton extends HTMLElement {
       props.size = this.getAttribute('size') ?? 'md';
     }
 
-    // Children as slot content (simplified)
     if (this.hasAttribute('children')) {
       props.children = this.getAttribute('children');
     }
@@ -67,20 +67,20 @@ class KosButton extends HTMLElement {
   }
 
   render() {
-    // Clean up existing component
-    if (this.svelteComponent) {
-      this.svelteComponent.$destroy();
-    }
-
     if (!this.shadowRoot) return;
 
-    // Create new Svelte component instance
-    this.svelteComponent = mount(Button, {
-      target: this.shadowRoot,
+    if (this.svelteRoot) {
+      this.svelteRoot.innerHTML = '';
+    }
+
+    this.svelteRoot = document.createElement('div');
+    this.shadowRoot.appendChild(this.svelteRoot);
+
+    mount(Button, {
+      target: this.svelteRoot,
       props: this.getComponentProps()
     });
 
-    // Add basic styling
     if (!this.shadowRoot.querySelector('style')) {
       const style = document.createElement('style');
       style.textContent = `
@@ -94,15 +94,11 @@ class KosButton extends HTMLElement {
       this.shadowRoot.appendChild(style);
     }
   }
-
-  private svelteComponent: { $destroy: () => void; $set: (props: Record<string, unknown>) => void } | null = null;
 }
 
-// Define the custom element
 if (!customElements.get('kos-button')) {
   customElements.define('kos-button', KosButton);
 }
 
-// Export for use in ES modules
 export { KosButton };
 export default KosButton;

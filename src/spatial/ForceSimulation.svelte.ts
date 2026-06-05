@@ -102,7 +102,7 @@ export class ForceSimulation implements Lifecycle {
       .alphaDecay(0.02)
       .velocityDecay(velocityDecay)
       .force('charge', d3.forceManyBody().strength(chargeStrength))
-      .force('collision', d3.forceCollide<ForceCell>().radius((d) => weightToRadius(d.weight) + collisionPadding))
+      .force('collision', d3.forceCollide<ForceCell>().radius((d: ForceCell) => weightToRadius(d.weight) + collisionPadding))
       .force('link', d3.forceLink(links as any).id((d: any) => d.id)
         .distance((l: any) => semanticSpringLength(1 - l.distance, minSpring, maxSpring))
         .strength(0.5))

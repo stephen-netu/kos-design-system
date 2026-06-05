@@ -1,4 +1,4 @@
-import { ChangeSet, EditorState, Transaction, type Transaction as TTransaction } from '@codemirror/state';
+import { ChangeSet, EditorState, Transaction, Text, type Transaction as TTransaction } from '@codemirror/state';
 
 const REPLACEMENTS: Record<string, string> = {
     '...': '\u2026',
@@ -19,7 +19,7 @@ function buildReplacementChanges(tr: TTransaction): { from: number; to: number; 
     const newDoc = tr.newDoc;
     const changes: { from: number; to: number; insert: string }[] = [];
 
-    tr.changes.iterChanges((_fromA, _toA, fromB, toB, inserted) => {
+    tr.changes.iterChanges((_fromA: number, _toA: number, fromB: number, toB: number, inserted: Text) => {
         const insertedStr = inserted.toString();
         if (insertedStr.length !== 1) return;
         const ch = insertedStr[0];

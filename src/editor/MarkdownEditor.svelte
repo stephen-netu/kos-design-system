@@ -13,7 +13,7 @@
   import { onMount, onDestroy, untrack } from 'svelte';
   import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
            drawSelection, dropCursor, rectangularSelection, crosshairCursor,
-           highlightActiveLine } from '@codemirror/view';
+           highlightActiveLine, type ViewUpdate } from '@codemirror/view';
   import { EditorState, type Extension } from '@codemirror/state';
   import { markdown } from '@codemirror/lang-markdown';
   import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
@@ -228,7 +228,7 @@
       expansion(),
       ...(completionSource ? [autocomplete({ source: completionSource })] : []),
       ...(spellCheckDictionary ? [spellcheck(spellCheckDictionary)] : []),
-      EditorView.updateListener.of((update) => {
+      EditorView.updateListener.of((update: ViewUpdate) => {
         if (update.docChanged) {
           content = update.state.doc.toString();
           isDirty = true;

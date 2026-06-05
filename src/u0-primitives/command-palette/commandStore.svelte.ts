@@ -9,15 +9,19 @@
  *   - S-05: AbortController for killable operations
  */
 
-import { invoke } from '@tauri-apps/api/core';
-import type { 
-  CommandSchema, 
-  CommandResult, 
+import type {
+  CommandSchema,
+  CommandResult,
   CommandContext,
   InvocationContext,
   CommandId,
   CommandPath
 } from './command-types';
+
+async function tauriInvoke<R>(command: string, payload?: Record<string, unknown>): Promise<R> {
+  const mod = await import('@tauri-apps/api/core');
+  return mod.invoke<R>(command, payload);
+}
 
 /** Command with UI state (selection, etc.) */
 export interface CommandUIState {
@@ -84,14 +88,14 @@ class CommandStore {
     try {
       // Fetch commands and capabilities from substrate
       const [commands, caps] = await Promise.all([
-        invoke<CommandSchema[]>('plugin:substrate|get_commands', { realmId }),
-        invoke<string[]>('plugin:substrate|get_capabilities', { realmId })
+        tauriInvoke<CommandSchema[]>('plugin:substrate|get_commands', { realmId }),
+        tauriInvoke<string[]>('plugin:substrate|get_capabilities', { realmId })
       ]);
       
       // S-02: Preserve deterministic order
       this.commands = new Map(commands.map(c => [c.id, c]));
       this.capabilities = new Set(caps);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('[CommandStore] Init failed:', err);
       // Graceful degradation — commands won't show but app continues
     }
@@ -238,7 +242,7 @@ class CommandStore {
       };
       
       // Invoke through substrate (S-01 authority check happens in kernel)
-      const result = await invoke<CommandResult>('plugin:substrate|invoke_command', {
+      const result = await tauriInvoke<CommandResult>('plugin:substrate|invoke_command', {
         commandId: command.id,
         parameters,
         context,

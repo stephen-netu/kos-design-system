@@ -1,4 +1,4 @@
-import { ChangeSet, EditorState, Transaction, Text, type Transaction as TTransaction } from '@codemirror/state';
+import { ChangeSet, EditorState, Text, type Transaction as TTransaction, type TransactionSpec } from '@codemirror/state';
 
 const REPLACEMENTS: Record<string, string> = {
     '...': '\u2026',
@@ -63,13 +63,12 @@ export function autoFormat() {
         const replacementCS = ChangeSet.of(replacementChanges, tr.newDoc.length);
         const composed = tr.changes.compose(replacementCS);
 
-        return Transaction.create(
-            tr.startState,
-            composed,
-            tr.selection,
-            tr.effects,
-            tr.annotations,
-            tr.scrollIntoView,
-        );
+        const spec: TransactionSpec = {
+            changes: composed,
+            selection: tr.selection,
+            effects: tr.effects,
+            scrollIntoView: tr.scrollIntoView,
+        };
+        return spec;
     });
 }

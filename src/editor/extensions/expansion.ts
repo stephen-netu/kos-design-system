@@ -1,4 +1,4 @@
-import { ChangeSet, EditorState, Transaction, Text, type Transaction as TTransaction } from '@codemirror/state';
+import { ChangeSet, EditorState, Text, type Transaction as TTransaction, type TransactionSpec } from '@codemirror/state';
 
 export interface ExpansionDictionary {
     [abbreviation: string]: string;
@@ -61,13 +61,12 @@ export function expansion(dictionary?: ExpansionDictionary) {
         const expansionCS = ChangeSet.of(expansionChanges, newDocLen);
         const composed = tr.changes.compose(expansionCS);
 
-        return Transaction.create(
-            tr.startState,
-            composed,
-            tr.selection,
-            tr.effects,
-            tr.annotations,
-            tr.scrollIntoView,
-        );
+        const spec: TransactionSpec = {
+            changes: composed,
+            selection: tr.selection,
+            effects: tr.effects,
+            scrollIntoView: tr.scrollIntoView,
+        };
+        return spec;
     });
 }

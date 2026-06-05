@@ -1,5 +1,4 @@
 import { type Diagnostic, linter, type LintSource } from '@codemirror/lint';
-import { type EditorView } from '@codemirror/view';
 
 export interface SpellCheckDictionary {
     check(word: string): boolean;
@@ -25,9 +24,9 @@ function extractWords(text: string): { word: string; from: number; to: number }[
 }
 
 export function spellcheck(dictionary: SpellCheckDictionary) {
-    const lintSource: LintSource = (view: EditorView): Diagnostic[] => {
+    const lintSource: LintSource = (view): Diagnostic[] => {
         const diagnostics: Diagnostic[] = [];
-        const words = extractWords(view.state.doc.text);
+        const words = extractWords(view.state.doc.toString());
 
         for (const { word, from, to } of words) {
             if (word.length > 1 && !dictionary.check(word)) {
@@ -36,10 +35,10 @@ export function spellcheck(dictionary: SpellCheckDictionary) {
                     to,
                     severity: 'warning',
                     message: `"${word}"`,
-                    actions: dictionary.suggest(word).slice(0, 8).map((suggestion) => ({
+                    actions: dictionary.suggest(word).slice(0, 8).map((suggestion: string) => ({
                         name: suggestion,
-                        apply(view: EditorView, from: number, to: number) {
-                            view.dispatch({ changes: { from, to, insert: suggestion } });
+                        apply(v, from: number, to: number) {
+                            v.dispatch({ changes: { from, to, insert: suggestion } });
                         },
                     })),
                 });

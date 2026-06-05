@@ -1,9 +1,12 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import type { CompletionSource, Completion } from '../editor/extensions/types.js';
+
+  export interface AutocompleteResult {
+    completions: Array<{ label: string; type?: string; detail?: string }>;
+  }
 
   export interface AutocompleteConfig {
-    source: CompletionSource;
+    source: { complete: (query: string) => Promise<AutocompleteResult> | AutocompleteResult };
     maxVisible?: number;
     minChars?: number;
   }
@@ -38,7 +41,7 @@
 
   let isFocused = $state(false);
   let showPassword = $state(false);
-  let completions = $state<Completion[]>([]);
+  let completions = $state<Array<{ label: string; type?: string; detail?: string }>>([]);
   let showCompletions = $state(false);
   let selectedIndex = $state(0);
 
@@ -52,13 +55,13 @@
       showCompletions = false;
       return;
     }
-    const results = await autocomplete.source.complete(query);
-    completions = results.slice(0, maxVisible);
+    const result = await autocomplete.source.complete(query);
+    completions = result.completions.slice(0, maxVisible);
     selectedIndex = 0;
     showCompletions = completions.length > 0;
   }
 
-  function applyCompletion(completion: Completion) {
+  function applyCompletion(completion: { label: string }) {
     value = completion.label;
     completions = [];
     showCompletions = false;

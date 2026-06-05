@@ -1,17 +1,18 @@
-export { autocompletion } from '@codemirror/autocomplete';
-export type { Completion, CompletionSource, CompletionResult } from '@codemirror/autocomplete';
+import { autocompletion, type CompletionSource } from '@codemirror/autocomplete';
+
+export { autocompletion };
+export type { CompletionSource };
 
 export interface AutocompleteConfig {
     source: CompletionSource;
-    maxVisible?: number;
-    minChars?: number;
+    defaultKeymap?: boolean;
+    closeOnBlur?: boolean;
 }
 
 export function autocomplete(config: AutocompleteConfig) {
     return autocompletion({
         override: [config.source],
-        maxVisible: config.maxVisible ?? 50,
-        defaultKeymap: true,
-        closeOnBlur: true,
+        defaultKeymap: config.defaultKeymap ?? true,
+        closeOnBlur: config.closeOnBlur ?? true,
     });
 }

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "KOS design-system — manages its own runtime/build deps via Renovate",
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "description": "Group CodeMirror packages to a single PR",
+      "matchPackagePrefixes": ["@codemirror/"],
+      "groupName": "CodeMirror"
+    },
+    {
+      "description": "Group Svelte toolchain to a single PR",
+      "matchPackageNames": ["svelte", "svelte-check", "@sveltejs/package", "@sveltejs/vite-plugin-svelte"],
+      "groupName": "Svelte toolchain"
+    },
+    {
+      "description": "Pinned codemirror core (matches LEAP overrides) — bump manually",
+      "matchPackageNames": ["@codemirror/state", "@codemirror/view"],
+      "enabled": false
+    }
+  ]
+}

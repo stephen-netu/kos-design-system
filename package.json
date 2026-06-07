@@ -155,6 +155,7 @@
     "@playwright/test": "^1.60.0",
     "@sveltejs/package": "^2.5.7",
     "@sveltejs/vite-plugin-svelte": "^4.0.4",
+    "@tauri-apps/api": "^2.8.0",
     "@testing-library/dom": "9.3.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/svelte": "5.3.1",

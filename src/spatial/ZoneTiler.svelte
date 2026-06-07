@@ -43,6 +43,8 @@
     onSplitRequest?: (zoneId: string, direction: SplitDirection) => void;
   }
 
+  export type ZoneTilerProps = Props;
+
   let {
     tree,
     width,

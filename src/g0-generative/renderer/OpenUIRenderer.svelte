@@ -23,7 +23,7 @@
   // Registry mapping component names to Svelte components
   const componentRegistry = $derived(buildRegistry(library));
 
-  function buildRegistry(library: ComponentLibrary): Map<string, typeof import('svelte').SvelteComponent> {
+  function buildRegistry(library: ComponentLibrary): Map<string, import('svelte').Component<Record<string, unknown>>> {
     // TODO: Implement component registration from library schemas
     // This requires mapping ComponentLibrary schemas to actual Svelte imports
     // Example: if (library.hasComponent('Card')) registry.set('Card', CardComponent);
@@ -35,12 +35,12 @@
     return node.type === 'element';
   }
 
-  function getComponent(name: string): typeof import('svelte').SvelteComponent | null {
+  function getComponent(name: string): import('svelte').Component<Record<string, unknown>> | null {
     return componentRegistry.get(name) || null;
   }
 
   function renderElement(element: OpenUIElement): {
-    component: typeof import('svelte').SvelteComponent | null;
+    component: import('svelte').Component<Record<string, unknown>> | null;
     props: Record<string, unknown>;
     children: string[];
     grandchildren: string[];

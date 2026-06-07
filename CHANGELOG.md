@@ -1,5 +1,19 @@
 # @stephen-netu/design-system
 
+## 0.2.1
+
+### Patch Changes
+
+- Fix Expansion CodeMirror extension to detect multi-character insertions, and ship svelte-check refactors:
+
+  - `fix(design-system): make Expansion CodeMirror extension detect multi-char insertions`
+  - `refactor(design-system): replace SvelteComponent with Component<Record<string, unknown>> in OpenUIRenderer`
+  - `feat(design-system): export per-component Props types from 5 spatial components`
+  - `refactor(design-system): remove redundant ambient @tauri-apps/api declarations`
+  - `fix(design-system): add @tauri-apps/api devDependency for t0-transport types`
+  - `fix(design-system): misc a11y and type-narrowing fixes`
+  - `fix(design-system): migrate u0-primitives tests to Svelte 5 Snippet API`
+
 ## 0.2.0
 
 ### Minor Changes

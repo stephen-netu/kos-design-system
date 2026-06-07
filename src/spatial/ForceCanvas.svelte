@@ -27,6 +27,8 @@
     tick?: number;
   }
 
+  export type ForceCanvasProps = Props;
+
   let {
     cells,
     width,

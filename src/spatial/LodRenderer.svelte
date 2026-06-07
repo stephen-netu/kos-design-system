@@ -53,6 +53,8 @@
     onCellClick?: (cellId: string, level: LodLevel) => void;
   }
 
+  export type LodRendererProps = Props;
+
   let {
     positions,
     zoom,

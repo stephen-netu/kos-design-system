@@ -23,6 +23,8 @@
     children: import('svelte').Snippet;
   }
 
+  export type BspTilingCanvasProps = Props;
+
   let {
     cards,
     containerWidth,

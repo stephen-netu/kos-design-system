@@ -17,6 +17,8 @@
     onCameraChange?: (state: CameraState) => void;
   }
 
+  export type SnapZoomCameraProps = Props;
+
   let {
     width,
     height,

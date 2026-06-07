@@ -21,27 +21,33 @@ function buildExpansionChanges(
     const newDoc = tr.newDoc;
     const changes: { from: number; to: number; insert: string }[] = [];
 
-    tr.changes.iterChanges((_fromA: number, _toA: number, fromB: number, toB: number, inserted: Text) => {
+    tr.changes.iterChanges((_fromA: number, _toA: number, _fromB: number, toB: number, inserted: Text) => {
         const insertedStr = inserted.toString();
-        if (insertedStr !== ' ' && insertedStr !== '\t') return;
+        if (insertedStr.length === 0) return;
 
-        const line = newDoc.lineAt(fromB);
-        let wordStart = fromB;
+        const lastIdx = insertedStr.length - 1;
+        const trigger = insertedStr[lastIdx];
+        if (trigger !== ' ' && trigger !== '\t') return;
+
+        if (insertedStr.length > 1 && /\s/.test(insertedStr[0])) return;
+
+        const triggerPos = toB - 1;
+        const line = newDoc.lineAt(triggerPos);
+        let wordStart = triggerPos;
         while (wordStart > line.from) {
             const ch = newDoc.sliceString(wordStart - 1, wordStart);
             if (/\s/.test(ch)) break;
             wordStart--;
         }
 
-        const precedingWord = newDoc.sliceString(wordStart, fromB);
-        const expansion = dictionary[precedingWord];
-        if (!expansion) return;
+        const precedingWord = newDoc.sliceString(wordStart, triggerPos);
+        const exp = dictionary[precedingWord];
+        if (!exp) return;
 
-        const trailingSpace = insertedStr === ' ' ? ' ' : '\t';
         changes.push({
             from: wordStart,
             to: toB,
-            insert: expansion + trailingSpace,
+            insert: exp + trigger,
         });
     });
 
@@ -50,7 +56,7 @@ function buildExpansionChanges(
 
 export function expansion(dictionary?: ExpansionDictionary) {
     const table = dictionary
-        ? { ...dictionary, ...BUILT_IN_EXPANSIONS }
+        ? { ...BUILT_IN_EXPANSIONS, ...dictionary }
         : BUILT_IN_EXPANSIONS;
 
     return EditorState.transactionFilter.of((tr: TTransaction) => {

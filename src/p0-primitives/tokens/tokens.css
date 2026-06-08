@@ -59,9 +59,10 @@
    --overlay-accent-50: rgba(184, 115, 51, 0.50);
    --overlay-accent-55: rgba(184, 115, 51, 0.55);
 
-   /* Overlay levels — status color opacity ramps */
-   --overlay-success-06: rgba(79, 168, 162, 0.06);
-   --overlay-error-06: rgba(193, 74, 74, 0.06);
+    /* Overlay levels — status color opacity ramps */
+    --overlay-success-06: rgba(79, 168, 162, 0.06);
+    --overlay-warning-06: rgba(245, 192, 48, 0.06);
+    --overlay-error-06: rgba(193, 74, 74, 0.06);
 
    /* Cell background for band/offer tables */
    --color-bg-cell: #121518;

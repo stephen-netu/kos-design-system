@@ -1,11 +1,12 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { cleanup, render, fireEvent } from '@testing-library/svelte';
 import Accordion from './Accordion.svelte';
+import type { Snippet } from 'svelte';
 
-const samplePanels = [
-  { id: 'p1', title: 'First', content: () => 'Content 1' },
-  { id: 'p2', title: 'Second', content: () => 'Content 2' },
-  { id: 'p3', title: 'Third', content: () => 'Content 3' },
+const samplePanels: { id: string; title: string; content: Snippet; disabled?: boolean }[] = [
+  { id: 'p1', title: 'First', content: (() => '') as unknown as Snippet },
+  { id: 'p2', title: 'Second', content: (() => '') as unknown as Snippet },
+  { id: 'p3', title: 'Third', content: (() => '') as unknown as Snippet },
 ];
 
 describe('Accordion', () => {
@@ -63,8 +64,8 @@ describe('Accordion', () => {
 
   it('does not open disabled panels', async () => {
     const panels = [
-      { id: 'p1', title: 'Enabled', content: () => 'E' },
-      { id: 'p2', title: 'Disabled', content: () => 'D', disabled: true },
+      { id: 'p1', title: 'Enabled', content: (() => '') as unknown as Snippet },
+      { id: 'p2', title: 'Disabled', content: (() => '') as unknown as Snippet, disabled: true },
     ];
     const { container } = render(Accordion, { panels });
     const buttons = container.querySelectorAll('[role="button"]');

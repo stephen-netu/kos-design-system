@@ -1,6 +1,7 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { cleanup, render, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
+import type { Snippet } from 'svelte';
 import Tooltip from './Tooltip.svelte';
 
 describe('Tooltip', () => {
@@ -8,7 +9,7 @@ describe('Tooltip', () => {
 
   it('renders the trigger wrapper', async () => {
     const { container } = render(Tooltip, {
-      props: { content: 'tip', trigger: () => 'hover me' },
+      props: { content: 'tip', trigger: ((() => '') as unknown as Snippet) },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper');
     expect(wrapper).not.toBeNull();
@@ -16,7 +17,7 @@ describe('Tooltip', () => {
 
   it('does not show tooltip content initially', () => {
     const { container } = render(Tooltip, {
-      props: { content: 'secret tip', trigger: () => 'hover me' },
+      props: { content: 'secret tip', trigger: ((() => '') as unknown as Snippet) },
     });
     expect(container.querySelector('.ds-tooltip-content')).toBeNull();
   });
@@ -24,7 +25,7 @@ describe('Tooltip', () => {
   it('shows tooltip on mouse enter', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'hovered!', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'hovered!', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -38,7 +39,7 @@ describe('Tooltip', () => {
   it('hides tooltip on mouse leave', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'hovered!', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'hovered!', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -55,7 +56,7 @@ describe('Tooltip', () => {
   it('applies position class for top (default)', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'top tip', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'top tip', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -69,7 +70,7 @@ describe('Tooltip', () => {
   it('applies position class for bottom', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'bottom tip', position: 'bottom', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'bottom tip', position: 'bottom', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -83,7 +84,7 @@ describe('Tooltip', () => {
   it('applies position class for left', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'left tip', position: 'left', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'left tip', position: 'left', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -97,7 +98,7 @@ describe('Tooltip', () => {
   it('applies position class for right', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'right tip', position: 'right', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'right tip', position: 'right', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -111,7 +112,7 @@ describe('Tooltip', () => {
   it('renders string content inside tooltip inner', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'hello world', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'hello world', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -126,7 +127,7 @@ describe('Tooltip', () => {
   it('respects delayMs before showing', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'delayed', trigger: () => 'target', delayMs: 500 },
+      props: { content: 'delayed', trigger: ((() => '') as unknown as Snippet), delayMs: 500 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.mouseEnter(wrapper);
@@ -143,7 +144,7 @@ describe('Tooltip', () => {
   it('shows tooltip on focus', async () => {
     vi.useFakeTimers();
     const { container } = render(Tooltip, {
-      props: { content: 'focused!', trigger: () => 'target', delayMs: 0 },
+      props: { content: 'focused!', trigger: ((() => '') as unknown as Snippet), delayMs: 0 },
     });
     const wrapper = container.querySelector('.ds-tooltip-wrapper')!;
     await fireEvent.focusIn(wrapper);
@@ -156,7 +157,7 @@ describe('Tooltip', () => {
 
   it('applies custom class to wrapper', () => {
     const { container } = render(Tooltip, {
-      props: { content: 'tip', trigger: () => 'target', class: 'my-tooltip' },
+      props: { content: 'tip', trigger: ((() => '') as unknown as Snippet), class: 'my-tooltip' },
     });
     expect(container.querySelector('.my-tooltip')).not.toBeNull();
   });

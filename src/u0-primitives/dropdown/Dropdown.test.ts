@@ -1,5 +1,6 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { cleanup, render, fireEvent } from '@testing-library/svelte';
+import type { Snippet } from 'svelte';
 import Dropdown from './Dropdown.svelte';
 
 const sampleItems = [
@@ -11,7 +12,7 @@ const sampleItems = [
 function renderDropdown(props = {}) {
   return render(Dropdown, {
     items: sampleItems,
-    trigger: () => '<button>Open</button>',
+    trigger: ((() => '') as unknown as Snippet),
     ...props,
   });
 }

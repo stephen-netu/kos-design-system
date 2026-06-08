@@ -1,32 +1,33 @@
 import { afterEach, describe, it, expect } from 'vitest';
 import { cleanup, render } from '@testing-library/svelte';
+import type { Snippet } from 'svelte';
 import ValidityBadge from './ValidityBadge.svelte';
 
 describe('ValidityBadge', () => {
   afterEach(() => cleanup());
 
   it('renders with default score', () => {
-    const { container } = render(ValidityBadge, { props: { children: () => {} } });
+    const { container } = render(ValidityBadge, { props: { children: ((() => '') as unknown as Snippet) } });
     expect(container.querySelector('.ds-validity-badge')).not.toBeNull();
   });
 
   it('applies high validity class for score >= 900', () => {
-    const { container } = render(ValidityBadge, { props: { score: 950, children: () => {} } });
+    const { container } = render(ValidityBadge, { props: { score: 950, children: ((() => '') as unknown as Snippet) } });
     expect(container.querySelector('.validity-color-high')).not.toBeNull();
   });
 
   it('applies medium validity class for score 700-899', () => {
-    const { container } = render(ValidityBadge, { props: { score: 750, children: () => {} } });
+    const { container } = render(ValidityBadge, { props: { score: 750, children: ((() => '') as unknown as Snippet) } });
     expect(container.querySelector('.validity-color-medium')).not.toBeNull();
   });
 
   it('applies low validity class for score 500-699', () => {
-    const { container } = render(ValidityBadge, { props: { score: 600, children: () => {} } });
+    const { container } = render(ValidityBadge, { props: { score: 600, children: ((() => '') as unknown as Snippet) } });
     expect(container.querySelector('.validity-color-low')).not.toBeNull();
   });
 
   it('applies critical validity class for score < 500', () => {
-    const { container } = render(ValidityBadge, { props: { score: 300, children: () => {} } });
+    const { container } = render(ValidityBadge, { props: { score: 300, children: ((() => '') as unknown as Snippet) } });
     expect(container.querySelector('.validity-color-critical')).not.toBeNull();
   });
 
@@ -39,10 +40,10 @@ describe('ValidityBadge', () => {
   });
 
   it('applies size classes', () => {
-    const { container: sm } = render(ValidityBadge, { props: { size: 'sm', children: () => {} } });
+    const { container: sm } = render(ValidityBadge, { props: { size: 'sm', children: ((() => '') as unknown as Snippet) } });
     expect(sm.querySelector('.size-sm')).not.toBeNull();
 
-    const { container: lg } = render(ValidityBadge, { props: { size: 'lg', children: () => {} } });
+    const { container: lg } = render(ValidityBadge, { props: { size: 'lg', children: ((() => '') as unknown as Snippet) } });
     expect(lg.querySelector('.size-lg')).not.toBeNull();
   });
 
@@ -57,13 +58,13 @@ describe('ValidityBadge', () => {
   });
 
   it('sets aria-label from validity label', () => {
-    const { container } = render(ValidityBadge, { props: { score: 950, children: () => {} } });
+    const { container } = render(ValidityBadge, { props: { score: 950, children: ((() => '') as unknown as Snippet) } });
     const badge = container.querySelector('.ds-validity-badge')!;
     expect(badge.getAttribute('aria-label')).toBe('High Validity');
   });
 
   it('renders custom children when provided', () => {
-    const { container } = render(ValidityBadge, { props: { score: 500, children: () => 'custom' } });
+    const { container } = render(ValidityBadge, { props: { score: 500, children: (() => '') as unknown as Snippet } });
     expect(container.querySelector('.ds-validity-content')).not.toBeNull();
     expect(container.querySelector('.ds-validity-score')).toBeNull();
   });

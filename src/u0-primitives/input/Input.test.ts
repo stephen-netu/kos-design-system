@@ -1,5 +1,6 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { cleanup, render, fireEvent } from '@testing-library/svelte';
+import type { Snippet } from 'svelte';
 import Input from './Input.svelte';
 
 describe('Input', () => {
@@ -47,7 +48,7 @@ describe('Input', () => {
 
   it('displays leading icon element when iconLeading is provided', () => {
     const { container } = render(Input, {
-      iconLeading: () => '<svg class="test-icon"></svg>'
+      iconLeading: ((() => '') as unknown as Snippet)
     });
     expect(container.querySelector('.ds-input-icon.leading')).not.toBeNull();
   });

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Pre-commit hook — topological enforcement gate
+# Pre-commit hook — topological enforcement gate (peer version)
 #
 # Blocks .gears/ and .realm/ from being committed inside this peer repo.
 # These directories belong at the KOS workspace root only.
@@ -11,6 +11,12 @@
 #   KOS/.realm/                — runtime state (locks, sockets, pids)
 #
 # See: realm-doc-topology-001
+#
+# Installed by: kos-repos install-peer-hooks <repo>
+#
+# Also chains the T-02 Worktree Lifecycle gate (lifecycle-validate.sh) which
+# lives at the KOS root and is resolved by walking up from this peer's
+# .githooks/ directory.
 
 set -euo pipefail
 
@@ -42,6 +48,28 @@ if [[ -n "$STRAY" ]]; then
     echo "See: realm-doc-topology-001"
     echo ""
     exit 1
+fi
+
+# T-02: Worktree Lifecycle Integrity (lifecycle-validate.sh lives at KOS root).
+# Walk up from this peer's .githooks/ to find KOS root, identified by
+# .gears/repos.toml.
+kos_root=""
+dir="$REPO_ROOT"
+while [[ "$dir" != "/" ]]; do
+  if [[ -f "$dir/.gears/repos.toml" ]]; then
+    kos_root="$dir"
+    break
+  fi
+  dir="$(dirname "$dir")"
+done
+
+if [[ -n "$kos_root" && -x "$kos_root/.gears/gates/lifecycle-validate.sh" ]]; then
+  if ! "$kos_root/.gears/gates/lifecycle-validate.sh"; then
+    echo "" >&2
+    echo "COMMIT BLOCKED — T-02 worktree-lifecycle violation in $(basename "$REPO_ROOT") (above)." >&2
+    echo "  Run /branch-sweep to reconcile, or bypass with --no-verify." >&2
+    exit 1
+  fi
 fi
 
 exit 0

@@ -1,11 +1,17 @@
 #!/bin/bash
 #
-# Pre-push hook — topology enforcement + cargo check (peer version)
+# Pre-push hook — topology + T-02 lifecycle enforcement (peer version)
 #
-# 1. Blocks push if .gears/ or .realm/ exist on disk inside this peer repo.
-#    Checks the filesystem, not the staging area (which is empty at push time).
-# 2. Runs `cargo check --locked` if a Cargo.toml exists in the repo root or src-tauri/.
-#    Safe no-op for pure-TypeScript/Svelte repos.
+# Blocks push if:
+#   - .gears/ or .realm/ exist on disk inside this peer repo (T-01)
+#   - any agent/*|feat/*|fix/* branch is prunable, fully-merged-but-not-deleted,
+#     or stale without an active worktree (T-02)
+#
+# Checks the filesystem, not the staging area (which is always empty at push time).
+#
+# Cargo compilation is NOT checked here — Tauri peer apps depend on LEAP workspace
+# path references and cannot be cargo-checked in isolation. Compilation gates live
+# in each repo's .gitea/workflows/ci.yml.
 #
 # Installed by: kos-repos install-peer-hooks <repo>
 
@@ -14,6 +20,28 @@ set -euo pipefail
 # REPO_ROOT = this peer repo's root (one level up from .githooks/)
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PEER_NAME="$(basename "$REPO_ROOT")"
+
+# T-02: Worktree Lifecycle Integrity (lifecycle-validate.sh lives at KOS root).
+# Cheap static check, runs before any network access. Walk up from this peer's
+# .githooks/ to find KOS root, identified by .gears/repos.toml.
+kos_root=""
+dir="$REPO_ROOT"
+while [[ "$dir" != "/" ]]; do
+  if [[ -f "$dir/.gears/repos.toml" ]]; then
+    kos_root="$dir"
+    break
+  fi
+  dir="$(dirname "$dir")"
+done
+
+if [[ -n "$kos_root" && -x "$kos_root/.gears/gates/lifecycle-validate.sh" ]]; then
+  if ! "$kos_root/.gears/gates/lifecycle-validate.sh"; then
+    echo "" >&2
+    echo "$PEER_NAME: PUSH BLOCKED — T-02 worktree-lifecycle violation (above)." >&2
+    echo "  Run /branch-sweep to reconcile, or bypass with --no-verify." >&2
+    exit 1
+  fi
+fi
 
 # ── Topology gate: physical directory check ────────────────────────────────────
 # At push time the staging area is empty — git diff --cached is always empty.
@@ -39,27 +67,6 @@ if [[ -d "$REPO_ROOT/.realm" ]]; then
     echo "See: realm-doc-topology-001"
     echo ""
     exit 1
-fi
-
-# ── Cargo check ────────────────────────────────────────────────────────────────
-# Root Cargo.toml (e.g. sovereign-candle, sonda backend)
-# src-tauri/Cargo.toml (Tauri peer apps: agora, ryu, atelier, loge, mir, etc.)
-CARGO_DIR=""
-if [[ -f "$REPO_ROOT/Cargo.toml" ]]; then
-    CARGO_DIR="$REPO_ROOT"
-elif [[ -f "$REPO_ROOT/src-tauri/Cargo.toml" ]]; then
-    CARGO_DIR="$REPO_ROOT/src-tauri"
-fi
-
-if [[ -n "$CARGO_DIR" ]]; then
-    echo "Running cargo check --locked in $CARGO_DIR..."
-    if ! (cd "$CARGO_DIR" && cargo check --locked) 2>&1; then
-        echo ""
-        echo "PUSH BLOCKED — CARGO CHECK FAILED. Fix compilation errors before pushing."
-        echo "Bypass (NOT RECOMMENDED): git push --no-verify"
-        echo ""
-        exit 1
-    fi
 fi
 
 exit 0

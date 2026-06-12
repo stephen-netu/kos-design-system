@@ -9,6 +9,7 @@
     loading?: boolean;
     class?: string;
     'aria-label'?: string;
+    'aria-expanded'?: boolean;
     onclick?: (e: MouseEvent) => void;
     children?: Snippet;
     iconLeading?: Snippet;
@@ -23,6 +24,7 @@
     loading = false,
     class: className = '',
     'aria-label': ariaLabel,
+    'aria-expanded': ariaExpanded,
     onclick,
     children,
     iconLeading,
@@ -45,6 +47,7 @@
   class:is-pressed={isPressed}
   disabled={disabled || loading}
   aria-label={ariaLabel}
+  aria-expanded={ariaExpanded}
   onclick={onclick}
   onpointerdown={handlePointerDown}
   onpointerup={handlePointerUp}

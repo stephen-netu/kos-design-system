@@ -265,8 +265,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: var(--bg-panel, #1a1a1a);
-    color: var(--text-primary, #e0e0e0);
+    background: var(--color-bg-panel, #1a1a1a);
+    color: var(--color-text-primary, #e0e0e0);
   }
 
   .chat-header {
@@ -275,14 +275,14 @@
     justify-content: space-between;
     padding: 12px 16px;
     border-bottom: 1px solid var(--border-subtle, #2a2a2a);
-    background: var(--bg-panel, #1a1a1a);
+    background: var(--color-bg-panel, #1a1a1a);
   }
 
   .chat-title {
     font-size: 14px;
     font-weight: 600;
     margin: 0;
-    color: var(--text-primary, #e0e0e0);
+    color: var(--color-text-primary, #e0e0e0);
   }
 
   .clear-btn {
@@ -293,7 +293,7 @@
     background: transparent;
     border: none;
     border-radius: var(--radius-sm, 4px);
-    color: var(--text-tertiary, #6b6b6b);
+    color: var(--color-text-tertiary, #6b6b6b);
     cursor: pointer;
     transition: all 0.15s ease;
   }
@@ -329,13 +329,13 @@
 
   .empty-text {
     font-size: 14px;
-    color: var(--text-secondary, #a0a0a0);
+    color: var(--color-text-secondary, #a0a0a0);
     margin: 0 0 4px 0;
   }
 
   .empty-hint {
     font-size: 12px;
-    color: var(--text-tertiary, #6b6b6b);
+    color: var(--color-text-tertiary, #6b6b6b);
     margin: 0;
   }
 
@@ -360,14 +360,14 @@
   }
 
   .message.user .message-bubble {
-    background: var(--accent-primary, var(--color-accent));
+    background: var(--color-accent);
     color: white;
     border-bottom-right-radius: 4px;
   }
 
   .message.assistant .message-bubble {
-    background: var(--bg-panel-elevated, #252525);
-    color: var(--text-primary, #e0e0e0);
+    background: var(--color-bg-panel-elevated, #252525);
+    color: var(--color-text-primary, #e0e0e0);
     border: 1px solid var(--border-subtle, #2a2a2a);
     border-bottom-left-radius: 4px;
   }
@@ -413,7 +413,7 @@
     display: inline-block;
     width: 2px;
     height: 1em;
-    background: var(--accent-primary, var(--color-accent));
+    background: var(--color-accent);
     margin-left: 2px;
     animation: blink 1s infinite;
     vertical-align: middle;
@@ -438,10 +438,10 @@
     align-items: center;
     gap: var(--space-1);
     padding: 4px 8px;
-    background: var(--accent-subtle, var(--color-accent-muted));
-    border: 1px solid var(--accent-primary, var(--color-accent));
+    background: var(--color-accent-subtle);
+    border: 1px solid var(--color-accent);
     border-radius: var(--radius-xl, 12px);
-    color: var(--accent-primary, var(--color-accent));
+    color: var(--color-accent);
     font-size: 11px;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -449,7 +449,7 @@
   }
 
   .citation-chip:hover {
-    background: var(--accent-primary, var(--color-accent));
+    background: var(--color-accent);
     color: white;
   }
 
@@ -472,9 +472,9 @@
     transform: translateX(-50%);
     width: 220px;
     padding: 10px 12px;
-    background: var(--bg-panel-elevated, #252525);
+    background: var(--color-bg-panel-elevated, #252525);
     border: 1px solid var(--border-subtle, #2a2a2a);
-    border-left: 3px solid var(--accent-primary, var(--color-accent));
+    border-left: 3px solid var(--color-accent);
     border-radius: var(--radius-md, 6px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 10;
@@ -495,13 +495,13 @@
     margin: 0 0 6px 0;
     font-size: 11px;
     line-height: 1.5;
-    color: var(--text-primary, #e0e0e0);
+    color: var(--color-text-primary, #e0e0e0);
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
   }
 
   .citation-popover-source {
     font-size: 10px;
-    color: var(--text-tertiary, #6b6b6b);
+    color: var(--color-text-tertiary, #6b6b6b);
     font-style: italic;
   }
 
@@ -518,7 +518,7 @@
   .input-container {
     padding: 12px 16px;
     border-top: 1px solid var(--border-subtle, #2a2a2a);
-    background: var(--bg-panel, #1a1a1a);
+    background: var(--color-bg-panel, #1a1a1a);
   }
 
   .input-wrapper {
@@ -530,21 +530,21 @@
   .chat-input {
     flex: 1;
     padding: 10px 14px;
-    background: var(--bg-panel-elevated, #252525);
+    background: var(--color-bg-panel-elevated, #252525);
     border: 1px solid var(--border-subtle, #2a2a2a);
     border-radius: var(--radius-xl, 20px);
-    color: var(--text-primary, #e0e0e0);
+    color: var(--color-text-primary, #e0e0e0);
     font-size: 13px;
     outline: none;
     transition: border-color 0.15s ease;
   }
 
   .chat-input:focus {
-    border-color: var(--accent-primary, var(--color-accent));
+    border-color: var(--color-accent);
   }
 
   .chat-input::placeholder {
-    color: var(--text-tertiary, #6b6b6b);
+    color: var(--color-text-tertiary, #6b6b6b);
   }
 
   .chat-input:disabled {
@@ -559,7 +559,7 @@
     width: 36px;
     height: 36px;
     padding: 0;
-    background: var(--accent-primary, var(--color-accent));
+    background: var(--color-accent);
     border: none;
     border-radius: 50%;
     color: white;
@@ -569,7 +569,7 @@
   }
 
   .send-btn:hover:not(:disabled) {
-    background: var(--accent-hover, #c9894f);
+    background: var(--color-accent-hover, #c9894f);
     transform: scale(1.05);
   }
 
@@ -584,7 +584,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    background: var(--accent-subtle, var(--color-accent-subtle));
+    background: var(--color-accent-subtle, var(--color-accent-subtle));
     border-bottom: 1px solid var(--border-focus, var(--color-accent-muted));
     gap: var(--space-2);
   }
@@ -593,7 +593,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-15);
-    color: var(--accent-primary, var(--color-accent));
+    color: var(--color-accent);
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
@@ -617,10 +617,10 @@
   .context-chip {
     font-size: 11px;
     padding: 2px 8px;
-    background: var(--bg-panel-elevated, #252525);
+    background: var(--color-bg-panel-elevated, #252525);
     border: 1px solid var(--border-subtle, #2a2a2a);
     border-radius: var(--radius-lg, 10px);
-    color: var(--text-secondary, #a0a0a0);
+    color: var(--color-text-secondary, #a0a0a0);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -635,7 +635,7 @@
     background: transparent;
     border: none;
     border-radius: var(--radius-sm, 4px);
-    color: var(--text-tertiary, #6b6b6b);
+    color: var(--color-text-tertiary, #6b6b6b);
     cursor: pointer;
     transition: all 0.15s ease;
     flex-shrink: 0;

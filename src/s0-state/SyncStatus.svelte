@@ -263,7 +263,7 @@
   }
 
   .action-danger {
-    background: var(--color-error-subtle, rgba(192, 57, 43, 0.15));
+    background: var(--color-error-bg, rgba(193, 74, 74, 0.10));
     color: var(--color-error, #c0392b);
     border-color: var(--color-error, #c0392b);
   }

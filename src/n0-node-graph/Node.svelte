@@ -243,7 +243,7 @@
   }
 
   .n0-node-label {
-    fill: var(--color-text, #e8e0d0);
+    fill: var(--color-text-primary, #e8e0d0);
     font-family: system-ui, sans-serif;
     font-size: 13px;
     font-weight: 500;
@@ -262,7 +262,7 @@
   .n0-node-body {
     overflow: hidden;
     padding: 8px;
-    color: var(--color-text, #e8e0d0);
+    color: var(--color-text-primary, #e8e0d0);
     font-family: system-ui, sans-serif;
     font-size: 13px;
   }

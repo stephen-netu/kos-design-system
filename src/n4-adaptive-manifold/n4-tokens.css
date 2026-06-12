@@ -66,10 +66,10 @@
 
   /* ── Kind accents (overridden by consuming apps) ───────────────────────── */
   --n4-kind-task: var(--color-accent, #b87333);
-  --n4-kind-agent: var(--color-expert-sovereign, #b87333);
+  --n4-kind-agent: var(--expert-sovereign, #b87333);
   --n4-kind-signal: var(--color-status-info, #2980b9);
   --n4-kind-capability: var(--color-accent-secondary, #d4a574);
-  --n4-kind-intent: var(--color-expert-atelier, #b87333);
+  --n4-kind-intent: var(--expert-atelier, #b87333);
   --n4-kind-subtask: color-mix(in srgb, var(--color-accent, #b87333) 60%, transparent);
   --n4-kind-note: var(--color-text-primary, #e8e0d0);
   --n4-kind-concept: var(--color-accent-secondary, #d4a574);

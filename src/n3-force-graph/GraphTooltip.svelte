@@ -70,12 +70,12 @@
     z-index: 1000;
     pointer-events: none;
 
-    background: var(--bg-elevated, #2a2a2a);
+    background: var(--color-bg-elevated, #2a2a2a);
     border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
     border-radius: var(--radius-sm, 6px);
     padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
 
-    color: var(--text-primary, #f2efe9);
+    color: var(--color-text-primary, #f2efe9);
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 0.75rem;
     line-height: 1.4;

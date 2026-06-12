@@ -36,6 +36,7 @@
    --color-accent-muted: var(--accent-muted, rgba(184, 115, 51, 0.16));
    --color-accent-subtle: var(--accent-subtle, rgba(184, 115, 51, 0.08));
    --color-accent-faint: var(--accent-faint, rgba(184, 115, 51, 0.04));
+   --color-accent-secondary: #d4a574;  /* Companion warm tone (n4 kind colors) */
 
    /* Overlay levels — white opacity ramps for borders, backgrounds, hover states */
    --overlay-white-02: rgba(255, 255, 255, 0.02);
@@ -79,7 +80,9 @@
   --color-success: #4fa8a2;
   --color-warning: #d4a04c;
   --color-error: #c14a4a;
+  --color-error-bg: rgba(193, 74, 74, 0.10);
   --color-info: #5b8db8;
+  --color-neutral: #6b6558;            /* Inactive / archival (e.g. compost phase) */
 
   /* --- Semantic (presence) --- */
   --color-online: #4fa8a2;

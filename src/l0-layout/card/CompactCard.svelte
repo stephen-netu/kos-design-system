@@ -78,11 +78,11 @@
 </Card>
 
 <style>
-  .ds-compact-card {
+  :global(.ds-compact-card) {
     transition: box-shadow var(--transition-normal);
   }
   
-  .ds-compact-card:hover {
+  :global(.ds-compact-card:hover) {
     box-shadow: var(--shadow-card-hover);
   }
   
@@ -104,7 +104,7 @@
   }
   
   /* Hide overflow preview text when not hovered */
-  .ds-compact-card:hover .ds-card-preview {
+  :global(.ds-compact-card:hover) .ds-card-preview {
     max-height: 4.5rem; /* ~3 lines */
     overflow: hidden;
     text-overflow: ellipsis;

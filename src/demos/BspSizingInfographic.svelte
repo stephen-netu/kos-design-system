@@ -158,7 +158,7 @@
     margin: 0 auto;
     font-family: system-ui, sans-serif;
     color: var(--color-text-primary, #e8e4dc);
-    background: var(--color-bg, #1a1918);
+    background: var(--color-bg-canvas, #1a1918);
     min-height: 100vh;
     overflow-y: auto;
   }

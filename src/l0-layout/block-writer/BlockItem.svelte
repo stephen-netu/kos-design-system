@@ -128,10 +128,12 @@
     overflow: hidden;
   }
 
-  .ds-tiny-indicator.ds-phase-seed { border-left: 3px solid var(--color-phase-seed, #8fbc8f); }
-  .ds-tiny-indicator.ds-phase-sprout { border-left: 3px solid var(--color-phase-sprout, #90ee90); }
-  .ds-tiny-indicator.ds-phase-flower { border-left: 3px solid var(--color-phase-flower, #ffa500); }
-  .ds-tiny-indicator.ds-phase-scelle { border-left: 3px solid var(--color-phase-scelle, #ff4500); }
+  /* Phase colors follow PHASE_CONFIG (block-writer-types.ts) */
+  .ds-tiny-indicator.ds-phase-seed { border-left: 3px solid var(--color-warning); }
+  .ds-tiny-indicator.ds-phase-sprout { border-left: 3px solid var(--color-info); }
+  .ds-tiny-indicator.ds-phase-go { border-left: 3px solid var(--color-success); }
+  .ds-tiny-indicator.ds-phase-freeze { border-left: 3px solid var(--color-accent); }
+  .ds-tiny-indicator.ds-phase-compost { border-left: 3px solid var(--color-neutral); }
 
   .ds-tiny-id {
     font-family: var(--font-mono, monospace);

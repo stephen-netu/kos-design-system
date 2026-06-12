@@ -156,7 +156,7 @@
     border-right: 1px solid var(--n0-node-border);
     overflow: hidden;
     font-family: var(--font-mono, monospace);
-    color: var(--color-text, #e8e0d0);
+    color: var(--color-text-primary, #e8e0d0);
   }
 
   .n0-palette-search {
@@ -172,7 +172,7 @@
     background: var(--n0-canvas-bg);
     border: 1px solid var(--n0-node-border);
     border-radius: var(--radius-sm, 4px);
-    color: var(--color-text, #e8e0d0);
+    color: var(--color-text-primary, #e8e0d0);
     font-family: inherit;
     font-size: 0.8rem;
     outline: none;

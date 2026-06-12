@@ -117,7 +117,7 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: var(--radius-md, 4px);
-    color: var(--color-text-muted, var(--color-text-muted-token, #6b6558));
+    color: var(--color-text-muted, #6b6558);
     cursor: pointer;
     transition: all 0.15s ease;
   }

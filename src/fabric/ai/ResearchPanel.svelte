@@ -490,9 +490,9 @@
     gap: var(--space-15);
     padding: 6px 16px;
     background: none;
-    border: 1px solid var(--color-danger, #e53935);
+    border: 1px solid var(--color-error, #e53935);
     border-radius: var(--radius-sm, 0.25rem);
-    color: var(--color-danger, #e53935);
+    color: var(--color-error, #e53935);
     font-size: 12px;
     cursor: pointer;
   }

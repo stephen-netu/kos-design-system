@@ -98,7 +98,7 @@
     flex-direction: column;
     height: 100%;
     min-height: 400px;
-    background: var(--color-surface, #1a1a1a);
+    background: var(--color-bg-panel, #1a1a1a);
     border-radius: var(--radius-lg, 8px);
     overflow: hidden;
   }

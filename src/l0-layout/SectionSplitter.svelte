@@ -52,7 +52,7 @@
     justify-content: center;
     cursor: ns-resize;
     background: var(--color-bg-panel, #222);
-    border-top: 1px solid var(--border-color, #333);
+    border-top: 1px solid var(--color-border, #333);
     flex-shrink: 0;
     user-select: none;
     transition: background 0.1s, border-top-color 0.1s;
@@ -60,8 +60,8 @@
 
   .section-splitter:hover,
   .section-splitter--active {
-    background: color-mix(in srgb, var(--accent-primary, var(--color-accent)) 10%, var(--color-bg-panel, #222));
-    border-top-color: var(--accent-primary, var(--color-accent));
+    background: color-mix(in srgb, var(--color-accent) 10%, var(--color-bg-panel, #222));
+    border-top-color: var(--color-accent);
   }
 
   /* Three-line grip — center line via element, top/bottom via box-shadow */
@@ -77,7 +77,7 @@
 
   .section-splitter:hover .section-splitter__grip,
   .section-splitter--active .section-splitter__grip {
-    background: var(--accent-primary, var(--color-accent));
-    box-shadow: 0 -4px 0 var(--accent-primary, var(--color-accent)), 0 4px 0 var(--accent-primary, var(--color-accent));
+    background: var(--color-accent);
+    box-shadow: 0 -4px 0 var(--color-accent), 0 4px 0 var(--color-accent);
   }
 </style>

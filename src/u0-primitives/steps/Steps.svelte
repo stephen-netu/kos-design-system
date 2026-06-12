@@ -93,7 +93,7 @@
     color: var(--color-text-secondary, #a09880);
   }
 
-  .steps[vertical="false"] {
+  .steps:not(.vertical) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -159,7 +159,7 @@
 
   /* Responsive adjustments */
   @media (max-width: 640px) {
-    .steps[vertical="true"] {
+    .steps.vertical {
       flex-direction: column;
       align-items: flex-start;
     }

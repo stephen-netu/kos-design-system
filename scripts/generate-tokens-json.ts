@@ -39,12 +39,15 @@ const CATEGORY_MAP: Record<string, string[]> = {
   '--color-accent-subtle': ['colors', 'accent', 'subtle'],
   '--color-accent-muted': ['colors', 'accent', 'muted'],
   '--color-accent-faint': ['colors', 'accent', 'faint'],
+  '--color-accent-secondary': ['colors', 'accent', 'secondary'],
 
   // colors.status
   '--color-success': ['colors', 'status', 'success'],
   '--color-warning': ['colors', 'status', 'warning'],
   '--color-error': ['colors', 'status', 'error'],
+  '--color-error-bg': ['colors', 'status', 'errorBg'],
   '--color-info': ['colors', 'status', 'info'],
+  '--color-neutral': ['colors', 'status', 'neutral'],
 
   // colors.semantic
   '--color-online': ['colors', 'semantic', 'online'],

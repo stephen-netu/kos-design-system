@@ -121,7 +121,7 @@
 <style>
   .lock-indicator {
     position: relative;
-    background: var(--color-bg-panel, var(--color-bg-panel-token, #181c20));
+    background: var(--color-bg-panel, #181c20);
     border-radius: var(--radius-md, 4px);
     overflow: hidden;
   }

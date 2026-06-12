@@ -12,6 +12,8 @@ export { default as Dropdown } from './dropdown/Dropdown.svelte';
 export { default as Tabs } from './tabs/Tabs.svelte';
 export type { Tab } from './tabs/tabs-types';
 export { default as Spinner } from './spinner/Spinner.svelte';
+export { default as SurfaceState } from './surface-state/SurfaceState.svelte';
+export type { SurfaceStateKind, Props as SurfaceStateProps } from './surface-state/SurfaceState.svelte';
 export { default as Modal } from './modal/Modal.svelte';
 export { default as AnimatedIcon } from './animated-icon/AnimatedIcon.svelte';
 export type { AnimatedIconName, AnimationType } from './animated-icon/index.js';

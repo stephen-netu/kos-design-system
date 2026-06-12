@@ -4,6 +4,12 @@ export { invoke, isTauri, isTauriReady, awaitTauriReady } from './invoke';
 export { createEventBus, type EventBus } from './events';
 export { TransportError, TransportErrorCode } from './error';
 export { createConnectionTracker, type ConnectionState } from './connection';
+export {
+  createSubstrateConnection,
+  type CreateSubstrateConnectionOptions,
+  type SubstrateConnection,
+  type SubstrateState,
+} from './substrate.svelte';
 
 // New from NNJAS port - Connection quality monitoring
 export {

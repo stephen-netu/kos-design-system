@@ -22,16 +22,18 @@ jobs:
           git config http.extraheader "Authorization: Bearer ${{ github.token }}"
           git fetch --depth=1 origin "${{ github.sha }}"
           git checkout FETCH_HEAD
+      - name: setup-pnpm
+        run: npm install -g pnpm@11
       - name: install-deps
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       - name: svelte-check
-        run: npx svelte-check --tsconfig ./tsconfig.json
+        run: pnpm exec svelte-check --tsconfig ./tsconfig.json
       - name: review-guards
         run: |
           node scripts/checks/import-graph.mjs
           node scripts/checks/token-audit.mjs
       - name: build
-        run: npm run build
+        run: pnpm run build
       - name: check-exports
         run: node scripts/checks/check-exports.mjs
       - name: publish
@@ -40,4 +42,4 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-          npm publish --access public
+          pnpm publish --access public --no-git-checks

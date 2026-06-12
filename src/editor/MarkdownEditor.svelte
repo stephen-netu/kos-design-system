@@ -377,7 +377,7 @@
           Close
         </button>
       {/if}
-      {#if !filePath}
+      {#if filePath && persistenceAvailable}
         <button
           class="action-btn primary"
           onclick={saveContent}

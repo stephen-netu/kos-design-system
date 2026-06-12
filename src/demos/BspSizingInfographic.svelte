@@ -168,26 +168,6 @@
     margin-bottom: 32px;
   }
   
-  .debug {
-    margin-top: 16px;
-    padding: 12px;
-    background: var(--color-accent-subtle);
-    border: 1px solid var(--color-accent, var(--color-accent));
-    border-radius: 6px;
-    font-family: monospace;
-    font-size: 12px;
-    text-align: left;
-  }
-  
-  .debug ul {
-    margin: 8px 0;
-    padding-left: 20px;
-  }
-  
-  .debug li {
-    margin: 2px 0;
-  }
-  
   h2 {
     margin: 0 0 8px 0;
     font-size: 24px;
@@ -318,20 +298,9 @@
     width: 100%;
   }
   
-  .mini-title {
-    font-weight: bold;
-    margin-bottom: 2px;
-  }
-  
   .mini-lines {
     color: var(--color-text-muted, #706858);
     font-size: 10px;
-  }
-  
-  .preview-header {
-    font-weight: bold;
-    margin-bottom: 4px;
-    font-size: 11px;
   }
   
   .preview-body {
@@ -350,6 +319,7 @@
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
   }
   
@@ -358,6 +328,7 @@
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 6;
+    line-clamp: 6;
     -webkit-box-orient: vertical;
   }
   

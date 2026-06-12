@@ -261,7 +261,9 @@
               >
                 {entry.title}
               </a>
-              <ExternalLink class="external-icon" size={12} />
+               <span class="external-icon">
+                 <ExternalLink size={12} />
+               </span>
             </div>
             <p class="result-snippet">{entry.snippet}</p>
             <div class="result-footer">
@@ -437,6 +439,7 @@
     margin: 0 0 8px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }

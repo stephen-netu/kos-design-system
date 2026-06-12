@@ -233,7 +233,6 @@
 
   @media (prefers-reduced-motion: reduce) {
     .ds-button { transition: none; }
-    .is-pressed:not(:disabled) { }
     @keyframes ds-button-spin {
       from { transform: translate(-50%, -50%) rotate(0deg); }
       to { transform: translate(-50%, -50%) rotate(360deg); }

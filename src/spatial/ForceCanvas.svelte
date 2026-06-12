@@ -41,19 +41,15 @@
   }: Props = $props();
 
   let canvas: HTMLCanvasElement | undefined = $state();
-  let sim = $state(new ForceSimulation(cells, config));
+  let sim: ForceSimulation | null = $state(null);
   let renderCtx: CanvasRenderContext | null = null;
   let rafId: number | null = null;
 
-  // ── Sync cells/config changes → new simulation ──────────────────────────
-  // We read+write `sim` inside this effect; without untrack(), reassigning
-  // `sim` would invalidate the effect's own dependency and loop forever
-  // (effect_update_depth_exceeded). Touch cells/config to register them as
-  // deps, then mutate sim outside tracking.
+  // ── Initialize + sync cells/config changes → simulation ──────────────────
   $effect(() => {
     cells; config;
     untrack(() => {
-      sim.stop();
+      sim?.stop();
       sim = new ForceSimulation(cells, config);
       if (canvas) runLayout();
     });
@@ -68,7 +64,7 @@
   // ── Notify LodRenderer of position changes (backward compat) ────────────
 
   $effect(() => {
-    if (sim.positions.length > 0) {
+      if (sim && sim.positions.length > 0) {
       onPositionsUpdate?.(sim.positions);
     }
   });
@@ -76,7 +72,7 @@
   // ── Lifecycle phases ─────────────────────────────────────────────────────
 
   function runLayout() {
-    if (!canvas || !active) return;
+    if (!canvas || !active || !sim) return;
 
     // Phase 1: constrain (advisory only — canvas is given explicit width/height)
     const constraintCtx: ConstraintContext = {
@@ -111,15 +107,15 @@
   function startRaf() {
     if (rafId !== null) return;
     function frame() {
-      if (!renderCtx) return;
-      sim.render(renderCtx);
+      if (!renderCtx || !sim) return;
+      sim?.render(renderCtx);
       renderCtx.flush();
       rafId = requestAnimationFrame(frame);
     }
     const reduceMotion = typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion) {
-      if (renderCtx) {
+      if (renderCtx && sim) {
         sim.render(renderCtx);
         renderCtx.flush();
       }
@@ -131,6 +127,7 @@
   // ── Click → interact phase ───────────────────────────────────────────────
 
   function handleClick(e: MouseEvent) {
+    if (!sim) return;
     for (const pos of sim.positions) {
       const r = pos.radius + 4;
       const dx = e.offsetX - pos.x;
@@ -145,7 +142,7 @@
   onMount(() => { if (active) runLayout(); });
   onDestroy(() => {
     if (rafId !== null) cancelAnimationFrame(rafId);
-    sim.stop();
+    sim?.stop();
   });
 </script>
 

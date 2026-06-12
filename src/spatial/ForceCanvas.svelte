@@ -112,10 +112,18 @@
     if (rafId !== null) return;
     function frame() {
       if (!renderCtx) return;
-      // Phase 4: render — flush sim positions to canvas
       sim.render(renderCtx);
       renderCtx.flush();
       rafId = requestAnimationFrame(frame);
+    }
+    const reduceMotion = typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      if (renderCtx) {
+        sim.render(renderCtx);
+        renderCtx.flush();
+      }
+      return;
     }
     rafId = requestAnimationFrame(frame);
   }

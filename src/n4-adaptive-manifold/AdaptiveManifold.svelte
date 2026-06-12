@@ -18,10 +18,11 @@
     ResolvedThemeColors,
     NodeIndicatorState,
     PhaseTheme,
+    NodeLayout,
   } from './types.js';
   import { DEFAULT_LAYOUT_PREFERENCES } from './types.js';
   import { resolvePhaseTheme, DEFAULT_PHASE_THEME } from './phase-theme.js';
-  import type { NodeLayout } from '../n1-flow-canvas/types.js';
+  import { getCanvasTheme } from '../p0-primitives/canvas-theme';
   import { LayoutOrchestrator } from './orchestrator.js';
   import { ManifoldProvider } from './providers/manifold-provider.js';
   import { GravitationalProvider } from './providers/gravitational-provider.js';
@@ -90,18 +91,18 @@
 
   let containerEl: HTMLDivElement | undefined = $state(undefined);
   let colors: ResolvedThemeColors = $state({
-    canvasBg: '#1a1a1a',
-    nodeActive: '#b87333',
-    nodeIdle: '#a09880',
+    canvasBg: getCanvasTheme().bg,
+    nodeActive: getCanvasTheme().nodeBorder,
+    nodeIdle: getCanvasTheme().nodeText,
     nodeBlocked: '#f39c12',
-    nodeCompleted: '#a09880',
+    nodeCompleted: getCanvasTheme().nodeText,
     nodeCritical: '#c0392b',
-    nodeBg: '#222',
-    nodeBorder: 'rgba(184, 115, 51, 0.15)',
-    nodeText: '#e8e0d0',
-    edgeColor: 'rgba(184, 115, 51, 0.25)',
-    edgeActive: '#b87333',
-    pulseColor: '#b87333',
+    nodeBg: getCanvasTheme().node,
+    nodeBorder: getCanvasTheme().edgeFade,
+    nodeText: getCanvasTheme().nodeText,
+    edgeColor: getCanvasTheme().edgeFade,
+    edgeActive: getCanvasTheme().nodeBorder,
+    pulseColor: getCanvasTheme().nodeBorder,
     pulseCritical: '#c0392b',
   });
 

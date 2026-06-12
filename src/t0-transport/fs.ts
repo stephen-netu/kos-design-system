@@ -27,10 +27,21 @@ export class FsUnavailableError extends Error {
 	}
 }
 
-async function loadFs(operation: string): Promise<typeof import('@tauri-apps/plugin-fs')> {
+interface TauriFsPlugin {
+	readTextFile(path: string, options?: unknown): Promise<string>;
+	writeTextFile(path: string, contents: string, options?: unknown): Promise<void>;
+	stat(path: string): Promise<{ mtime: Date | string | number | null; [key: string]: unknown }>;
+}
+
+async function loadFs(operation: string): Promise<TauriFsPlugin> {
 	if (!isTauri()) throw new FsUnavailableError(operation);
 	try {
-		return await import('@tauri-apps/plugin-fs');
+		// @tauri-apps/plugin-fs is an optional peer. Using an indirect specifier
+		// so TypeScript and bundlers treat this as a fully dynamic import — no
+		// static module resolution, no build-time error on missing package.
+		const spec = '@tauri-apps/plugin-fs';
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return await (import(/* @vite-ignore */ spec) as Promise<any>) as TauriFsPlugin;
 	} catch (cause) {
 		throw new FsUnavailableError(operation, cause);
 	}

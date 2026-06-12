@@ -8,6 +8,8 @@ export { getCanvasTheme } from './canvas-theme';
 
 // Theme system
 export { default as ThemeProvider } from './ThemeProvider.svelte';
+export { provideThemeStore, THEME_STORE_KEY } from './theme-context';
+export type { ThemeStoreLike } from './theme-context';
 export type { ThemeMode, ThemeConfig } from './ThemeProvider.svelte';
 export { createTheme, defaultLightTheme, defaultDarkTheme, brassAccentTheme } from './theme';
 

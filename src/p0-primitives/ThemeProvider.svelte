@@ -4,13 +4,12 @@
    *
    * Runtime theme management for KOS Design System.
    * Provides light/dark/auto modes and custom theme overrides.
-   * Wraps the singleton ThemeStore for component-level integration.
+   * Receives theme store via Svelte context (set by s0-state or app layer).
    *
    * @package @kos/design-system/p0-primitives
    */
   import type { Snippet } from 'svelte';
-  import { onMount } from 'svelte';
-  import { themeStore, initThemeStore, type ThemeName } from '../s0-state/ThemeStore.svelte';
+  import { getThemeStore, THEME_STORE_KEY, type ThemeStoreLike } from './theme-context';
 
   export type ThemeMode = 'light' | 'dark' | 'auto';
 
@@ -81,14 +80,14 @@
 
   let { mode, theme, children }: Props = $props();
 
-  initThemeStore();
+  const store = getThemeStore();
 
-  const THEME_MAP: Record<Exclude<ThemeMode, 'auto'>, ThemeName> = {
+  const THEME_MAP: Record<Exclude<ThemeMode, 'auto'>, string> = {
     dark: 'dark',
     light: 'light',
   };
 
-  function resolveMode(): ThemeName {
+  function resolveMode(): string {
     if (mode === 'auto') {
       if (typeof window === 'undefined') return 'dark';
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -97,7 +96,7 @@
   }
 
   $effect(() => {
-    themeStore.setTheme(resolveMode());
+    store.setTheme(resolveMode());
   });
 
   function generateCSSVariables(t: ThemeConfig | undefined): string {
@@ -165,10 +164,10 @@
 
 <div
   class="theme-provider"
-  class:mode-dark={themeStore.theme === 'dark'}
-  class:mode-light={themeStore.theme === 'light'}
-  data-theme={themeStore.theme}
-  data-theme-mode={themeStore.theme}
+  class:mode-dark={store.theme === 'dark'}
+  class:mode-light={store.theme === 'light'}
+  data-theme={store.theme}
+  data-theme-mode={store.theme}
   style={customStyles}
 >
   {@render children()}

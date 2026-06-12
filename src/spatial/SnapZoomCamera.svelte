@@ -65,6 +65,13 @@
     runPhases();
   });
 
+  $effect(() => {
+    void width;
+    void height;
+    void config;
+    runPhases();
+  });
+
   // ── Interaction forwarding ────────────────────────────────────────────────
 
   let wheelRafId: number | null = null;

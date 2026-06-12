@@ -28,14 +28,21 @@
   --color-card-text-secondary: #a8a08c;
   --color-card-text-tertiary: #6b6558;
 
-  /* --- Accent (default: brass, user-controllable via --accent-*) --- */
-  --color-accent: var(--accent-primary, #b87333);
-  --color-accent-hover: var(--accent-hover, #d4892f);
-  --color-accent-active: var(--accent-active, #8a5526);
-   --color-accent-glow: var(--accent-glow, rgba(184, 115, 51, 0.28));
-   --color-accent-muted: var(--accent-muted, rgba(184, 115, 51, 0.16));
-   --color-accent-subtle: var(--accent-subtle, rgba(184, 115, 51, 0.08));
-   --color-accent-faint: var(--accent-faint, rgba(184, 115, 51, 0.04));
+   /* --- Accent (default: brass, user-controllable via --accent-*) --- */
+   --accent-primary: #b87333;
+   --accent-hover: #d4892f;
+   --accent-active: #8a5526;
+   --accent-glow: rgba(184, 115, 51, 0.28);
+   --accent-muted: rgba(184, 115, 51, 0.16);
+   --accent-subtle: rgba(184, 115, 51, 0.08);
+   --accent-faint: rgba(184, 115, 51, 0.04);
+   --color-accent: var(--accent-primary);
+   --color-accent-hover: var(--accent-hover);
+   --color-accent-active: var(--accent-active);
+   --color-accent-glow: var(--accent-glow);
+   --color-accent-muted: var(--accent-muted);
+   --color-accent-subtle: var(--accent-subtle);
+   --color-accent-faint: var(--accent-faint);
    --color-accent-secondary: #d4a574;  /* Companion warm tone (n4 kind colors) */
 
    /* Overlay levels — white opacity ramps for borders, backgrounds, hover states */

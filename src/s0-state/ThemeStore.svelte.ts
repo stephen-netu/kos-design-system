@@ -1,4 +1,5 @@
-import { onMount } from 'svelte';
+import { onMount, setContext } from 'svelte';
+import { THEME_STORE_KEY, type ThemeStoreLike } from '../p0-primitives/theme-context';
 
 export type ThemeName = 'dark' | 'light' | 'control-room';
 
@@ -57,7 +58,12 @@ class ThemeStore {
 
 export const themeStore = new ThemeStore();
 
+export function provideThemeStoreContext(): void {
+  setContext(THEME_STORE_KEY, themeStore as ThemeStoreLike);
+}
+
 export function initThemeStore(): void {
+  provideThemeStoreContext();
   onMount(() => {
     themeStore.syncFromDOM();
     const stored = getStoredTheme();

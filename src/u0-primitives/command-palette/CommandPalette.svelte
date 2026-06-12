@@ -269,9 +269,15 @@
           ? getParameterPlaceholder(currentParam)
           : placeholder}
         disabled={isExecuting}
+        role="combobox"
         aria-autocomplete="list"
         aria-controls="suggestions-list"
         aria-expanded={filteredCommands.length > 0 || suggestions.length > 0}
+        aria-activedescendant={!activeCommand && filteredCommands.length > 0
+          ? `command-opt-${selectedIndex}`
+          : activeCommand && suggestions.length > 0
+            ? `suggestion-opt-${selectedIndex}`
+            : undefined}
       />
       
       {#if isExecuting}
@@ -289,6 +295,7 @@
       >
         {#each filteredCommands as cmd, i (cmd.id)}
           <li 
+            id="command-opt-${i}"
             role="option"
             aria-selected={i === selectedIndex}
             class:selected={i === selectedIndex}
@@ -316,6 +323,7 @@
       >
         {#each suggestions as sug, i (sug)}
           <li 
+            id="suggestion-opt-${i}"
             role="option"
             aria-selected={i === selectedIndex}
             class:selected={i === selectedIndex}

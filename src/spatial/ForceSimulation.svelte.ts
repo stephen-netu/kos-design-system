@@ -9,7 +9,9 @@ import type { Lifecycle } from '../s0-lifecycle/Lifecycle';
 import type { ConstraintContext, SizeConstraints } from '../s0-lifecycle/ConstraintContext';
 import type { LayoutContext } from '../s0-lifecycle/LayoutContext';
 import type { RenderContext } from '../s0-lifecycle/RenderContext';
-import type { ForceCell, CellPosition, ForceCanvasConfig } from './force-canvas-types';
+import type { ForceCell, CellPosition, ForceCanvasConfig, ForceLink } from './force-canvas-types';
+import type { D3Simulation, D3ForceLink, D3SimulationNode } from './d3-types';
+import { toD3Node, toD3Link } from './d3-types';
 import { weightToRadius, cosineSimilarity, semanticSpringLength } from './force-canvas-types';
 
 const MIN_ZONE_PAD = 40;
@@ -20,7 +22,7 @@ export class ForceSimulation implements Lifecycle {
 
   private cells: ForceCell[] = [];
   private config: ForceCanvasConfig | undefined;
-  private simulation: any = null;
+  private simulation: D3Simulation<D3SimulationNode> | null = null;
   private boundsWidth = 0;
   private boundsHeight = 0;
   private generation = 0;
@@ -71,8 +73,8 @@ export class ForceSimulation implements Lifecycle {
       return;
     }
 
-    const d3 = await import('d3-force');
-    if (gen !== this.generation) return; // superseded by a newer layout call
+    const d3Mod = await import('d3-force');
+    if (gen !== this.generation) return;
     const cfg = this.config;
     const w = this.boundsWidth;
     const h = this.boundsHeight;
@@ -87,39 +89,50 @@ export class ForceSimulation implements Lifecycle {
     const cx = w / 2;
     const cy = h / 2;
 
-    for (const cell of this.cells) {
+    const nodes = this.cells.map((cell, i): D3SimulationNode => {
       if (cell.x === undefined) {
-        // Deterministic initial placement: spiral by index
-        cell.x = cx + (cell.index ?? 0) * 3;
-        cell.y = cy + (cell.index ?? 0) * 2;
+        cell.x = cx + (cell.index ?? i) * 3;
+        cell.y = cy + (cell.index ?? i) * 2;
       }
-    }
+      return toD3Node(cell);
+    });
 
-    const links = this.buildLinks();
+    const links = this.buildLinks().map(toD3Link);
 
-    this.simulation = d3
-      .forceSimulation(this.cells as any)
+    const sim = d3Mod.forceSimulation(nodes)
       .alphaDecay(0.02)
       .velocityDecay(velocityDecay)
-      .force('charge', d3.forceManyBody().strength(chargeStrength))
-      .force('collision', d3.forceCollide<ForceCell>().radius((d: ForceCell) => weightToRadius(d.weight) + collisionPadding))
-      .force('link', d3.forceLink(links as any).id((d: any) => d.id)
-        .distance((l: any) => semanticSpringLength(1 - l.distance, minSpring, maxSpring))
+      .force('charge', d3Mod.forceManyBody().strength(chargeStrength))
+      .force('collision', d3Mod.forceCollide<D3SimulationNode>().radius((d) => {
+        const cell = this.cells.find((c) => c.id === d.id);
+        return cell ? weightToRadius(cell.weight) + collisionPadding : collisionPadding + 8;
+      }))
+      .force('link', d3Mod.forceLink<D3SimulationNode, D3ForceLink>(links).id((d) => d.id)
+        .distance((l) => semanticSpringLength(1 - (l.distance ?? 0.5), minSpring, maxSpring))
         .strength(0.5))
-      .force('center', d3.forceCenter(cx, cy).strength(0.03))
+      .force('center', d3Mod.forceCenter(cx, cy).strength(0.03))
       .force('wall', this.wallForce(w, h, wallMargin, wallStrength))
       .on('tick', () => {
-        this.positions = this.cells.map((c) => ({
-          x: c.x ?? cx,
-          y: c.y ?? cy,
-          radius: weightToRadius(c.weight),
-          cell: c,
-        }));
+        this.positions = nodes.map((n) => {
+          const cell = this.cells.find((c) => c.id === n.id)!;
+          return {
+            x: n.x ?? cx,
+            y: n.y ?? cy,
+            radius: weightToRadius(cell.weight),
+            cell,
+          };
+        });
       });
+
+    if (gen !== this.generation) {
+      sim.stop();
+      return;
+    }
+    this.simulation = sim;
   }
 
-  private buildLinks(): unknown[] {
-    const links: Array<{ source: string; target: string; distance: number }> = [];
+  private buildLinks(): ForceLink[] {
+    const links: ForceLink[] = [];
     const THRESHOLD = 0.3;
     for (let i = 0; i < this.cells.length; i++) {
       for (let j = i + 1; j < this.cells.length; j++) {

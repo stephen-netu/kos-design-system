@@ -1,11 +1,18 @@
 <script lang="ts">
-  import mermaid from 'mermaid';
   import type { DiagramSpec, RenderOptions } from './types';
 
-  mermaid.initialize({
-    securityLevel: 'strict',
-    startOnLoad: false,
-  });
+  let mermaidModule: typeof import('mermaid') | null = null;
+
+  async function getMermaid() {
+    if (!mermaidModule) {
+      mermaidModule = await import('mermaid');
+      mermaidModule.default.initialize({
+        securityLevel: 'strict',
+        startOnLoad: false,
+      });
+    }
+    return mermaidModule.default;
+  }
 
   let { spec, options = {} }: {
     spec: DiagramSpec;
@@ -19,6 +26,7 @@
   });
 
   async function renderDiagram(s: DiagramSpec, opts: RenderOptions) {
+    const mermaid = await getMermaid();
     const id = `mermaid-${crypto.randomUUID()}`;
     const { svg } = await mermaid.render(id, s.source);
     svgContent = svg;

@@ -38,7 +38,8 @@ export function isTauri(): boolean {
  * Use for conditional rendering. Use awaitTauriReady() for init paths.
  */
 export function isTauriReady(): boolean {
-  return typeof window !== 'undefined' && (window as any).__TAURI_INTERNALS__ != null;
+  if (typeof window === 'undefined') return false;
+  return (window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ != null;
 }
 
 /**

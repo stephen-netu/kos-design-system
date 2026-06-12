@@ -56,29 +56,36 @@
   let previouslyFocusedElement: Element | null = null;
   let isVisible = $state(false);
   const modalId = `modal-${Math.random().toString(36).slice(2, 9)}`;
+  let focusRestoreTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Handle isOpen changes with animation delay
   $effect(() => {
     if (isOpen) {
-      // Store previously focused element
+      if (focusRestoreTimer !== null) {
+        clearTimeout(focusRestoreTimer);
+        focusRestoreTimer = null;
+      }
       previouslyFocusedElement = document.activeElement;
-      // Show modal (triggers CSS transition)
       isVisible = true;
-      // Focus management after render
       tick().then(() => {
         modalElement?.focus();
         trapFocus();
       });
     } else {
-      // Hide modal (triggers CSS transition)
       isVisible = false;
-      // Restore focus after transition
-      setTimeout(() => {
+      focusRestoreTimer = setTimeout(() => {
+        focusRestoreTimer = null;
         if (previouslyFocusedElement instanceof HTMLElement) {
           previouslyFocusedElement.focus();
         }
       }, 150);
     }
+    return () => {
+      if (focusRestoreTimer !== null) {
+        clearTimeout(focusRestoreTimer);
+        focusRestoreTimer = null;
+      }
+    };
   });
 
   function handleClose() {

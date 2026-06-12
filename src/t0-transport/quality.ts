@@ -31,7 +31,7 @@ export interface QualityMonitor {
 
 const SAMPLE_WINDOW = 60; // 60 seconds of history
 const PING_INTERVAL = 5000; // Ping every 5 seconds
-const MAX_HISTORY = 12; // Keep last 12 samples
+const MAX_HISTORY = Math.max(12, Math.ceil(SAMPLE_WINDOW * 1000 / PING_INTERVAL)); // 60s window → 12 samples at 5s interval
 
 let metrics: QualityMetrics = {
   latency: null,
@@ -120,6 +120,10 @@ export function startQualityMonitoring(): void {
           lost: true
         });
         pingStartTime = null;
+        // Trim to bounded size — interval runs every 1s so history can grow fast
+        if (metrics.history.length > MAX_HISTORY) {
+          metrics.history = metrics.history.slice(-MAX_HISTORY);
+        }
         updateMetrics();
       }
     }

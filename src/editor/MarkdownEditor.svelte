@@ -18,8 +18,7 @@
   import { markdown } from '@codemirror/lang-markdown';
   import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
   import { search } from '@codemirror/search';
-  import { writeFile, readFile } from '../tauri';
-  import { vaultStore } from '../stores/vaultStore.svelte';
+  import { writeTextFile, readTextFile, getMtimeMs, isTauri } from '../t0-transport/fs';
   import FindReplaceDialog from './FindReplaceDialog.svelte';
   import { autoFormat } from './extensions/autoformat';
   import { expansion } from './extensions/expansion';
@@ -50,10 +49,15 @@
   // Auto-save
   let autoSaveTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  // Persistence backend (T0 transport). Static per session: without a Tauri
+  // host there is no file backend, and the UI must say so instead of "Saved".
+  const persistenceAvailable = isTauri();
+
   // External change detection
   let showExternalChangeDialog = $state(false);
   let externalChangeCheckInterval: ReturnType<typeof setInterval> | null = null;
   let isCheckingExternalChanges = $state(false);
+  let lastKnownMtimeMs: number | null = null;
   
   // CodeMirror instance
   let editorContainer: HTMLDivElement;
@@ -65,8 +69,9 @@
   // Computed
   let fileName = $derived(filePath?.split('/').pop() || filePath || 'Untitled');
   let saveStatus = $derived(
-    isSaving ? 'Saving...' : 
-    saveError ? 'Error!' : 
+    isSaving ? 'Saving...' :
+    saveError ? 'Error!' :
+    filePath && !persistenceAvailable ? 'Not persisted' :
     isDirty ? 'Unsaved' : 'Saved'
   );
 
@@ -111,43 +116,43 @@
   // Custom dark theme matching Atelier - uses CSS variables via style injection
   const atelierTheme = EditorView.theme({
     '&': {
-      backgroundColor: 'var(--bg-canvas)',
-      color: 'var(--text-primary)',
+      backgroundColor: 'var(--color-bg-canvas)',
+      color: 'var(--color-text-primary)',
       fontSize: '14px',
       fontFamily: "var(--font-mono)"
     },
     '.cm-content': {
-      caretColor: 'var(--accent-primary)',
+      caretColor: 'var(--color-accent)',
       padding: '16px'
     },
     '.cm-cursor': {
-      borderLeftColor: 'var(--accent-primary)'
+      borderLeftColor: 'var(--color-accent)'
     },
     '.cm-activeLine': {
-      backgroundColor: 'var(--accent-subtle)'
+      backgroundColor: 'var(--color-accent-subtle)'
     },
     '.cm-gutters': {
-      backgroundColor: 'var(--bg-app)',
+      backgroundColor: 'var(--color-bg-app)',
       borderRight: '1px solid var(--border-subtle)',
-      color: 'var(--text-tertiary)'
+      color: 'var(--color-text-tertiary)'
     },
     '.cm-activeLineGutter': {
-      backgroundColor: 'var(--accent-subtle)',
-      color: 'var(--accent-primary)'
+      backgroundColor: 'var(--color-accent-subtle)',
+      color: 'var(--color-accent)'
     },
     '.cm-selectionBackground': {
-      backgroundColor: 'var(--accent-subtle)'
+      backgroundColor: 'var(--color-accent-subtle)'
     }
   }, { dark: true });
 
-  // Check for external file changes
+  // Check for external file changes (mtime-based via T0 transport)
   async function checkExternalChanges() {
-    if (!filePath || isCheckingExternalChanges || showExternalChangeDialog || !isDirty) return;
-    
+    if (!filePath || !persistenceAvailable || isCheckingExternalChanges || showExternalChangeDialog || !isDirty) return;
+
     isCheckingExternalChanges = true;
     try {
-      const hasChanged = await vaultStore.hasFileChangedExternally(filePath);
-      if (hasChanged) {
+      const mtime = await getMtimeMs(filePath);
+      if (mtime !== null && lastKnownMtimeMs !== null && mtime > lastKnownMtimeMs) {
         showExternalChangeDialog = true;
       }
     } catch (err) {
@@ -163,8 +168,8 @@
     if (!filePath) return;
     
     try {
-      const newContent = await readFile(filePath);
-      
+      const newContent = await readTextFile(filePath);
+
       // Update editor content
       if (editorView) {
         editorView.dispatch({
@@ -175,18 +180,17 @@
           }
         });
       }
-      
+
       content = newContent;
       isDirty = false;
       saveError = null;
-      
+
       // Notify parent
       onExternalChange?.(newContent);
       onChange?.(newContent);
-      
-      // Update tracked state in vaultStore
-      const modifiedAt = await vaultStore.getFileModifiedTime(filePath);
-      vaultStore.updateFileState(filePath, newContent, modifiedAt);
+
+      // Update tracked modification time
+      try { lastKnownMtimeMs = await getMtimeMs(filePath); } catch { /* keep prior value */ }
     } catch (err) {
       console.error('Failed to reload file:', err);
       saveError = err instanceof Error ? err.message : 'Failed to reload file';
@@ -253,7 +257,13 @@
       parent: editorContainer
     });
 
-    // Start external change detection polling (every 2 seconds)
+    // Seed the tracked modification time, then start external change
+    // detection polling (every 2 seconds). Skipped without a backend.
+    if (filePath && persistenceAvailable) {
+      getMtimeMs(filePath)
+        .then((m) => { lastKnownMtimeMs = m; })
+        .catch(() => { /* file may not exist yet */ });
+    }
     externalChangeCheckInterval = setInterval(checkExternalChanges, 2000);
     
     // Also check when window regains focus
@@ -300,18 +310,21 @@
   // Save file
   async function saveContent() {
     if (!isDirty || isSaving || !filePath) return;
-    
+
+    // No backend → no write. The status chip reads "Not persisted"; do not
+    // mark clean or fire onSave, and never pretend the save succeeded.
+    if (!persistenceAvailable) return;
+
     isSaving = true;
     saveError = null;
-    
+
     try {
-      await writeFile(filePath, content);
+      await writeTextFile(filePath, content);
       isDirty = false;
       onSave?.();
-      
+
       // Update tracked modification time after save
-      const modifiedAt = await vaultStore.getFileModifiedTime(filePath);
-      vaultStore.updateFileState(filePath, content, modifiedAt);
+      try { lastKnownMtimeMs = await getMtimeMs(filePath); } catch { /* keep prior value */ }
     } catch (err) {
       saveError = err instanceof Error ? err.message : String(err);
       console.error('Failed to save file:', err);
@@ -437,8 +450,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: var(--bg-canvas, #141414);
-    color: var(--text-primary, #f5f2eb);
+    background: var(--color-bg-canvas, #141414);
+    color: var(--color-text-primary, #f5f2eb);
   }
 
   .editor-header {
@@ -447,7 +460,7 @@
     justify-content: space-between;
     padding: 12px 16px;
     border-bottom: 1px solid var(--border-subtle, #2a2a2a);
-    background: var(--bg-panel, #1a1a1a);
+    background: var(--color-bg-panel, #1a1a1a);
   }
 
   .file-info {
@@ -463,11 +476,11 @@
 
   .save-status {
     font-size: 12px;
-    color: var(--text-tertiary, #6b6b6b);
+    color: var(--color-text-tertiary, #6b6b6b);
   }
 
   .save-status.dirty {
-    color: var(--accent-primary, var(--color-accent));
+    color: var(--color-accent);
   }
 
   .save-status.error {
@@ -482,8 +495,8 @@
   .action-btn {
     padding: 6px 12px;
     border: 1px solid var(--border-subtle, #2a2a2a);
-    background: var(--bg-panel-elevated, #252525);
-    color: var(--text-secondary, #a0a0a0);
+    background: var(--color-bg-panel-elevated, #252525);
+    color: var(--color-text-secondary, #a0a0a0);
     border-radius: var(--radius-sm, 4px);
     cursor: pointer;
     font-size: 13px;
@@ -492,23 +505,23 @@
 
   .action-btn:hover {
     background: var(--border-subtle);
-    color: var(--text-primary, #f5f2eb);
+    color: var(--color-text-primary, #f5f2eb);
   }
 
   .action-btn.active {
-    background: var(--accent-subtle, var(--color-accent-muted));
-    color: var(--accent-primary, var(--color-accent));
-    border-color: var(--accent-primary, var(--color-accent));
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
   }
 
   .action-btn.primary {
-    background: var(--accent-primary, var(--color-accent));
+    background: var(--color-accent);
     color: white;
-    border-color: var(--accent-primary, var(--color-accent));
+    border-color: var(--color-accent);
   }
 
   .action-btn.primary:hover {
-    background: var(--accent-hover, #c9843d);
+    background: var(--color-accent-hover, #c9843d);
   }
 
   .action-btn:disabled {
@@ -543,7 +556,7 @@
   .preview-pane {
     border-left: 1px solid var(--border-subtle, #2a2a2a);
     overflow-y: auto;
-    background: var(--bg-panel, #1a1a1a);
+    background: var(--color-bg-panel, #1a1a1a);
   }
 
   .preview-content {
@@ -564,7 +577,7 @@
   }
 
   .preview-content :global(code) {
-    background: var(--bg-panel-elevated, #252525);
+    background: var(--color-bg-panel-elevated, #252525);
     padding: 2px 6px;
     border-radius: var(--radius-sm, 3px);
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
@@ -572,7 +585,7 @@
   }
 
   .preview-content :global(pre) {
-    background: var(--bg-panel-elevated, #252525);
+    background: var(--color-bg-panel-elevated, #252525);
     padding: 12px;
     border-radius: var(--radius-md, 6px);
     overflow-x: auto;
@@ -595,15 +608,15 @@
   }
 
   .preview-content :global(blockquote) {
-    border-left: 3px solid var(--accent-primary);
+    border-left: 3px solid var(--color-accent);
     padding-left: 12px;
     margin-left: 0;
     margin-bottom: 12px;
-    color: var(--text-secondary);
+    color: var(--color-text-secondary);
   }
 
   .preview-content :global(a) {
-    color: var(--accent-primary);
+    color: var(--color-accent);
     text-decoration: none;
   }
 
@@ -630,7 +643,7 @@
   }
 
   .dialog {
-    background: var(--bg-panel, #1a1a1a);
+    background: var(--color-bg-panel, #1a1a1a);
     border: 1px solid var(--border-subtle, #2a2a2a);
     border-radius: var(--radius-lg, 8px);
     min-width: 400px;
@@ -647,7 +660,7 @@
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: var(--text-primary, #f5f2eb);
+    color: var(--color-text-primary, #f5f2eb);
   }
 
   .dialog-body {
@@ -656,7 +669,7 @@
 
   .dialog-body p {
     margin: 0 0 12px 0;
-    color: var(--text-secondary, #a0a0a0);
+    color: var(--color-text-secondary, #a0a0a0);
     font-size: 14px;
     line-height: 1.5;
   }

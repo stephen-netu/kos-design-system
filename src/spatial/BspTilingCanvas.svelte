@@ -34,18 +34,18 @@
 
   // ── Simulation (reactive) ────────────────────────────────────────────────
 
-   let sim: BspTilingSimulation | null = $state(null);
+  let sim: BspTilingSimulation | null = $state(null);
 
-   $effect(() => {
-     const c = cards;
-     const w = containerWidth;
-     const h = containerHeight;
-     untrack(() => {
-       sim = new BspTilingSimulation(c, w, h);
-       runLayout();
-       paintCanvas();
-     });
-   });
+  $effect(() => {
+    const c = cards;
+    const w = containerWidth;
+    const h = containerHeight;
+    untrack(() => {
+      sim = new BspTilingSimulation(c, w, h);
+      runLayout();
+      paintCanvas();
+    });
+  });
 
   // ── Canvas + Lifecycle contexts ───────────────────────────────────────────
 
@@ -79,13 +79,13 @@
     };
   }
 
-   function runLayout(): void {
-     if (!sim) return;
-     const cc = makeConstraintContext();
-     const lc = makeLayoutContext();
-     sim.constrain(cc);
-     sim.layout(lc);
-   }
+  function runLayout(): void {
+    if (!sim) return;
+    const cc = makeConstraintContext();
+    const lc = makeLayoutContext();
+    sim.constrain(cc);
+    sim.layout(lc);
+  }
 
   function makeInteractionContext(e: PointerEvent, target: HTMLElement): InteractionContext {
     const rect = target.getBoundingClientRect();
@@ -111,20 +111,20 @@
     };
   }
 
-   function paintCanvas(): void {
-     if (!canvasCtx || !sim) return;
-     sim.render(canvasCtx);
-     canvasCtx.flush();
-   }
+  function paintCanvas(): void {
+    if (!canvasCtx || !sim) return;
+    sim.render(canvasCtx);
+    canvasCtx.flush();
+  }
 
   // ── Event handlers ────────────────────────────────────────────────────────
 
-   function handlePointerDown(e: PointerEvent): void {
-     if (!sim) return;
-     const target = e.currentTarget as HTMLElement;
-     const ctx = makeInteractionContext(e, target);
-     sim.interact(ctx);
-   }
+  function handlePointerDown(e: PointerEvent): void {
+    if (!sim) return;
+    const target = e.currentTarget as HTMLElement;
+    const ctx = makeInteractionContext(e, target);
+    sim.interact(ctx);
+  }
 
   onMount(() => {
     if (!canvasEl) return;
@@ -138,8 +138,6 @@
       ctx2d.scale(dpr, dpr);
     }
     canvasCtx = new CanvasRenderContext(canvasEl);
-    runLayout();
-    paintCanvas();
   });
 </script>
 
@@ -151,7 +149,7 @@
     aria-hidden="true"
   ></canvas>
 
-   {#each (sim?.positions ?? []) as zone (zone.cardId)}
+  {#each (sim?.positions ?? []) as zone (zone.cardId)}
     <div
       class="tiling-slot"
       style:left="{zone.x}px"

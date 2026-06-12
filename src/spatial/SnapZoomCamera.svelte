@@ -4,7 +4,7 @@
   // Renders via CSS transforms on a wrapper div
 
   import type { Snippet } from 'svelte';
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, untrack } from 'svelte';
   import { CameraController } from './CameraController.svelte.js';
   import type { CameraState, SnapZoomTarget, CameraConfig } from './camera-types.js';
   import type { InteractionContext } from '../s0-lifecycle/InteractionContext.js';
@@ -27,8 +27,21 @@
     onCameraChange,
   }: Props = $props();
 
-  const controller = $state(new CameraController(width, height, config));
-  const cameraState: CameraState = $derived(controller.getCameraState());
+  let controller = $state<CameraController | null>(null);
+  const cameraState: CameraState = $derived(controller?.getCameraState() ?? { zoom: 1, panX: 0, panY: 0 });
+  const panX = $derived(controller?.panX ?? 0);
+  const panY = $derived(controller?.panY ?? 0);
+  const zoom = $derived(controller?.zoom ?? 1);
+
+  $effect(() => {
+    void width;
+    void height;
+    void config;
+    untrack(() => {
+      controller = new CameraController(width, height, config);
+      runPhases();
+    });
+  });
 
   $effect(() => {
     onCameraChange?.(cameraState);
@@ -37,6 +50,7 @@
   // ── Contexts for lifecycle phases ─────────────────────────────────────────
 
   function runPhases(): void {
+    if (!controller) return;
     controller.constrain({
       available: {
         width: { min: width, preferred: width, max: width },
@@ -61,24 +75,13 @@
     });
   }
 
-  onMount(() => {
-    runPhases();
-  });
-
-  $effect(() => {
-    void width;
-    void height;
-    void config;
-    runPhases();
-  });
-
   // ── Interaction forwarding ────────────────────────────────────────────────
 
   let wheelRafId: number | null = null;
   let pendingWheelEvent: WheelEvent | null = null;
 
   onDestroy(() => {
-    controller.stop();
+    controller?.stop();
     if (wheelRafId !== null) cancelAnimationFrame(wheelRafId);
   });
 
@@ -127,14 +130,14 @@
       pendingWheelEvent = null;
       if (evt) {
         const ctx = makeInteractionContext(evt);
-        controller.interact(ctx);
+        controller?.interact(ctx);
       }
     });
   }
 
   function handlePointerDown(e: PointerEvent) {
     const ctx = makeInteractionContext(e);
-    const outcome = controller.interact(ctx);
+    const outcome = controller?.interact(ctx);
     if (outcome === 'consumed') {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     }
@@ -142,12 +145,12 @@
 
   function handlePointerMove(e: PointerEvent) {
     const ctx = makeInteractionContext(e);
-    controller.interact(ctx);
+    controller?.interact(ctx);
   }
 
   function handlePointerUp(e: PointerEvent) {
     const ctx = makeInteractionContext(e);
-    controller.interact(ctx);
+    controller?.interact(ctx);
   }
 </script>
 
@@ -164,7 +167,7 @@
 >
   <div
     class="camera-viewport"
-    style:transform="translate({controller.panX}px, {controller.panY}px) scale({controller.zoom})"
+    style:transform="translate({panX}px, {panY}px) scale({zoom})"
     style:transform-origin="0 0"
   >
     {@render children(cameraState)}

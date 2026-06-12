@@ -47,15 +47,23 @@
   let cardClasses = $derived(
     `ds-grant-card ${className}${isInteractive ? ' is-interactive' : ''}${selected ? ' is-selected' : ''}`
   );
+  let cardAttrs = $derived(isInteractive ? {
+    role: 'button',
+    tabindex: 0,
+    onclick,
+    onkeydown: (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onclick?.(new MouseEvent('click'));
+      }
+    },
+    'aria-pressed': selected
+  } : {});
 </script>
 
 <div
   class={cardClasses}
-  role={isInteractive ? 'button' : 'region'}
-  tabindex={isInteractive ? 0 : undefined}
-  onclick={onclick}
-  onkeydown={isInteractive ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onclick?.(new MouseEvent('click')); } } : undefined}
-  aria-pressed={isInteractive ? selected : undefined}
+  {...cardAttrs}
 >
   <div class="ds-grant-card-header">
     <h3 class="ds-grant-card-title" title={title}>{title}</h3>
@@ -129,6 +137,7 @@
     flex: 1;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -156,6 +165,7 @@
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;

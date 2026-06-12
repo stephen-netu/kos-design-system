@@ -174,6 +174,21 @@
     paramValues = {};
     currentParamIndex = 0;
   }
+
+  function handleOptionKeydown(e: KeyboardEvent, cmd: CommandSchema) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      selectCommand(cmd);
+    }
+  }
+
+  function handleSuggestionKeydown(e: KeyboardEvent, suggestion: string) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      inputValue = suggestion;
+      submitParameter();
+    }
+  }
   
   function submitParameter() {
     if (!activeCommand || !currentParam) return;
@@ -298,8 +313,10 @@
             id="command-opt-${i}"
             role="option"
             aria-selected={i === selectedIndex}
+            tabindex={i === selectedIndex ? 0 : -1}
             class:selected={i === selectedIndex}
             onclick={() => selectCommand(cmd)}
+            onkeydown={(e) => handleOptionKeydown(e, cmd)}
           >
             <span class="command-name">/{cmd.path}</span>
             <span class="command-desc">{cmd.description}</span>
@@ -326,8 +343,10 @@
             id="suggestion-opt-${i}"
             role="option"
             aria-selected={i === selectedIndex}
+            tabindex={i === selectedIndex ? 0 : -1}
             class:selected={i === selectedIndex}
             onclick={() => { inputValue = sug; submitParameter(); }}
+            onkeydown={(e) => handleSuggestionKeydown(e, sug)}
           >
             {sug}
           </li>

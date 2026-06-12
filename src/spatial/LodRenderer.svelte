@@ -209,12 +209,25 @@
         {@const state = getLodState(pos.cell.id)}
         {@const isTransitioning = state?.transitionProgress !== null && state?.transitionProgress !== undefined}
 
+        {@const cellAttrs = onCellClick ? {
+          role: 'button',
+          tabindex: 0,
+          'aria-label': 'Open cell at current level of detail',
+          onclick: () => onCellClick?.(pos.cell.id, currentLod),
+          onkeydown: (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onCellClick?.(pos.cell.id, currentLod);
+            }
+          }
+        } : {}}
+
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
           class="lod-cell"
           style:left="{pos.x - pos.radius}px"
           style:top="{pos.y - pos.radius}px"
-          onclick={() => onCellClick?.(pos.cell.id, currentLod)}
+          {...cellAttrs}
           data-lod={currentLod}
           data-cell-id={pos.cell.id}
         >

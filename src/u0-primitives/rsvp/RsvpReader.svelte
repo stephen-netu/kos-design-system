@@ -106,7 +106,6 @@
   class="rsvp-container" 
   role="region" 
   aria-label="Rapid serial visual presentation reader"
-  tabindex="0"
 >
   <!-- Screen reader announcement of current word -->
   <span class="sr-only" aria-live="polite" aria-atomic="true">

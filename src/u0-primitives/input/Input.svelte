@@ -67,6 +67,13 @@
     showCompletions = false;
   }
 
+  function handleCompletionKeydown(e: KeyboardEvent, completion: { label: string }) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      applyCompletion(completion);
+    }
+  }
+
   function handleInput() {
     fetchCompletions(value);
   }
@@ -182,8 +189,10 @@
           id="autocomplete-option-{i}"
           role="option"
           aria-selected={i === selectedIndex}
+          tabindex={i === selectedIndex ? 0 : -1}
           class:selected={i === selectedIndex}
           onclick={() => applyCompletion(completion)}
+          onkeydown={(e) => handleCompletionKeydown(e, completion)}
           class="ds-input-autocomplete__item"
         >
           {#if completion.type}

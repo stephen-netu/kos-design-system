@@ -57,7 +57,6 @@
         class="correction-tooltip"
         style="position: fixed; top: {position.top}px; left: {position.left}px;"
         role="tooltip"
-        tabindex="0"
     >
         <div class="correction-tooltip__header">
             <span class="correction-tooltip__word">{word}</span>

@@ -204,7 +204,7 @@
   style:height="{height}px"
   onkeydown={handleKeydown}
   tabindex="0"
-  role="application"
+  role="grid"
   aria-label="Zone tiler — use h/j/k/l to navigate zones"
 >
   <!-- Zone panes -->
@@ -219,7 +219,8 @@
       style:width="{zone.width}px"
       style:height="{zone.height}px"
       tabindex="0"
-      role="region"
+      role="button"
+      aria-pressed={zone.id === focusedZoneId}
       aria-label={zone.zone.label}
       data-zone-id={zone.id}
       onclick={() => handleZoneClick(zone.id)}

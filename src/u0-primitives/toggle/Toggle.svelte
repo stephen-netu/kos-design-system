@@ -48,9 +48,9 @@
   </div>
 
   {#if label}
-    <span class="ds-toggle-label" onclick={toggle}>
+    <button type="button" class="ds-toggle-label" onclick={toggle} disabled={disabled}>
       {@render label()}
-    </span>
+    </button>
   {/if}
 </label>
 
@@ -105,9 +105,19 @@
 
   /* Label */
   .ds-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
     font-family: var(--font-sans);
     color: var(--color-text-primary);
     cursor: pointer;
+  }
+
+  .ds-toggle-label:disabled {
+    cursor: not-allowed;
   }
 
   /* --- Sizes --- */

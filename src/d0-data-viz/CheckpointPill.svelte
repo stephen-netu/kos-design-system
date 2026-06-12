@@ -57,6 +57,11 @@
     isExpanded = !isExpanded;
   }
 
+  function handlePillClick(event: MouseEvent) {
+    if ((event.target as Element).closest('.checkpoint-bar')) return;
+    toggleExpanded();
+  }
+
   // Collapse when clicking outside (handled by parent or escape key)
   function handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'Escape' && isExpanded) {
@@ -91,7 +96,7 @@
   tabindex="0"
   aria-label={ariaLabel}
   aria-expanded={isExpanded}
-  onclick={toggleExpanded}
+  onclick={handlePillClick}
   onkeydown={(e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -132,7 +137,7 @@
           ▲
         </button>
       </div>
-      <div class="pill-content" onclick={(e) => e.stopPropagation()}>
+      <div class="pill-content" role="group" aria-label="Checkpoint timeline">
         <CheckpointBar
           {checkpoints}
           {currentSeqno}

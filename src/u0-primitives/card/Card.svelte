@@ -30,6 +30,13 @@
   }: Props = $props();
 
   let isInteractive = $derived(variant === 'interactive' || !!onclick);
+  let cardAttrs = $derived(isInteractive ? {
+    role: 'button',
+    tabindex: 0,
+    onclick,
+    onkeydown: handleKeydown,
+    'aria-pressed': selected
+  } : {});
 
   function handleKeydown(e: KeyboardEvent) {
     if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
@@ -48,13 +55,9 @@
   style={style || undefined}
   class:is-interactive={isInteractive}
   class:is-selected={selected}
-  role={isInteractive ? "button" : "region"}
-  tabindex={isInteractive ? 0 : undefined}
-  onclick={isInteractive ? onclick : undefined}
+  {...cardAttrs}
   onmouseenter={onmouseenter}
   onmouseleave={onmouseleave}
-  onkeydown={isInteractive ? handleKeydown : undefined}
-  aria-pressed={isInteractive ? selected : undefined}
 >
   {#if header}
     <header class="ds-card-header">

@@ -211,7 +211,7 @@
 </script>
 
 {#if isOpen}
-  <div class="find-replace-dialog" role="dialog" aria-modal="true" aria-label={showReplace ? 'Find and replace' : 'Find'} onkeydown={handleKeyDown}>
+  <div class="find-replace-dialog" role="dialog" aria-modal="true" aria-label={showReplace ? 'Find and replace' : 'Find'} tabindex="-1" onkeydown={handleKeyDown}>
     <div class="dialog-header">
       <span class="dialog-title">{showReplace ? 'Find and Replace' : 'Find'}</span>
       <button class="close-btn" onclick={handleClose} aria-label="Close">

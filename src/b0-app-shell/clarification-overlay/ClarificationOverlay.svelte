@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount, tick } from 'svelte';
+
   /** Mirrors ClarificationSession from @kos/agent — kept local to avoid a design-system→agent dep. */
   interface ClarificationSession {
     sessionId: string;
@@ -19,6 +21,12 @@
   const { session, onSubmit, onDismiss, submitting = false }: Props = $props();
 
   let reply = $state('');
+  let replyInput: HTMLTextAreaElement | undefined;
+
+  onMount(async () => {
+    await tick();
+    replyInput?.focus();
+  });
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter' && !e.shiftKey && reply.trim()) {
@@ -37,7 +45,7 @@
   }
 </script>
 
-<div class="clarification-overlay" role="dialog" aria-modal="true" aria-labelledby="clarification-heading">
+<div class="clarification-overlay" role="dialog" aria-modal="true" aria-labelledby="clarification-heading" tabindex="-1">
   <div class="clarification-panel">
     <header class="clarification-header">
       <div class="scaffold-badge">{session.scaffoldKind}</div>
@@ -61,12 +69,12 @@
       <div class="reply-area">
         <textarea
           class="reply-input"
+          bind:this={replyInput}
           bind:value={reply}
           onkeydown={handleKeydown}
           placeholder="Your answer…"
           rows={3}
           disabled={submitting}
-          autofocus
         ></textarea>
         <button
           class="submit-btn"

@@ -89,7 +89,7 @@
 
         <div class="component-section">
           <h3>Inputs & Forms</h3>
-          <div class="demo-row" style="max-width: 400px; display: flex; flex-direction: column;">
+          <div class="demo-row" style="max-width: 25rem; display: flex; flex-direction: column;">
             <Input placeholder="Standard Input" bind:value={inputValue} />
             <Input placeholder="With leading icon">
               {#snippet iconLeading()} <Search size={16}/> {/snippet}
@@ -182,7 +182,7 @@
         
         <div class="component-section">
           <h3>Form Field & Search</h3>
-          <div class="demo-row" style="flex-direction: column; max-width: 400px;">
+          <div class="demo-row" style="flex-direction: column; max-width: 25rem;">
             <FormField id="demo-field" label="Email Address" helper="We'll never share your email.">
               <Input id="demo-field" type="email" placeholder="agent@kos.network" />
             </FormField>
@@ -198,7 +198,7 @@
         <!-- TODO: Re-add when Chat components exist
         <div class="component-section">
           <h3>List Items</h3>
-          <div class="demo-row" style="flex-direction: column; max-width: 320px;">
+            <div class="demo-row" style="flex-direction: column; max-width: 20rem;">
             <ChannelListItem id="c1" name="general-chat" time="2m" unreadCount={5} preview="Hey, did we merge the PR?" />
             <ChannelListItem id="c2" name="architecture-req" isActive preview="Let's discuss the capability model." />
             <ChannelListItem id="c3" name="alerts-noisy" isMuted unreadCount={12} preview="[CRITICAL] Pod failure" />
@@ -207,7 +207,7 @@
 
         <div class="component-section">
           <h3>Message Bubbles</h3>
-          <div class="demo-row" style="flex-direction: column; max-width: 500px">
+          <div class="demo-row" style="flex-direction: column; max-width: 31.25rem">
             <MessageBubble id="m1" senderName="Alice" timestamp={Date.now() - 60000} content="..." />
           </div>
         </div>
@@ -216,12 +216,11 @@
         <div class="component-section">
           <h3>Kanban Card</h3>
           <div class="demo-row">
-            <div style="width: 280px">
-              <KanbanCard item={{
+            <div style="width: 17.5rem">
+              <KanbanCard card={{
                 id: '1', title: 'Implement Design Tokens', priority: 'high',
-                content: 'Add full css variable support to all atomic components.',
-                badges: [{ label: 'Frontend', color: 'accent' }],
-                assignee: { name: 'Netu' }
+                description: 'Add full css variable support to all atomic components.',
+                tags: ['Frontend'],
               }} />
             </div>
           </div>
@@ -235,13 +234,13 @@
         <!-- TODO: Re-add when ContextPanel component exists
         <div class="component-section">
           <h3>Context Panel</h3>
-          <div style="height: 300px; position: relative; border: 1px solid var(--border-default); overflow: hidden; border-radius: var(--radius-lg, 8px);">
-            <div style="padding: 20px;">
+          <div style="height: 18.75rem; position: relative; border: var(--border-width-thin) solid var(--border-default); overflow: hidden; border-radius: var(--radius-lg);">
+            <div style="padding: var(--space-5);">
               <Button onclick={() => isContextPanelOpen = true}>Open Panel</Button>
             </div>
             <ContextPanel bind:isOpen={isContextPanelOpen} title="Task Details" tabs={[]}>
               <div class="ds-stack">
-                <KanbanCard item={{id:'x', title:'Sample Task', priority:'urgent'}} />
+                <KanbanCard card={{id:'x', title:'Sample Task', priority:'urgent'}} />
               </div>
             </ContextPanel>
           </div>
@@ -250,26 +249,35 @@
 
         <div class="component-section">
           <h3>Kanban Board</h3>
-          <div style="height: 400px; border: 1px solid var(--border-default); border-radius: var(--radius-lg, 8px);">
-            <KanbanBoard>
-              <KanbanColumn id="todo" title="To Do" count={2}>
-                <KanbanCard item={{id:'t1', title:'Setup repo', priority:'high'}} />
-                <KanbanCard item={{id:'t2', title:'Config vite', priority:'medium'}} />
-              </KanbanColumn>
-              
-              <KanbanColumn id="inprog" title="In Progress" count={1} wipLimit={3}>
-                <KanbanCard item={{id:'t3', title:'Build components', priority:'high'}} />
-              </KanbanColumn>
-
-              <KanbanColumn id="done" title="Done" count={0} />
-            </KanbanBoard>
+          <div style="height: 25rem; border: var(--border-width-thin) solid var(--border-default); border-radius: var(--radius-lg);">
+            <KanbanBoard
+              columns={[
+                {
+                  column: { id: 'todo', title: 'To Do' },
+                  cards: [
+                    { id: 't1', title: 'Setup repo', priority: 'high' },
+                    { id: 't2', title: 'Config vite', priority: 'medium' },
+                  ],
+                },
+                {
+                  column: { id: 'inprog', title: 'In Progress' },
+                  cards: [
+                    { id: 't3', title: 'Build components', priority: 'high' },
+                  ],
+                },
+                {
+                  column: { id: 'done', title: 'Done' },
+                  cards: [],
+                },
+              ]}
+            />
           </div>
         </div>
 
         <!-- TODO: Re-add when ChatPanel and CanvasToolbar components exist
         <div class="component-section">
           <h3>Chat Panel (Organism)</h3>
-          <div style="height: 500px; border: 1px solid var(--border-default); border-radius: var(--radius-lg, 8px);">
+          <div style="height: 31.25rem; border: var(--border-width-thin) solid var(--border-default); border-radius: var(--radius-lg);">
             <ChatPanel title="general-chat" memberCount={42}>
               {#snippet headerActions()}<Button variant="ghost" size="sm"><Search size={16}/></Button>{/snippet}
               {#snippet messages()}<p>Messages here</p>{/snippet}
@@ -280,7 +288,7 @@
 
         <div class="component-section">
           <h3>Canvas Toolbar</h3>
-          <div style="height: 200px; position: relative; background: var(--color-bg-canvas);">
+          <div style="height: 12.5rem; position: relative; background: var(--color-bg-canvas);">
             <CanvasToolbar position="bottom">
               <Button variant="ghost"><Settings size={16}/></Button>
             </CanvasToolbar>
@@ -298,7 +306,7 @@
           <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
             ADR: ui-timeline-checkpoint-bar-001 — Scrollable checkpoint navigation with color-coded components.
           </p>
-          <div style="border: 1px solid var(--border-default); border-radius: var(--radius-lg, 8px); overflow: hidden;">
+          <div style="border: var(--border-width-thin) solid var(--border-default); border-radius: var(--radius-lg); overflow: hidden;">
             <CheckpointBar
               checkpoints={demoCheckpoints}
               currentSeqno={demoCurrentSeqno}
@@ -323,9 +331,9 @@
           <h3>Component Color Coding</h3>
           <div class="demo-row">
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-              {#each Object.entries({ 'rust-crate': 'var(--color-accent)', 'ui-bundle': '#5f9ea0', 'config': '#daa520', 'faculty-state': '#9370db', 'substrate-binary': '#cd5c5c', 'system-snapshot': '#2f4f4f' }) as [type, color]}
+              {#each Object.entries({ 'rust-crate': 'var(--color-accent)', 'ui-bundle': 'var(--color-info)', 'config': 'var(--color-warning)', 'faculty-state': 'var(--expert-sovereign)', 'substrate-binary': 'var(--color-info)', 'system-snapshot': 'var(--color-offline)' }) as [type, color]}
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                  <span style="color: {color}; font-size: 16px;">◉</span>
+                  <span style="color: {color}; font-size: var(--text-base);">◉</span>
                   <span style="font-size: 0.85rem; color: var(--color-text-secondary); font-family: var(--font-mono);">{type}</span>
                   <span style="font-size: 0.75rem; color: var(--color-text-muted);">{color}</span>
                 </div>
@@ -342,7 +350,7 @@
 <style>
   .showcase {
     padding: var(--space-8);
-    max-width: 1200px;
+    max-width: 75rem;
     margin: 0 auto;
     font-family: var(--font-sans);
     color: var(--color-text-primary);
@@ -358,7 +366,7 @@
   h1 {
     margin: 0;
     font-size: var(--text-2xl);
-    background: linear-gradient(135deg, var(--color-accent) 0%, #E2A670 100%);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -367,7 +375,7 @@
     margin: 0 0 var(--space-4) 0;
     font-weight: 500;
     color: var(--color-text-secondary);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: var(--border-width-thin) solid var(--border-subtle);
     padding-bottom: var(--space-2);
   }
 
@@ -395,7 +403,7 @@
 
   .glass-bg {
     padding: var(--space-4);
-    background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-info));
     border-radius: var(--radius-lg);
   }
 </style>

@@ -10,8 +10,8 @@
  * @example
  * ```svelte
  * <script>
- *   import { CheckpointBar } from '@sov/design-system';
- *   import { themeStore } from '$lib/stores/themeStore.svelte';
+ *   import { CheckpointBar } from '@kos/design-system/d0-data-viz';
+ *   import { themeStore } from '@kos/design-system/s0-state';
  *
  *   // Colors automatically applied from themeStore
  *   // Users customize via Settings > Appearance > Checkpoint Colors
@@ -23,7 +23,7 @@
  * @example
  * ```typescript
  * // Programmatic color customization
- * import { themeStore } from '$lib/stores/themeStore.svelte';
+ * import { themeStore } from '@kos/design-system/s0-state';
  *
  * themeStore.setCustomToken('d0-checkpoint-rust', '#ff6b35');     // Orange rust
  * themeStore.setCustomToken('d0-checkpoint-ui', '#00d4aa');       // Teal UI

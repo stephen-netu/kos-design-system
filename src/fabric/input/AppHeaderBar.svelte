@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
-   * CommandBar - Fabric Component
-   * 
+   * AppHeaderBar — Fabric application header.
+   *
    * Application header with vault selection and shortcuts.
    * Decoupled from shell stores - uses props/callbacks for all state.
    * 
@@ -36,18 +36,18 @@
   .command-bar {
     display: flex;
     align-items: center;
-    height: 40px;
-    padding: 0 12px;
+    height: 2.5rem;
+    padding: 0 var(--space-3);
     background: var(--color-bg-canvas);
-    border-top: 2px solid var(--border-default);
-    border-bottom: 2px solid var(--border-default);
+    border-top: var(--border-width-default) solid var(--border-default);
+    border-bottom: var(--border-width-default) solid var(--border-default);
     gap: var(--space-3);
   }
 
   .app-name {
     font-weight: 600;
     color: var(--color-text-primary);
-    font-size: 14px;
+    font-size: var(--text-sm);
     font-family: var(--font-mono);
     letter-spacing: 0.05em;
   }
@@ -58,12 +58,12 @@
 
   .cmd-btn {
     background: transparent;
-    border: 2px solid var(--border-subtle);
+    border: var(--border-width-default) solid var(--border-subtle);
     border-radius: 0; /* Military sharp edges */
     color: var(--color-text-secondary);
     cursor: pointer;
-    font-size: 13px;
-    padding: 4px 8px;
+    font-size: 0.8125rem;
+    padding: var(--space-1) var(--space-2);
     transition: border-color 0.15s, color 0.15s, background 0.15s;
     font-family: var(--font-mono);
     text-transform: uppercase;
@@ -78,11 +78,11 @@
   }
 
   .mode-label {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--color-text-tertiary);
-    padding: 2px 8px;
+    padding: var(--space-05) var(--space-2);
     background: var(--color-bg-panel);
-    border: 2px solid var(--border-subtle);
+    border: var(--border-width-default) solid var(--border-subtle);
     border-radius: 0;
     font-family: var(--font-mono);
     text-transform: uppercase;

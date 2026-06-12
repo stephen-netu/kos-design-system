@@ -1,122 +1,169 @@
 <script lang="ts">
+  /**
+   * KanbanColumn — Merged canonical component.
+   *
+   * Combines fabric's ColumnState props pattern with l0's Snippet children,
+   * Badge composition, WIP limit, and ds-kanban-* CSS classes.
+   *
+   * @package @kos/design-system/fabric/layout
+   */
   import type { Snippet } from 'svelte';
-  import Badge from '../../u0-primitives/badge/Badge.svelte';
+  import type { CardData } from './KanbanCard.svelte';
 
-  interface Props {
+  export interface ColumnData {
     id: string;
     title: string;
-    count?: number;
+    color?: string;
     wipLimit?: number;
-    isOverLimit?: boolean;
+  }
+
+  export interface Props {
+    column: ColumnData;
+    isDropTarget?: boolean;
+    isCollapsed?: boolean;
+    isMoveTarget?: boolean;
+    onCardClick?: (card: CardData) => void;
+    onCardDragStart?: (card: CardData) => void;
+    onCardDragEnd?: () => void;
+    onDrop?: (targetColumnId: string, cardId: string) => void;
+    onDragOver?: (columnId: string) => void;
+    onDragLeave?: (columnId: string) => void;
+    onAddCard?: (columnId: string) => void;
+    onMenuClick?: (columnId: string) => void;
+    onCardKeyDown?: (e: KeyboardEvent, cardId: string, sourceColumnId: string) => void;
+    moveMode?: boolean;
+    children?: Snippet;
+    actions?: Snippet;
     class?: string;
-    ondragover?: (e: DragEvent) => void;
-    ondragleave?: (e: DragEvent) => void;
-    ondrop?: (e: DragEvent) => void;
-    children?: Snippet; // The KanbanCards go here
-    actions?: Snippet; // Additional header actions (e.g. + button)
   }
 
   let {
-    id,
-    title,
-    count = 0,
-    wipLimit,
-    isOverLimit = false,
-    class: className = '',
-    ondragover,
-    ondragleave,
-    ondrop,
+    column,
+    isDropTarget = false,
+    isCollapsed = false,
+    isMoveTarget = false,
+    onCardClick,
+    onCardDragStart,
+    onCardDragEnd,
+    onDrop,
+    onDragOver,
+    onDragLeave,
+    onAddCard,
+    onMenuClick,
+    onCardKeyDown,
+    moveMode = false,
     children,
-    actions
+    actions,
+    class: className = '',
   }: Props = $props();
 
   let isDragTarget = $state(false);
 
-  // Derived state for WIP limit
-  let overLimit = $derived(isOverLimit || (wipLimit !== undefined && count > wipLimit));
-
   function handleDragOver(e: DragEvent) {
-    e.preventDefault(); // Necessary to allow dropping
+    e.preventDefault();
     if (e.dataTransfer) {
       e.dataTransfer.dropEffect = 'move';
     }
     isDragTarget = true;
-    ondragover?.(e);
+    onDragOver?.(column.id);
   }
 
   function handleDragLeave(e: DragEvent) {
     isDragTarget = false;
-    ondragleave?.(e);
+    onDragLeave?.(column.id);
   }
 
   function handleDrop(e: DragEvent) {
     e.preventDefault();
     isDragTarget = false;
-    ondrop?.(e);
+    const cardId = e.dataTransfer?.getData('text/plain');
+    if (cardId) {
+      onDrop?.(column.id, cardId);
+    }
   }
 </script>
 
-<div 
+<div
   class="ds-kanban-column {className}"
-  class:is-over-limit={overLimit}
-  data-column-id={id}
+  class:is-move-target={isMoveTarget}
+  data-column-id={column.id}
 >
   <header class="ds-kanban-column-header">
     <div class="ds-kanban-column-title-group">
-      <h3 class="ds-kanban-column-title">{title}</h3>
-      <Badge
-        variant={overLimit ? 'status' : 'outline'}
-        color={overLimit ? 'error' : 'neutral'}
-        size="sm"
-      >
-        {count} {#if wipLimit}/ {wipLimit}{/if}
-      </Badge>
+      {#if column.color}
+        <span
+          class="ds-kanban-column-color"
+          style="background: {column.color}"
+        ></span>
+      {/if}
+      <h3 class="ds-kanban-column-title">{column.title}</h3>
     </div>
 
-    {#if actions}
-      <div class="ds-kanban-column-actions">
+    <div class="ds-kanban-column-actions">
+      {#if actions}
         {@render actions()}
-      </div>
-    {/if}
-  </header>
-
-  <div 
-    class="ds-kanban-column-content"
-    class:is-drag-target={isDragTarget}
-    role="region"
-    aria-label={`${title} column`}
-    ondragover={handleDragOver}
-    ondragleave={handleDragLeave}
-    ondrop={handleDrop}
-  >
-    <div class="ds-kanban-column-scroll-area">
-      {#if children}
-        {@render children()}
+      {/if}
+      {#if onAddCard}
+        <button
+          class="ds-kanban-column-add-btn"
+          onclick={() => onAddCard?.(column.id)}
+          title="Add card"
+          aria-label={`Add card to ${column.title}`}
+        >
+          +
+        </button>
+      {/if}
+      {#if onMenuClick}
+        <button
+          class="ds-kanban-column-menu-btn"
+          onclick={() => onMenuClick?.(column.id)}
+          title="Column menu"
+          aria-label={`Menu for ${column.title}`}
+        >
+          ⋯
+        </button>
       {/if}
     </div>
+  </header>
 
-    <!-- Drop indicator overlay -->
-    <div class="ds-kanban-drop-indicator"></div>
-  </div>
+  {#if !isCollapsed}
+    <div
+      class="ds-kanban-column-content"
+      class:is-drag-target={isDropTarget || isDragTarget}
+      role="region"
+      aria-label={`${column.title} column`}
+      ondragover={handleDragOver}
+      ondragleave={handleDragLeave}
+      ondrop={handleDrop}
+    >
+      <div class="ds-kanban-column-scroll-area">
+        {#if children}
+          {@render children()}
+        {/if}
+      </div>
+
+      <div class="ds-kanban-drop-indicator"></div>
+    </div>
+  {/if}
 </div>
 
 <style>
   .ds-kanban-column {
     display: flex;
     flex-direction: column;
-    min-width: 320px;
-    max-width: 360px;
+    min-width: 18.75rem;
+    max-width: 22.5rem;
     height: 100%;
     background: var(--color-bg-panel);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg, 0.5rem);
+    border: var(--border-width-thin) solid var(--border-default);
     flex-shrink: 0;
-    transition: border-color var(--transition-normal);
+    transition: border-color var(--transition-normal, 0.2s);
   }
 
-  .ds-kanban-column.is-over-limit {
-    border-color: rgba(166, 94, 94, 0.4);
-    box-shadow: 0 0 0 1px rgba(166, 94, 94, 0.1) inset;
+  .ds-kanban-column.is-move-target {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 var(--border-width-thin) var(--color-accent);
   }
 
   .ds-kanban-column-header {
@@ -124,13 +171,21 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-4);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: var(--border-width-thin) solid var(--border-subtle);
+    flex-shrink: 0;
   }
 
   .ds-kanban-column-title-group {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .ds-kanban-column-color {
+    width: var(--space-2);
+    height: var(--space-2);
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 
   .ds-kanban-column-title {
@@ -143,7 +198,29 @@
   .ds-kanban-column-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-1);
+  }
+
+  .ds-kanban-column-add-btn,
+  .ds-kanban-column-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-text-tertiary);
+    padding: var(--space-1);
+    border-radius: var(--radius-sm, 0.25rem);
+    cursor: pointer;
+    font-size: var(--text-base);
+    line-height: 1;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .ds-kanban-column-add-btn:hover,
+  .ds-kanban-column-menu-btn:hover {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-canvas);
   }
 
   .ds-kanban-column-content {
@@ -151,9 +228,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 100px;
-    background: transparent;
-    transition: background var(--transition-fast);
+    min-height: 5rem;
+    transition: background var(--transition-fast, 0.15s);
   }
 
   .ds-kanban-column-scroll-area {
@@ -165,9 +241,8 @@
     height: 100%;
   }
 
-  /* Custom scrollbar for column */
   .ds-kanban-column-scroll-area::-webkit-scrollbar {
-    width: 6px;
+    width: var(--size-divider);
   }
   .ds-kanban-column-scroll-area::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
@@ -177,19 +252,18 @@
     background: transparent;
   }
 
-  /* Drag Target State */
   .ds-kanban-column-content.is-drag-target {
-    background: var(--color-accent-faint); /* Very subtle brass tint */
+    background: var(--color-accent-faint, rgba(184,115,51,0.06));
   }
 
   .ds-kanban-drop-indicator {
     position: absolute;
     inset: var(--space-3);
-    border: 2px dashed var(--color-accent);
+    border: var(--border-width-default) dashed var(--color-accent);
     border-radius: var(--radius-md);
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--transition-fast);
+    transition: opacity var(--transition-fast, 0.15s);
   }
 
   .ds-kanban-column-content.is-drag-target .ds-kanban-drop-indicator {

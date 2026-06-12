@@ -6,8 +6,13 @@ export interface CommandDefinition<T = unknown, R = unknown> {
   response?: R;
 }
 
-async function getTauriInvoke() {
-  const mod = await import('@tauri-apps/api/core');
+type TauriCoreModule = {
+  invoke: <R>(command: string, payload?: Record<string, unknown>) => Promise<R>;
+};
+
+async function getTauriInvoke(): Promise<TauriCoreModule['invoke']> {
+  const spec = '@tauri-apps/api/core';
+  const mod = await import(/* @vite-ignore */ spec) as TauriCoreModule;
   return mod.invoke;
 }
 

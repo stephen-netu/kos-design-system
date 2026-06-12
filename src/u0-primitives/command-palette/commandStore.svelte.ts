@@ -18,8 +18,13 @@ import type {
   CommandPath
 } from './command-types';
 
+type TauriCoreModule = {
+  invoke: <R>(command: string, payload?: Record<string, unknown>) => Promise<R>;
+};
+
 async function tauriInvoke<R>(command: string, payload?: Record<string, unknown>): Promise<R> {
-  const mod = await import('@tauri-apps/api/core');
+  const spec = '@tauri-apps/api/core';
+  const mod = await import(/* @vite-ignore */ spec) as TauriCoreModule;
   return mod.invoke<R>(command, payload);
 }
 

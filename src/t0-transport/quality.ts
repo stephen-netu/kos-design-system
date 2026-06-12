@@ -1,8 +1,17 @@
 /**
- * Connection Quality Monitoring
- * 
- * A generalized version of NNJAS quality.ts for the LEAP design system.
- * Monitors WebSocket/connection quality with latency tracking.
+ * Connection Quality Monitoring (F-29 — module-scope singleton).
+ *
+ * Holds module-scope mutable state (metrics, pingId, interval, subscribers).
+ * startQualityMonitoring() uses setInterval; consume via subscribeQuality()
+ * for reactive updates in components.
+ *
+ * @module t0-transport/quality
+ * @example
+ * ```ts
+ * import { startQualityMonitoring, subscribeQuality } from '@kos/design-system/t0-transport';
+ * startQualityMonitoring();
+ * const unsub = subscribeQuality(m => console.log(m.quality));
+ * ```
  */
 
 export type QualityLevel = 'excellent' | 'good' | 'fair' | 'poor' | 'disconnected';

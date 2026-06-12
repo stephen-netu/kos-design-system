@@ -1,7 +1,21 @@
-import { onMount, setContext } from 'svelte';
+/**
+ * ThemeStore — Module-scope singleton for theme state (F-29).
+ *
+ * Instantiated once at module scope. Reads localStorage during import
+ * (safely guarded by hasLocalStorage()). Bundlers keep the instantiation
+ * at import time, so this module is NOT SSR-inert.
+ *
+ * @module s0-state/ThemeStore
+ * @example
+ * ```ts
+ * import { themeStore } from '@kos/design-system/s0-state';
+ * themeStore.setTheme('light');
+ * ```
+ */
+import { setContext, onMount } from 'svelte';
 import { THEME_STORE_KEY, type ThemeStoreLike } from '../p0-primitives/theme-context';
-
-export type ThemeName = 'dark' | 'light' | 'control-room';
+import type { ThemeName } from '../p0-primitives/theme-context';
+export type { ThemeName } from '../p0-primitives/theme-context';
 
 const STORAGE_KEY = 'kos-theme';
 

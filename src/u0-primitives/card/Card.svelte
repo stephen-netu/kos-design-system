@@ -33,8 +33,11 @@
 
   function handleKeydown(e: KeyboardEvent) {
     if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
+      onkeydown?.(e);
+      if (e.defaultPrevented) return;
       e.preventDefault();
       onclick?.(new MouseEvent('click'));
+      return;
     }
     onkeydown?.(e);
   }
@@ -81,7 +84,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--border-default);
+    border: var(--border-width-thin) solid var(--border-default);
     background: var(--color-card-bg);
     color: var(--color-card-text-primary);
     overflow: hidden;
@@ -91,7 +94,7 @@
 
   .ds-card-header {
     padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: var(--border-width-thin) solid var(--border-default);
     font-weight: 600;
     background: var(--color-bg-panel);
     font-size: var(--text-sm);
@@ -106,7 +109,7 @@
 
   .ds-card-footer {
     padding: var(--space-3) var(--space-4);
-    border-top: 1px solid var(--border-default);
+    border-top: var(--border-width-thin) solid var(--border-default);
     background: var(--color-accent-faint);
   }
 
@@ -125,9 +128,9 @@
 
   .variant-glass {
     background: rgba(24, 28, 32, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(var(--blur-md));
+    -webkit-backdrop-filter: blur(var(--blur-md));
+    border: var(--border-width-thin) solid rgba(255, 255, 255, 0.08);
     color: var(--color-text-primary);
   }
 
@@ -136,10 +139,10 @@
     border-color: var(--color-card-border);
     background-image: repeating-linear-gradient(
       0deg,
-      transparent 0px,
-      transparent 1px,
-      rgba(255, 255, 255, 0.02) 1px,
-      rgba(255, 255, 255, 0.02) 2px
+      transparent 0,
+      transparent var(--border-width-thin),
+      rgba(255, 255, 255, 0.02) var(--border-width-thin),
+      rgba(255, 255, 255, 0.02) var(--border-width-default)
     );
   }
 
@@ -171,7 +174,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    border: 1px solid transparent;
+    border: var(--border-width-thin) solid transparent;
     transition: border-color var(--transition-fast);
   }
 
@@ -180,10 +183,10 @@
     border-color: var(--color-accent);
     background: repeating-linear-gradient(
       45deg,
-      transparent 0px,
-      transparent 2px,
-      var(--color-accent-muted) 2px,
-      var(--color-accent-muted) 4px
+      transparent 0,
+      transparent var(--border-width-default),
+      var(--color-accent-muted) var(--border-width-default),
+      var(--color-accent-muted) var(--blur-md)
     );
   }
 

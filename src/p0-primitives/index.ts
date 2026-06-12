@@ -9,9 +9,6 @@ export { getCanvasTheme } from './canvas-theme';
 // Theme system
 export { default as ThemeProvider } from './ThemeProvider.svelte';
 export { provideThemeStore, THEME_STORE_KEY } from './theme-context';
-export type { ThemeStoreLike } from './theme-context';
+export type { ThemeName, ThemeStoreLike } from './theme-context';
 export type { ThemeMode, ThemeConfig } from './ThemeProvider.svelte';
 export { createTheme, defaultLightTheme, defaultDarkTheme, brassAccentTheme } from './theme';
-
-// ThemeStore — types only; singleton is subpath-only to avoid module-scope side effect
-export type { ThemeName } from '../s0-state/ThemeStore.svelte';

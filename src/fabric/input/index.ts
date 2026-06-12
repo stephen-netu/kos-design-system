@@ -7,7 +7,7 @@
  * @adr 2026-04-12-leap-substrate-refactor-001
  */
 
-export { default as CommandBar } from './CommandBar.svelte';
-export type { Props as CommandBarProps } from './CommandBar.svelte';
+export { default as AppHeaderBar } from './AppHeaderBar.svelte';
+export type { Props as AppHeaderBarProps } from './AppHeaderBar.svelte';
 export { default as KeyboardShortcuts } from './KeyboardShortcuts.svelte';
 export type { ShortcutBinding, ShortcutGroup } from './KeyboardShortcuts.svelte';

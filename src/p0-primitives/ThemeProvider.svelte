@@ -9,7 +9,7 @@
    * @package @kos/design-system/p0-primitives
    */
   import type { Snippet } from 'svelte';
-  import { getThemeStore, THEME_STORE_KEY, type ThemeStoreLike } from './theme-context';
+  import { getThemeStore, THEME_STORE_KEY, type ThemeName, type ThemeStoreLike } from './theme-context';
 
   export type ThemeMode = 'light' | 'dark' | 'auto';
 
@@ -82,12 +82,12 @@
 
   const store = getThemeStore();
 
-  const THEME_MAP: Record<Exclude<ThemeMode, 'auto'>, string> = {
+  const THEME_MAP: Record<Exclude<ThemeMode, 'auto'>, ThemeName> = {
     dark: 'dark',
     light: 'light',
   };
 
-  function resolveMode(): string {
+  function resolveMode(): ThemeName {
     if (mode === 'auto') {
       if (typeof window === 'undefined') return 'dark';
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -175,8 +175,8 @@
 
 <style>
   .theme-provider {
-    color: var(--color-text-primary, #e8e0d0);
-    background: var(--color-bg-primary, #0b0d0f);
+    color: var(--color-text-primary);
+    background: var(--color-bg-primary);
     font-family: var(--font-sans, 'Outfit', system-ui, sans-serif);
   }
 </style>

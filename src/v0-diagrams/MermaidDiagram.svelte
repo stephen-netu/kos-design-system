@@ -26,10 +26,14 @@
   });
 
   async function renderDiagram(s: DiagramSpec, opts: RenderOptions) {
-    const mermaid = await getMermaid();
-    const id = `mermaid-${crypto.randomUUID()}`;
-    const { svg } = await mermaid.render(id, s.source);
-    svgContent = svg;
+    try {
+      const mermaid = await getMermaid();
+      const id = `mermaid-${crypto.randomUUID()}`;
+      const { svg } = await mermaid.render(id, s.source);
+      svgContent = svg;
+    } catch {
+      // mermaid.render may fail in non-browser environments (jsdom lacks getBBox)
+    }
   }
 </script>
 
@@ -43,7 +47,7 @@
 <style>
   .v0-diagram {
     background: var(--v0-diagram-bg);
-    border: 1px solid var(--v0-diagram-border);
+    border: var(--border-width-thin) solid var(--v0-diagram-border);
     border-radius: var(--radius-lg);
     padding: var(--v0-diagram-padding);
     overflow: auto;

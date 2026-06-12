@@ -24,14 +24,36 @@
  *   const stackDepth = modalStackStore.depth;
  */
 
+/**
+ * ModalStackStore — Module-scope singleton for modal stacking (F-29).
+ *
+ * Instantiated once at module scope. Holds the visible-modal stack and
+ * the logical modal stack. Consumers register/unregister modals at
+ * mount/unmount time via the Modal component.
+ *
+ * @module s0-state/modal-stack-store
+ * @example
+ * ```ts
+ * import { modalStackStore } from '@kos/design-system/s0-state';
+ * console.log(modalStackStore.depth);
+ * ```
+ */
+
 export interface ModalData {
   id: string;
   props?: Record<string, unknown>;
   onClose?: () => void;
 }
 
+export interface VisibleModal {
+  id: string;
+  zIndex: number;
+  onClose: () => void;
+}
+
 class ModalStackStore {
   private stack: ModalData[] = $state([]);
+  private visibleModals: VisibleModal[] = $state([]);
 
   get active(): ModalData | null {
     if (this.stack.length === 0) return null;
@@ -44,6 +66,15 @@ class ModalStackStore {
 
   get all(): readonly ModalData[] {
     return this.stack;
+  }
+
+  get topmost(): VisibleModal | null {
+    if (this.visibleModals.length === 0) return null;
+    return this.visibleModals[this.visibleModals.length - 1];
+  }
+
+  get visibleIds(): readonly string[] {
+    return this.visibleModals.map((modal) => modal.id);
   }
 
   push(modal: ModalData): void {
@@ -69,6 +100,19 @@ class ModalStackStore {
     const removing = this.stack[idx];
     this.stack = this.stack.filter(m => m.id !== id);
     removing.onClose?.();
+  }
+
+  register(modal: VisibleModal): () => void {
+    this.visibleModals = [...this.visibleModals, modal];
+    return () => this.unregister(modal.id);
+  }
+
+  unregister(id: string): void {
+    this.visibleModals = this.visibleModals.filter((modal) => modal.id !== id);
+  }
+
+  isTopmost(id: string): boolean {
+    return this.topmost?.id === id;
   }
 }
 

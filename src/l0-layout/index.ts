@@ -3,9 +3,12 @@
 export { default as WorkspaceLayout } from './workspace/WorkspaceLayout.svelte';
 export { default as ChatViewLayout } from './chat-view/ChatViewLayout.svelte';
 export { default as KanbanViewLayout } from './kanban/KanbanViewLayout.svelte';
+// Kanban — canonical l0-layout surface (F-24)
 export { default as KanbanBoard } from './kanban/KanbanBoard.svelte';
 export { default as KanbanColumn } from './kanban/KanbanColumn.svelte';
 export { default as KanbanCard } from './kanban/KanbanCard.svelte';
+export type { ColumnData } from './kanban/KanbanColumn.svelte';
+export type { CardData } from './kanban/KanbanCard.svelte';
 
 // New from NNJAS port
 export { default as SnapPanel } from './SnapPanel.svelte';

@@ -1,5 +1,6 @@
 <script lang="ts">
   import Button from '../button/Button.svelte';
+  import { untrack } from 'svelte';
   import { segmentForRsvp, calculateOrp, getWordDisplayTime, type RsvpWord } from './rsvp-utils';
 
   let { 
@@ -21,7 +22,7 @@
   } = $props();
 
   let isPlaying = $state(false);
-  let currentWpm = $state(initialWpm);
+  let currentWpm = $state(untrack(() => initialWpm));
   let wordIndex = $state(0);
   let words: RsvpWord[] = $derived(segmentForRsvp(text));
   
@@ -99,7 +100,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <div 
   class="rsvp-container" 
@@ -161,7 +162,7 @@
     padding: var(--space-6);
     background: var(--color-bg-panel);
     border-radius: var(--radius-lg);
-    min-width: 320px;
+    min-width: 20rem;
     box-shadow: var(--shadow-card);
   }
   
@@ -194,7 +195,7 @@
     align-items: center;
     gap: var(--space-3);
     width: 100%;
-    max-width: 400px;
+    max-width: 25rem;
   }
   
   input[type="range"] {
@@ -238,10 +239,10 @@
   /* Screen reader only */
   .sr-only {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: var(--border-width-thin);
+    height: var(--border-width-thin);
     padding: 0;
-    margin: -1px;
+    margin: calc(var(--border-width-thin) * -1);
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;

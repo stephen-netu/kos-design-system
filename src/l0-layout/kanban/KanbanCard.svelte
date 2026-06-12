@@ -1,177 +1,213 @@
 <script lang="ts">
-  import { GripVertical, X } from '@lucide/svelte';
+  /**
+   * KanbanCard — Merged canonical component.
+   *
+   * Combines fabric's CardData pattern with l0's Card composition,
+   * grip-handle-only drag for WebKit compatibility,
+   * and keyboard DnD support (F-16).
+   *
+   * @package @kos/design-system/fabric/layout
+   */
   import Card from '../../u0-primitives/card/Card.svelte';
-  import Badge from '../../u0-primitives/badge/Badge.svelte';
-  import Avatar from '../../u0-primitives/avatar/Avatar.svelte';
-  import type { Snippet } from 'svelte';
 
-  export interface KanbanCardData {
+  export interface CardData {
     id: string;
     title: string;
-    content?: string;
+    description?: string;
     priority?: 'low' | 'medium' | 'high' | 'urgent';
-    assignee?: {
-      name: string;
-      src?: string;
-    };
-    badges?: Array<{
-      label: string;
-      color?: 'accent' | 'success' | 'warning' | 'error' | 'info' | 'neutral';
-    }>;
+    tags?: string[];
+    dueDate?: Date;
+    assignee?: string;
+    metadata?: Record<string, unknown>;
   }
 
-  interface Props {
-    item: KanbanCardData;
+  export interface Props {
+    card: CardData;
     isDragging?: boolean;
-    class?: string;
-    ondragstart?: (e: DragEvent) => void;
-    onclick?: () => void;
-    ondelete?: () => void;
-    actions?: Snippet; // Additional actions for hover state
+    isSelected?: boolean;
+    disabled?: boolean;
+    onClick?: (card: CardData) => void;
+    onDragStart?: (card: CardData) => void;
+    onDragEnd?: (card: CardData) => void;
+    onKeyDown?: (e: KeyboardEvent) => void;
+    moveMode?: boolean;
+    children?: import('svelte').Snippet;
   }
 
   let {
-    item,
+    card,
     isDragging = false,
-    class: className = '',
-    ondragstart,
-    onclick,
-    ondelete,
-    actions
+    isSelected = false,
+    disabled = false,
+    onClick,
+    onDragStart,
+    onDragEnd,
+    onKeyDown,
+    moveMode = false,
+    children,
   }: Props = $props();
 
+  function getPriorityColor(p: CardData['priority']): string {
+    switch (p) {
+      case 'urgent': return 'var(--color-error)';
+      case 'high': return 'var(--color-error)';
+      case 'medium': return 'var(--color-warning)';
+      case 'low': return 'var(--color-success)';
+      default: return 'transparent';
+    }
+  }
+
+  function formatDate(date: Date | undefined): string {
+    if (!date) return '';
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
   function handleGripDragStart(e: DragEvent) {
+    if (disabled) return;
     if (e.dataTransfer) {
-      e.dataTransfer.setData('text/plain', item.id);
+      e.dataTransfer.setData('text/plain', card.id);
       e.dataTransfer.effectAllowed = 'move';
-      // Use the full card wrapper as the drag ghost — dragging just the grip icon looks broken.
-      const wrapper = (e.currentTarget as HTMLElement).closest<HTMLElement>('.ds-kanban-card-wrapper');
+      const wrapper = (e.currentTarget as HTMLElement).closest<HTMLElement>('.ds-kanban-card');
       if (wrapper) {
         e.dataTransfer.setDragImage(wrapper, wrapper.offsetWidth / 2, 20);
       }
     }
-    ondragstart?.(e);
+    onDragStart?.(card);
   }
 
-  function getPriorityColor(p: KanbanCardData['priority']) {
-    switch (p) {
-      case 'low': return 'var(--color-info)';
-      case 'medium': return 'var(--color-warning)';
-      case 'high': return 'var(--color-accent)';
-      case 'urgent': return 'var(--color-error)';
-      default: return 'transparent';
+  function handleCardClick() {
+    if (!disabled) onClick?.(card);
+  }
+
+  function handleCardKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onKeyDown?.(e);
+      if (!e.defaultPrevented) onClick?.(card);
+      return;
     }
+    onKeyDown?.(e);
   }
 </script>
 
-<!-- Drag is scoped to the grip handle — the wrapper is NOT draggable.
-     Making the whole wrapper draggable suppresses click events on WebKit (Tauri/Safari). -->
 <div
-  class="ds-kanban-card-wrapper {className}"
+  class="ds-kanban-card"
   class:is-dragging={isDragging}
-  aria-grabbed={isDragging}
+  class:is-selected={isSelected}
+  class:is-move-source={moveMode && isSelected}
+  class:is-disabled={disabled}
+  role="listitem"
+  aria-grabbed={isDragging || (moveMode && isSelected) ? 'true' : 'false'}
+  aria-label={card.title}
 >
-  <Card 
-    variant="interactive" 
-    onclick={onclick}
-    class="ds-kanban-card-inner"
-  >
-    <!-- Priority Bar -->
-    {#if item.priority}
-      <div 
-        class="ds-kanban-priority-bar" 
-        style="background-color: {getPriorityColor(item.priority)};"
-        title="Priority: {item.priority}"
+  <Card variant="interactive" onclick={handleCardClick} onkeydown={handleCardKeyDown}>
+    {#if card.priority}
+      <div
+        class="ds-kanban-priority-bar"
+        style="background-color: {getPriorityColor(card.priority)}"
+        title="Priority: {card.priority}"
       ></div>
     {/if}
 
-    <div class="ds-kanban-header">
+    <div class="ds-kanban-card-header">
       <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
         class="ds-kanban-drag-handle"
-        title="Drag to reorder"
+        title="Drag to reorder (or press Space to move)"
         draggable="true"
         ondragstart={handleGripDragStart}
       >
-        <GripVertical size={14} />
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="5" cy="4" r="1.5" fill="currentColor"/>
+          <circle cx="11" cy="4" r="1.5" fill="currentColor"/>
+          <circle cx="5" cy="8" r="1.5" fill="currentColor"/>
+          <circle cx="11" cy="8" r="1.5" fill="currentColor"/>
+          <circle cx="5" cy="12" r="1.5" fill="currentColor"/>
+          <circle cx="11" cy="12" r="1.5" fill="currentColor"/>
+        </svg>
       </div>
-      
-      <h4 class="ds-kanban-title">{item.title}</h4>
 
-      <div class="ds-kanban-actions">
-        {#if actions}
-          {@render actions()}
-        {/if}
-        {#if ondelete}
-          <button 
-            class="ds-kanban-delete" 
-            onclick={(e) => { e.stopPropagation(); ondelete(); }}
-            title="Delete task"
-            aria-label="Delete task"
-          >
-            <X size={14} />
-          </button>
-        {/if}
-      </div>
+      <span class="ds-kanban-card-title">{card.title}</span>
     </div>
 
-    {#if item.content}
-      <p class="ds-kanban-preview">{item.content}</p>
+    {#if card.description}
+      <p class="ds-kanban-card-description">{card.description}</p>
     {/if}
 
-    <div class="ds-kanban-footer">
-      <div class="ds-kanban-badges">
-        {#if item.badges}
-          {#each item.badges as badge}
-            <Badge variant="status" color={badge.color || 'neutral'} size="sm">
-              {badge.label}
-            </Badge>
-          {/each}
-        {/if}
-      </div>
+    {#if children}
+      {@render children()}
+    {/if}
 
-      {#if item.assignee}
-        <div class="ds-kanban-assignee">
-          <Avatar 
-            name={item.assignee.name} 
-            src={item.assignee.src} 
-            size="sm" 
-            class="ds-kanban-avatar"
-          />
+    <div class="ds-kanban-card-footer">
+      {#if card.tags && card.tags.length > 0}
+        <div class="ds-kanban-card-tags">
+          {#each card.tags.slice(0, 3) as tag}
+            <span class="ds-kanban-card-tag">{tag}</span>
+          {/each}
+          {#if card.tags.length > 3}
+            <span class="ds-kanban-card-tag-more">+{card.tags.length - 3}</span>
+          {/if}
         </div>
+      {/if}
+
+      {#if card.dueDate}
+        <span class="ds-kanban-card-due" class:overdue={card.dueDate < new Date()}>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 4v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {formatDate(card.dueDate)}
+        </span>
       {/if}
     </div>
   </Card>
 </div>
 
 <style>
-  .ds-kanban-card-wrapper {
+  .ds-kanban-card {
     position: relative;
     width: 100%;
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
+    transition: transform var(--transition-fast, 0.15s), opacity var(--transition-fast, 0.15s);
+    cursor: pointer;
   }
 
-  .ds-kanban-card-wrapper.is-dragging {
+  .ds-kanban-card.is-dragging {
     opacity: 0.5;
     transform: scale(0.98);
   }
 
-  /* Target the inner card to override default padding */
-  :global(.ds-kanban-card-inner.ds-card) {
+  .ds-kanban-card.is-selected {
+    box-shadow: 0 0 0 var(--border-width-default) var(--color-accent);
+    border-radius: var(--radius-md, 0.375rem);
+  }
+
+  .ds-kanban-card.is-move-source {
+    box-shadow: 0 0 0 var(--border-width-default) var(--color-accent), 0 0 var(--blur-lg) var(--color-accent-glow);
+    border-radius: var(--radius-md, 0.375rem);
+  }
+
+  .ds-kanban-card.is-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .ds-kanban-card :global(.ds-card) {
     padding: 0;
-    overflow: hidden; /* For priority bar */
+    overflow: hidden;
+    position: relative;
   }
 
   .ds-kanban-priority-bar {
     position: absolute;
     top: 0;
     left: 0;
-    width: 4px;
+    width: var(--space-1);
     height: 100%;
     z-index: 2;
   }
 
-  .ds-kanban-header {
+  .ds-kanban-card-header {
     display: flex;
     align-items: flex-start;
     padding: var(--space-3) var(--space-4) var(--space-2) var(--space-2);
@@ -181,15 +217,9 @@
   .ds-kanban-drag-handle {
     color: var(--color-text-muted);
     cursor: grab;
-    margin-top: 2px;
-    padding: 2px;
-    border-radius: var(--radius-sm);
-    touch-action: none;
-    opacity: 0.4;
-    transition: opacity var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
   }
 
-  .ds-kanban-card-wrapper:hover .ds-kanban-drag-handle {
+  .ds-kanban-card:hover .ds-kanban-drag-handle {
     opacity: 1;
   }
 
@@ -199,13 +229,12 @@
 
   .ds-kanban-drag-handle:hover {
     color: var(--color-text-secondary);
-    background: var(--color-bg-panel);
+    background: var(--color-bg-panel, rgba(255,255,255,0.05));
   }
 
-  .ds-kanban-title {
+  .ds-kanban-card-title {
     flex: 1;
     min-width: 0;
-    margin: 0;
     font-size: var(--text-sm);
     font-weight: 500;
     color: var(--color-text-primary);
@@ -215,62 +244,58 @@
     text-overflow: ellipsis;
   }
 
-  .ds-kanban-actions {
-    display: flex;
-    align-items: center;
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-  }
-
-  .ds-kanban-card-wrapper:hover .ds-kanban-actions {
-    opacity: 1;
-  }
-
-  .ds-kanban-delete {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    color: var(--color-text-muted);
-    padding: 4px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-  }
-
-  .ds-kanban-delete:hover {
-    color: var(--color-error);
-    background: rgba(166, 94, 94, 0.15);
-  }
-
-  .ds-kanban-preview {
-    margin: 0 0 var(--space-3) var(--space-8);
+  .ds-kanban-card-description {
+    margin: 0 0 var(--space-3) var(--space-5);
     padding-right: var(--space-4);
     font-size: var(--text-xs);
     color: var(--color-text-secondary);
     line-height: 1.4;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
     overflow: hidden;
   }
 
-  .ds-kanban-footer {
+  .ds-kanban-card-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--space-4) var(--space-3) var(--space-8);
-    gap: var(--space-3);
-  }
-
-  .ds-kanban-badges {
-    display: flex;
-    flex-wrap: wrap;
+    padding: 0 var(--space-4) var(--space-3) var(--space-5);
     gap: var(--space-2);
   }
 
-  .ds-kanban-assignee {
+  .ds-kanban-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .ds-kanban-card-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.625rem;
+    padding: var(--space-05) 0.375rem;
+    background: var(--color-bg-canvas);
+    border-radius: var(--radius-sm, 0.25rem);
+    color: var(--color-text-tertiary);
+  }
+
+  .ds-kanban-card-tag-more {
+    font-size: 0.625rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .ds-kanban-card-due {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.6875rem;
+    color: var(--color-text-tertiary);
     flex-shrink: 0;
+  }
+
+  .ds-kanban-card-due.overdue {
+    color: var(--color-error);
   }
 </style>

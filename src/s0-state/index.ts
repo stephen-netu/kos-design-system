@@ -26,4 +26,3 @@ export type { SyncStatusState, SyncStatusAction } from './SyncStatus.svelte';
 export type { ModalData } from './modal-stack-store.svelte';
 
 // Theme management — subpath only (module-scope singleton)
-export type { ThemeName } from './ThemeStore.svelte';

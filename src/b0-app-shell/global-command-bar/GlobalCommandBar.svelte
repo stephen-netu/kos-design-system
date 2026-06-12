@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * CommandBar — The LEAP global command strip.
+   * GlobalCommandBar — The LEAP global command strip.
    *
    * Three zones, always in the same positions across every LEAP app:
    *   LEFT  · FLOW PHASE — the system's current operational state
@@ -10,7 +10,7 @@
    * Prop-driven: no store imports. Each app wires it to its own stores.
    *
    * Placement: top of every LEAP app shell, above app-specific navigation.
-   * Height: 52px fixed.
+   * Height: 3.25rem fixed.
    */
 
   interface Props {
@@ -51,21 +51,21 @@
     switch (flowPhase?.toLowerCase()) {
       case 'go':
       case 'running':
-      case 'executing':   return '#27ae60';
+      case 'executing':   return 'var(--color-success)';
       case 'sprout':
       case 'in_progress':
-      case 'active':      return '#4682c8';
+      case 'active':      return 'var(--color-info)';
       case 'weed':
-      case 'weeding':     return '#e67e22';
+      case 'weeding':     return 'var(--color-warning)';
       case 'consult':
-      case 'consulting':  return '#b87333';
+      case 'consulting':  return 'var(--color-accent)';
       case 'freeze':
       case 'frozen':
-      case 'blocked':     return '#506eb4';
-      case 'seed':        return '#b87333';
+      case 'blocked':     return 'var(--color-info)';
+      case 'seed':        return 'var(--color-accent)';
       case 'compost':
-      case 'prune':       return '#3d3d3d';
-      default:            return '#5a5245';
+      case 'prune':       return 'var(--color-text-muted)';
+      default:            return 'var(--color-text-muted)';
     }
   });
 
@@ -206,12 +206,12 @@
 
   .cb {
     display: grid;
-    grid-template-columns: 148px 1px 1fr 1px 196px;
+    grid-template-columns: 9.25rem var(--border-width-thin) 1fr var(--border-width-thin) 12.25rem;
     align-items: stretch;
-    height: 52px;
+    height: 3.25rem;
     width: 100%;
-    background: #0a0a0a;
-    border-bottom: 1px solid var(--color-accent-subtle);
+    background: var(--color-bg-inset);
+    border-bottom: var(--border-width-thin) solid var(--color-accent-subtle);
     position: relative;
     overflow: visible;
     flex-shrink: 0;
@@ -224,10 +224,10 @@
     inset: 0;
     background: repeating-linear-gradient(
       180deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(255, 255, 255, 0.012) 2px,
-      rgba(255, 255, 255, 0.012) 3px
+      transparent 0,
+      transparent 0.125rem,
+      rgba(255, 255, 255, 0.012) 0.125rem,
+      rgba(255, 255, 255, 0.012) 0.1875rem
     );
     pointer-events: none;
     z-index: 0;
@@ -240,7 +240,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 1px;
+    height: var(--border-width-thin);
     background: linear-gradient(
       90deg,
       var(--color-accent-muted) 0%,
@@ -260,9 +260,9 @@
   /* ── Divider ───────────────────────────────────────────────────────────── */
 
   .cb-rule {
-    width: 1px;
+    width: var(--border-width-thin);
     background: var(--color-accent-subtle);
-    margin: 12px 0;
+    margin: var(--space-3) 0;
     z-index: 1;
   }
 
@@ -271,8 +271,8 @@
   .cb-phase {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 18px;
+    gap: var(--space-2);
+    padding: 0 1.125rem;
     position: relative;
     z-index: 1;
   }
@@ -284,20 +284,20 @@
     inset: 0;
     background: radial-gradient(
       ellipse 160% 120% at -10% 50%,
-      color-mix(in srgb, var(--glow, #5a5245) 12%, transparent),
+      color-mix(in srgb, var(--glow, var(--color-text-muted)) 12%, transparent),
       transparent 65%
     );
     pointer-events: none;
   }
 
   .cb-phase__dot {
-    width: 8px;
-    height: 8px;
+    width: var(--space-2);
+    height: var(--space-2);
     border-radius: 50%;
-    background: var(--glow, #5a5245);
+    background: var(--glow, var(--color-text-muted));
     box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--glow, #5a5245) 20%, transparent),
-      0 0 8px color-mix(in srgb, var(--glow, #5a5245) 50%, transparent);
+      0 0 0 var(--border-width-default) color-mix(in srgb, var(--glow, var(--color-text-muted)) 20%, transparent),
+      0 0 var(--blur-lg) color-mix(in srgb, var(--glow, var(--color-text-muted)) 50%, transparent);
     flex-shrink: 0;
     transition: background 0.4s, box-shadow 0.4s;
   }
@@ -310,14 +310,14 @@
     0%, 100% {
       opacity: 1;
       box-shadow:
-        0 0 0 2px color-mix(in srgb, var(--glow) 20%, transparent),
-        0 0 10px color-mix(in srgb, var(--glow) 60%, transparent);
+        0 0 0 var(--border-width-default) color-mix(in srgb, var(--glow) 20%, transparent),
+        0 0 0.625rem color-mix(in srgb, var(--glow) 60%, transparent);
     }
     50% {
       opacity: 0.65;
       box-shadow:
-        0 0 0 2px color-mix(in srgb, var(--glow) 10%, transparent),
-        0 0 4px color-mix(in srgb, var(--glow) 30%, transparent);
+        0 0 0 var(--border-width-default) color-mix(in srgb, var(--glow) 10%, transparent),
+        0 0 0.25rem color-mix(in srgb, var(--glow) 30%, transparent);
     }
   }
 
@@ -329,9 +329,9 @@
 
   .cb-phase__name {
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: var(--text-sm);
     font-weight: 700;
-    color: var(--glow, #5a5245);
+    color: var(--glow, var(--color-text-muted));
     letter-spacing: 0.1em;
     line-height: 1;
     transition: color 0.4s;
@@ -339,8 +339,8 @@
 
   .cb-phase__sub {
     font-family: var(--font-mono);
-    font-size: 9px;
-    color: rgba(160, 152, 128, 0.65);
+    font-size: 0.5625rem;
+    color: color-mix(in srgb, var(--color-text-secondary) 65%, transparent);
     letter-spacing: 0.06em;
     line-height: 1;
   }
@@ -351,7 +351,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: 0 16px;
+    padding: 0 var(--space-4);
     position: relative;
     z-index: 1;
     transition: background 0.2s;
@@ -362,9 +362,9 @@
     content: '';
     position: absolute;
     bottom: 0;
-    left: 20px;
-    right: 20px;
-    height: 1px;
+    left: var(--space-5);
+    right: var(--space-5);
+    height: var(--border-width-thin);
     background: var(--color-accent-muted);
     transform: scaleX(0);
     transform-origin: center;
@@ -381,7 +381,7 @@
 
   .cb-intent__cursor {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--color-accent-muted);
     flex-shrink: 0;
     user-select: none;
@@ -401,20 +401,20 @@
     border: none;
     outline: none;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--color-text-primary);
     padding: 0;
     caret-color: var(--color-accent);
   }
 
   .cb-intent__input::placeholder {
-    color: rgba(160, 152, 128, 0.25);
+    color: color-mix(in srgb, var(--color-text-secondary) 25%, transparent);
     font-style: italic;
   }
 
   .cb-intent__input:disabled {
     cursor: not-allowed;
-    color: rgba(160, 152, 128, 0.3);
+    color: color-mix(in srgb, var(--color-text-secondary) 30%, transparent);
   }
 
   .cb-intent__send {
@@ -422,11 +422,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--color-accent-glow);
-    border-radius: var(--radius-sm, 3px);
+    width: 1.5rem;
+    height: 1.5rem;
+    background: var(--overlay-white-04);
+    border: var(--border-width-thin) solid var(--color-accent-glow);
+    border-radius: var(--radius-sm);
     color: var(--color-accent-muted);
     cursor: pointer;
     transition: all 0.12s;
@@ -441,7 +441,7 @@
   .cb-intent__send--ready:hover {
     background: var(--color-accent-muted);
     border-color: var(--color-accent-muted);
-    box-shadow: 0 0 8px var(--color-accent-muted);
+    box-shadow: 0 0 var(--blur-lg) var(--color-accent-muted);
   }
 
   .cb-intent__send:disabled {
@@ -451,9 +451,9 @@
 
   .cb-intent__spinner {
     display: inline-block;
-    width: 10px;
-    height: 10px;
-    border: 1.5px solid var(--color-accent-muted);
+    width: var(--space-2);
+    height: var(--space-2);
+    border: 0.09375rem solid var(--color-accent-muted);
     border-top-color: var(--color-accent);
     border-radius: 50%;
     animation: cb-spin 0.65s linear infinite;
@@ -469,8 +469,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 5px;
-    padding: 0 18px;
+    gap: 0.3125rem;
+    padding: 0 1.125rem;
     position: relative;
     z-index: 1;
   }
@@ -495,9 +495,9 @@
   }
 
   .cb-spark__seg {
-    width: 4px;
-    height: 11px;
-    border-radius: var(--radius-xs, 1px);
+    width: var(--space-1);
+    height: 0.6875rem;
+    border-radius: var(--radius-xs);
     background: var(--color-accent-subtle);
     transition: background 0.3s, box-shadow 0.3s;
     flex-shrink: 0;
@@ -505,19 +505,19 @@
 
   .cb-spark__seg--on {
     background: var(--color-accent);
-    box-shadow: 0 0 3px var(--color-accent-muted);
+    box-shadow: 0 0 0.1875rem var(--color-accent-muted);
   }
 
   /* Warning — amber shift */
   .cb-spark--warning .cb-spark__seg--on {
-    background: #e67e22;
-    box-shadow: 0 0 3px rgba(230, 126, 34, 0.5);
+    background: var(--color-warning);
+    box-shadow: 0 0 0.1875rem color-mix(in srgb, var(--color-warning) 50%, transparent);
   }
 
   /* Critical — red + pulse */
   .cb-spark--critical .cb-spark__seg--on {
-    background: #c0392b;
-    box-shadow: 0 0 4px rgba(192, 57, 43, 0.6);
+    background: var(--color-error);
+    box-shadow: 0 0 0.25rem color-mix(in srgb, var(--color-error) 60%, transparent);
     animation: spark-critical 1.2s ease-in-out infinite;
   }
 
@@ -529,37 +529,37 @@
   .cb-spark__readout {
     display: flex;
     align-items: baseline;
-    gap: 3px;
+    gap: 0.1875rem;
     font-family: var(--font-mono);
   }
 
   .cb-spark__val {
-    font-size: 11px;
+    font-size: 0.6875rem;
     font-weight: 600;
     color: var(--color-accent);
     letter-spacing: 0.02em;
   }
 
-  .cb-spark--warning .cb-spark__val  { color: #e67e22; }
-  .cb-spark--critical .cb-spark__val { color: #c0392b; }
+  .cb-spark--warning .cb-spark__val  { color: var(--color-warning); }
+  .cb-spark--critical .cb-spark__val { color: var(--color-error); }
 
   .cb-spark__div {
-    font-size: 10px;
-    color: rgba(160, 152, 128, 0.3);
+    font-size: 0.625rem;
+    color: color-mix(in srgb, var(--color-text-secondary) 30%, transparent);
   }
 
   .cb-spark__cap {
-    font-size: 10px;
-    color: rgba(160, 152, 128, 0.45);
+    font-size: 0.625rem;
+    color: color-mix(in srgb, var(--color-text-secondary) 45%, transparent);
     letter-spacing: 0.02em;
   }
 
   .cb-spark__lbl {
-    font-size: 9px;
+    font-size: 0.5rem;
     font-weight: 600;
-    color: rgba(160, 152, 128, 0.35);
+    color: color-mix(in srgb, var(--color-text-secondary) 35%, transparent);
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    margin-left: 5px;
+    margin-left: 0.3125rem;
   }
 </style>

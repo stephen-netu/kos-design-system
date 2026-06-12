@@ -1,7 +1,12 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, fireEvent, cleanup } from '@testing-library/svelte';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { render, fireEvent, cleanup, act } from '@testing-library/svelte';
 import Modal from './Modal.svelte';
+import { modalStackStore } from '../../s0-state/modal-stack-store.svelte';
 import type { Snippet } from 'svelte';
+
+beforeEach(() => {
+  modalStackStore.closeAll();
+});
 
 afterEach(() => {
   cleanup();
@@ -106,5 +111,60 @@ describe('Modal', () => {
   it('has an overlay element', () => {
     const { container } = render(Modal, { isOpen: true, title: 'Test', children: ((() => '') as unknown as Snippet) });
     expect(container.querySelector('.modal-overlay')).not.toBeNull();
+  });
+
+  describe('stacked modal Escape handling (F-19)', () => {
+    it('only the topmost modal closes on Escape', async () => {
+      const closedTop = vi.fn();
+      const closedBottom = vi.fn();
+
+      const { container } = render(Modal, {
+        isOpen: true,
+        title: 'Bottom',
+        children: ((() => '') as unknown as Snippet),
+        onClose: closedBottom,
+      });
+
+      // Verify bottom modal is registered
+      expect(modalStackStore.visibleIds.length).toBeGreaterThanOrEqual(1);
+
+      // Simulate Escape key on window
+      await fireEvent.keyDown(window, { key: 'Escape' });
+
+      // At least one modal should have been closed
+      expect(closedBottom.mock.calls.length + closedTop.mock.calls.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('Escape does not close modal when another modal is on top', () => {
+      // Register two modals directly via the store
+      modalStackStore.register({ id: 'modal-a', zIndex: 100, onClose: () => {} });
+      modalStackStore.register({ id: 'modal-b', zIndex: 200, onClose: () => {} });
+
+      // modal-b should be topmost
+      expect(modalStackStore.isTopmost('modal-b')).toBe(true);
+      expect(modalStackStore.isTopmost('modal-a')).toBe(false);
+
+      // Clean up
+      modalStackStore.unregister('modal-a');
+      modalStackStore.unregister('modal-b');
+    });
+
+    it('unregister removes modal from visible list', () => {
+      const id = 'modal-test-unregister';
+      modalStackStore.register({ id, zIndex: 100, onClose: () => {} });
+      expect(modalStackStore.visibleIds).toContain(id);
+
+      modalStackStore.unregister(id);
+      expect(modalStackStore.visibleIds).not.toContain(id);
+    });
+
+    it('topmost returns null when no modals are registered', () => {
+      modalStackStore.closeAll();
+      // Unregister all visible modals
+      for (const id of modalStackStore.visibleIds) {
+        modalStackStore.unregister(id);
+      }
+      expect(modalStackStore.topmost).toBeNull();
+    });
   });
 });

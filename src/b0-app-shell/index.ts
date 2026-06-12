@@ -10,5 +10,5 @@
  * and resource visibility. They are prop-driven (no store imports).
  */
 
-export { default as CommandBar } from './command-bar/CommandBar.svelte';
+export { default as GlobalCommandBar } from './global-command-bar/GlobalCommandBar.svelte';
 export { ClarificationOverlay } from './clarification-overlay/index';

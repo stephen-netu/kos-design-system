@@ -31,9 +31,11 @@ export * from './f0-forms';
 export * from './d0-data-viz';
 // N0 Node Graph — Visual composition primitives (SVG DAG, <100 nodes)
 export * from './n0-node-graph';
-// Epistemic types — Assay, Allay, Expert, Provenance
+// Epistemic types — public LEAP plugin contracts for assay, allay,
+// expert identity, and provenance metadata.
 export * from './epistemic';
-// Platform — cross-boundary protocols (HUD, etc.)
+// Platform protocols — public LEAP shell/plugin boundary metadata,
+// including HUD contribution and indicator contracts.
 export * from './platform';
 
 // N1 Flow Canvas — pure types + generic adapter utilities (no runtime: no elkjs, no web-worker)

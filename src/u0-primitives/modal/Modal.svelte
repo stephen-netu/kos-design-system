@@ -11,7 +11,8 @@
    * </Modal>
    */
 
-  import { tick } from 'svelte';
+  import { tick, untrack } from 'svelte';
+  import { modalStackStore } from '../../s0-state/modal-stack-store.svelte';
 
   export interface Props {
     /** Controls modal visibility */
@@ -57,6 +58,21 @@
   let isVisible = $state(false);
   const modalId = `modal-${Math.random().toString(36).slice(2, 9)}`;
   let focusRestoreTimer: ReturnType<typeof setTimeout> | null = null;
+  const focusableSelector = [
+    'button:not([disabled])',
+    '[href]:not([aria-hidden="true"])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"]):not([disabled])',
+  ].join(', ');
+
+  $effect(() => {
+    if (!isOpen) return;
+    untrack(() => {
+      return modalStackStore.register({ id: modalId, zIndex, onClose: handleClose });
+    });
+  });
 
   // Handle isOpen changes with animation delay
   $effect(() => {
@@ -100,7 +116,7 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (!isOpen) return;
+    if (!isOpen || !modalStackStore.isTopmost(modalId)) return;
 
     // Close on Escape
     if (closeOnEscape && e.key === 'Escape') {
@@ -111,11 +127,11 @@
 
     // Trap focus with Tab key
     if (e.key === 'Tab' && modalElement) {
-      const focusableElements = modalElement.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+      const focusableElements = Array.from(
+        modalElement.querySelectorAll<HTMLElement>(focusableSelector)
+      ).filter((element) => element.offsetParent !== null || element === document.activeElement);
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
 
       if (e.shiftKey && document.activeElement === firstElement) {
         e.preventDefault();
@@ -242,17 +258,17 @@
   .modal-dialog {
     position: relative;
     background: var(--color-bg-panel-elevated);
-    border: 1px solid var(--border-default);
+    border: var(--border-width-thin) solid var(--border-default);
     border-radius: var(--radius-xl);
     width: 90%;
-    max-width: 600px;
+    max-width: 37.5rem;
     max-height: 80vh;
     display: flex;
     flex-direction: column;
     z-index: 1;
     outline: none;
     box-shadow: var(--shadow-xl);
-    transform: translateY(20px) scale(0.98);
+    transform: translateY(1.25rem) scale(0.98);
     transition: transform var(--transition-normal), opacity var(--transition-normal);
     opacity: 0;
   }
@@ -263,7 +279,7 @@
   }
 
   .modal-dialog:focus {
-    box-shadow: 0 0 0 2px var(--color-accent), var(--shadow-xl);
+    box-shadow: 0 0 0 var(--border-width-default) var(--color-accent), var(--shadow-xl);
   }
 
   .modal-header {
@@ -271,7 +287,7 @@
     justify-content: space-between;
     align-items: center;
     padding: var(--space-5) var(--space-6);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: var(--border-width-thin) solid var(--border-default);
     flex-shrink: 0;
   }
 
@@ -310,8 +326,8 @@
   }
 
   .modal-close-btn:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline: var(--border-width-default) solid var(--color-accent);
+    outline-offset: var(--border-width-default);
   }
 
   .modal-content {
@@ -327,12 +343,12 @@
     justify-content: flex-end;
     gap: var(--space-3);
     padding: var(--space-4) var(--space-6);
-    border-top: 1px solid var(--border-default);
+    border-top: var(--border-width-thin) solid var(--border-default);
     flex-shrink: 0;
   }
 
   /* Size variants via data attribute — :global() required since the value is set dynamically */
-  :global(.modal-dialog[data-size="small"]) { max-width: 400px; }
-  :global(.modal-dialog[data-size="large"]) { max-width: 800px; }
+  :global(.modal-dialog[data-size="small"]) { max-width: 25rem; }
+  :global(.modal-dialog[data-size="large"]) { max-width: 50rem; }
   :global(.modal-dialog[data-size="full"]) { max-width: 95vw; max-height: 95vh; }
 </style>

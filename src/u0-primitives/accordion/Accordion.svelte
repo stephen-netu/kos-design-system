@@ -6,6 +6,7 @@
    * 
    * @package @kos/design-system/u0-primitives
    */
+  import { untrack } from 'svelte';
   import type { Snippet } from 'svelte';
 
   interface Panel {
@@ -40,7 +41,7 @@
     onOpenChange,
   }: Props = $props();
 
-  let internalOpenIds = $state<string[]>([...defaultOpen]);
+  let internalOpenIds = $state<string[]>(untrack(() => [...defaultOpen]));
 
   function setInternalOpenIds(fn: (prev: string[]) => string[]) {
     internalOpenIds = fn(internalOpenIds);
@@ -125,14 +126,14 @@
 
 <style>
   .accordion {
-    border-radius: var(--radius-md, 0.25rem);
+    border-radius: var(--radius-md);
     overflow: hidden;
-    border: 1px solid var(--color-border, var(--border-default, #3a3630));
-    background: var(--color-bg-app, #0b0d0f);
+    border: var(--border-width-thin) solid var(--color-border);
+    background: var(--color-bg-app);
   }
 
   .accordion-item {
-    border-bottom: 1px solid var(--color-border, var(--border-default, #3a3630));
+    border-bottom: var(--border-width-thin) solid var(--color-border);
   }
 
   .accordion-item:last-child {
@@ -148,21 +149,21 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-4, 1rem);
+    padding: var(--space-4);
     cursor: pointer;
     user-select: none;
-    transition: background-color var(--duration-normal, 200ms) ease-in-out;
+    transition: background-color var(--duration-normal) ease-in-out;
   }
 
   .accordion-header:hover:not(.disabled) {
-    background: var(--color-bg-secondary, var(--color-bg-canvas, #121518));
+    background: var(--color-bg-secondary);
   }
 
   /* Removed duplicate focus-visible — the box-shadow variant below supersedes. */
 
   /* Focus styles for keyboard navigation */
   .accordion-header:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-accent, var(--color-accent));
+    box-shadow: 0 0 0 var(--border-width-default) var(--color-accent);
   }
 
   /* Disabled states */

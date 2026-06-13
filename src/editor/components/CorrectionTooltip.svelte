@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		correction: { original: string; suggestions: string[] };
@@ -13,6 +13,7 @@
 
 	let dismissed = $state(false);
 	let tooltip = $state<HTMLDivElement | null>(null);
+	let listenersAttached = false;
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
@@ -22,28 +23,48 @@
 	}
 
 	function handlePointerDown(e: PointerEvent) {
-		if (!tooltip) return;
+		if (dismissed || !tooltip) return;
 		const target = e.target as Node | null;
 		if (target && tooltip.contains(target)) return;
 		handleDismiss();
 	}
 
+	function attachListeners() {
+		if (listenersAttached) return;
+		window.addEventListener('keydown', handleKeydown);
+		window.addEventListener('pointerdown', handlePointerDown);
+		listenersAttached = true;
+	}
+
+	function detachListeners() {
+		if (!listenersAttached) return;
+		window.removeEventListener('keydown', handleKeydown);
+		window.removeEventListener('pointerdown', handlePointerDown);
+		listenersAttached = false;
+	}
+
+	function handleAccept(suggestion: string) {
+		if (dismissed) return;
+		onAccept(suggestion);
+		handleDismiss();
+	}
+
+	function handleAddToDictionary() {
+		if (dismissed) return;
+		onAddToDictionary();
+		handleDismiss();
+	}
+
 	function handleDismiss() {
+		if (dismissed) return;
 		dismissed = true;
+		detachListeners();
 		onDismiss();
 	}
 
 	onMount(() => {
-		window.addEventListener('keydown', handleKeydown);
-		window.addEventListener('pointerdown', handlePointerDown);
-		return () => {
-			window.removeEventListener('keydown', handleKeydown);
-			window.removeEventListener('pointerdown', handlePointerDown);
-		};
-	});
-
-	onDestroy(() => {
-		if (!dismissed) handleDismiss();
+		attachListeners();
+		return detachListeners;
 	});
 </script>
 
@@ -58,14 +79,14 @@
 		<div class="correction-tooltip__header">
 			<span class="correction-tooltip__word">{correction.original}</span>
 			<button class="correction-tooltip__close" onclick={handleDismiss} aria-label="Dismiss">
-				✕
+				×
 			</button>
 		</div>
 		{#if correction.suggestions.length > 0}
 			<ul class="correction-tooltip__suggestions">
 				{#each correction.suggestions as s}
 					<li>
-						<button class="correction-tooltip__suggestion" onclick={() => onAccept(s)}>
+						<button class="correction-tooltip__suggestion" onclick={() => handleAccept(s)}>
 							{s}
 						</button>
 					</li>
@@ -73,7 +94,7 @@
 			</ul>
 		{/if}
 		<div class="correction-tooltip__actions">
-			<button class="correction-tooltip__action" onclick={onAddToDictionary}>
+			<button class="correction-tooltip__action" onclick={handleAddToDictionary}>
 				Add to Dictionary
 			</button>
 		</div>
@@ -82,6 +103,7 @@
 
 <style>
 	.correction-tooltip {
+		position: fixed;
 		background: var(--color-bg-panel, #1a1a1a);
 		border: 1px solid var(--border-default, #2a2a2a);
 		border-radius: var(--radius-md, 6px);

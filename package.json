@@ -112,6 +112,7 @@
     "./x0-enchanted-blocks": "./dist/x0-enchanted-blocks/index.js",
     "./editor": "./dist/editor/index.js",
     "./editor/MarkdownEditor.svelte": "./dist/editor/MarkdownEditor.svelte",
+    "./editor/CorrectionTooltip.svelte": "./dist/editor/components/CorrectionTooltip.svelte",
     "./demos": "./dist/demos/index.js",
     "./demos/BspZoneDemo.svelte": "./dist/demos/BspZoneDemo.svelte",
     "./demos/NodepadBlocksShowcase.svelte": "./dist/demos/NodepadBlocksShowcase.svelte",

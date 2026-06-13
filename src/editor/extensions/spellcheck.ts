@@ -1,8 +1,8 @@
 import { type Diagnostic, linter, type LintSource } from '@codemirror/lint';
 
 export interface SpellCheckDictionary {
-    check(word: string): boolean;
-    suggest(word: string): string[];
+    check(word: string): boolean | Promise<boolean>;
+    suggest(word: string): string[] | Promise<string[]>;
     addWord(word: string): void;
 }
 
@@ -24,18 +24,21 @@ function extractWords(text: string): { word: string; from: number; to: number }[
 }
 
 export function spellcheck(dictionary: SpellCheckDictionary) {
-    const lintSource: LintSource = (view): Diagnostic[] => {
+    const lintSource: LintSource = async (view): Promise<Diagnostic[]> => {
         const diagnostics: Diagnostic[] = [];
         const words = extractWords(view.state.doc.toString());
 
         for (const { word, from, to } of words) {
-            if (word.length > 1 && !dictionary.check(word)) {
+            if (word.length > 1 && !(await dictionary.check(word))) {
+                const suggestions = (await dictionary.suggest(word))
+                    .slice(0, 8)
+                    .sort((a, b) => a.localeCompare(b));
                 diagnostics.push({
                     from,
                     to,
                     severity: 'warning',
                     message: `"${word}"`,
-                    actions: dictionary.suggest(word).slice(0, 8).map((suggestion: string) => ({
+                    actions: suggestions.map((suggestion: string) => ({
                         name: suggestion,
                         apply(v, from: number, to: number) {
                             v.dispatch({ changes: { from, to, insert: suggestion } });

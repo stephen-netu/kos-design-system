@@ -1,2 +1,2 @@
 export { type ExpansionDictionary } from './expansion';
-export { type SpellCheckDictionary } from './spellcheck';
+export { type SpellCheckCorrection, type SpellCheckConfig, type SpellCheckDictionary } from './spellcheck';

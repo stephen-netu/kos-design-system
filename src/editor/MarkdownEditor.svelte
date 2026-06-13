@@ -20,12 +20,13 @@
   import { search } from '@codemirror/search';
   import { writeTextFile, readTextFile, getMtimeMs, isTauri } from '../t0-transport/fs';
   import FindReplaceDialog from './FindReplaceDialog.svelte';
+  import CorrectionTooltip from './components/CorrectionTooltip.svelte';
   import { autoFormat } from './extensions/autoformat';
   import { expansion } from './extensions/expansion';
   import { autocomplete } from './extensions/autocomplete';
   import { spellcheck } from './extensions/spellcheck';
   import type { CompletionSource } from './extensions/autocomplete';
-  import type { SpellCheckDictionary } from './extensions/spellcheck';
+  import type { SpellCheckCorrection, SpellCheckDictionary } from './extensions/spellcheck';
 
   interface Props {
     filePath: string | null;
@@ -33,9 +34,14 @@
     onChange?: (content: string) => void;
     onSave?: () => void;
     onClose?: () => void;
-    onExternalChange?: (newContent: string) => void;
+    onExternalChange?: (content: string) => void;
     completionSource?: CompletionSource;
     spellCheckDictionary?: SpellCheckDictionary;
+  }
+
+  interface ActiveCorrection extends SpellCheckCorrection {
+    from: number;
+    to: number;
   }
 
   let { filePath, initialContent, onChange, onSave, onClose, onExternalChange, completionSource, spellCheckDictionary }: Props = $props();
@@ -45,6 +51,7 @@
   let isSaving = $state(false);
   let saveError = $state<string | null>(null);
   let showPreview = $state(false);
+  let activeCorrection = $state<ActiveCorrection | null>(null);
 
   // Auto-save
   let autoSaveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -109,8 +116,34 @@
   // Close find/replace dialog
   function closeFindReplace() {
     showFindReplace = false;
-    // Focus back to editor
     editorView?.focus();
+  }
+
+  async function handleCorrectionClick(
+    correction: SpellCheckCorrection,
+    _view: EditorView,
+    from: number,
+    to: number
+  ) {
+    activeCorrection = { ...correction, from, to };
+  }
+
+  function handleAcceptCorrection(suggestion: string) {
+    if (!activeCorrection || !editorView) return;
+    editorView.dispatch({
+      changes: { from: activeCorrection.from, to: activeCorrection.to, insert: suggestion },
+    });
+    activeCorrection = null;
+  }
+
+  function handleAddWordToDictionary() {
+    if (!activeCorrection) return;
+    spellCheckDictionary?.addWord(activeCorrection.original);
+    activeCorrection = null;
+  }
+
+  function handleDismissCorrection() {
+    activeCorrection = null;
   }
 
   // Custom dark theme matching Atelier - uses CSS variables via style injection
@@ -231,10 +264,11 @@
       autoFormat(),
       expansion(),
       ...(completionSource ? [autocomplete({ source: completionSource })] : []),
-      ...(spellCheckDictionary ? [spellcheck(spellCheckDictionary)] : []),
+      ...(spellCheckDictionary ? spellcheck(spellCheckDictionary, { onCorrectionClick: handleCorrectionClick }) : []),
       EditorView.updateListener.of((update: ViewUpdate) => {
         if (update.docChanged) {
           content = update.state.doc.toString();
+          activeCorrection = null;
           isDirty = true;
           saveError = null;
            onChange?.(content);
@@ -408,6 +442,16 @@
       </div>
     {/if}
   </div>
+
+  {#if activeCorrection}
+    <CorrectionTooltip
+      correction={{ original: activeCorrection.original, suggestions: activeCorrection.suggestions }}
+      position={activeCorrection.position}
+      onAccept={handleAcceptCorrection}
+      onDismiss={handleDismissCorrection}
+      onAddToDictionary={handleAddWordToDictionary}
+    />
+  {/if}
 
   {#if saveError}
     <div class="error-banner">

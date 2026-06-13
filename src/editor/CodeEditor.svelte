@@ -14,12 +14,12 @@
   import { expansion } from './extensions/expansion';
   import { autocomplete } from './extensions/autocomplete';
   import { spellcheck } from './extensions/spellcheck';
+  import CorrectionTooltip from './components/CorrectionTooltip.svelte';
   import type { CompletionSource } from './extensions/autocomplete';
-  import type { SpellCheckDictionary } from './extensions/spellcheck';
+  import type { SpellCheckCorrection, SpellCheckDictionary } from './extensions/spellcheck';
 
   interface Props {
     content: string;
-    /** Source hint — file path or URL, used for language detection */
     source?: string;
     isActive: boolean;
     onContentChange?: (content: string) => void;
@@ -28,12 +28,18 @@
     spellCheckDictionary?: SpellCheckDictionary;
   }
 
+  interface ActiveCorrection extends SpellCheckCorrection {
+    from: number;
+    to: number;
+  }
+
   let { content, source = '', isActive, onContentChange, onBlur, completionSource, spellCheckDictionary }: Props = $props();
 
   let container: HTMLElement | null = $state(null);
   let view: EditorView | null = null;
   let skipSync = false;
   let detectedLang = $state('text');
+  let activeCorrection = $state<ActiveCorrection | null>(null);
 
   // Detect language from source path/extension or content shebang
   async function detectLanguageExtension(): Promise<Extension> {
@@ -85,6 +91,33 @@
     return [];
   }
 
+  async function handleCorrectionClick(
+    correction: SpellCheckCorrection,
+    _view: EditorView,
+    from: number,
+    to: number
+  ) {
+    activeCorrection = { ...correction, from, to };
+  }
+
+  function handleAcceptCorrection(suggestion: string) {
+    if (!activeCorrection || !view) return;
+    view.dispatch({
+      changes: { from: activeCorrection.from, to: activeCorrection.to, insert: suggestion },
+    });
+    activeCorrection = null;
+  }
+
+  function handleAddWordToDictionary() {
+    if (!activeCorrection) return;
+    spellCheckDictionary?.addWord(activeCorrection.original);
+    activeCorrection = null;
+  }
+
+  function handleDismissCorrection() {
+    activeCorrection = null;
+  }
+
   // Loge dark theme (matches MarkdownEditor)
   const logeTheme = EditorView.theme({
     '&': { background: 'transparent', height: '100%', color: '#e8e0d0' },
@@ -131,10 +164,11 @@
           autoFormat(),
           expansion(),
           ...(completionSource ? [autocomplete({ source: completionSource })] : []),
-          ...(spellCheckDictionary ? [spellcheck(spellCheckDictionary)] : []),
+          ...(spellCheckDictionary ? spellcheck(spellCheckDictionary, { onCorrectionClick: handleCorrectionClick }) : []),
           EditorView.updateListener.of((update: ViewUpdate) => {
             if (update.docChanged) {
               skipSync = true;
+              activeCorrection = null;
               onContentChange?.(update.state.doc.toString());
             }
           }),
@@ -169,6 +203,16 @@
     <div class="code-editor-lang-badge">{detectedLang}</div>
   {/if}
 </div>
+
+{#if activeCorrection}
+  <CorrectionTooltip
+    correction={{ original: activeCorrection.original, suggestions: activeCorrection.suggestions }}
+    position={activeCorrection.position}
+    onAccept={handleAcceptCorrection}
+    onDismiss={handleDismissCorrection}
+    onAddToDictionary={handleAddWordToDictionary}
+  />
+{/if}
 
 <style>
   .code-editor {

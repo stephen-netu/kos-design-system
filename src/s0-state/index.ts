@@ -23,6 +23,7 @@ export { default as SyncStatus } from './SyncStatus.svelte';
 export type { SyncStatusState, SyncStatusAction } from './SyncStatus.svelte';
 
 // Modal stack management — subpath only (module-scope singleton)
-export type { ModalData } from './modal-stack-store.svelte';
+export { modalStackStore } from './modal-stack-store.svelte';
+export type { ModalData, VisibleModal } from './modal-stack-store.svelte';
 
 // Theme management — subpath only (module-scope singleton)

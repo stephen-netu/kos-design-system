@@ -11,7 +11,12 @@
     "isolatedModules": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@stephen-netu/design-system": ["./src/index.ts"],
+      "@stephen-netu/design-system/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.svelte"],
   "exclude": ["node_modules", "dist", "src/**/*.test.ts"]

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, fireEvent, cleanup, act } from '@testing-library/svelte';
 import Modal from './Modal.svelte';
-import { modalStackStore } from '../../s0-state/modal-stack-store.svelte';
+import { modalStackStore } from '@stephen-netu/design-system/s0-state';
 import type { Snippet } from 'svelte';
 
 beforeEach(() => {

@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const srcDir = resolve(__dirname, './src');
 
 export default defineConfig({
     plugins: [
@@ -14,6 +15,12 @@ export default defineConfig({
     resolve: {
         conditions: ['browser', 'module', 'import'],
         dedupe: ['svelte', '@sveltejs/vite-plugin-svelte'],
+        alias: {
+            '@stephen-netu/design-system/': `${srcDir}/`,
+            '@kos/design-system/': `${srcDir}/`,
+            '@stephen-netu/design-system': `${srcDir}/index.ts`,
+            '@kos/design-system': `${srcDir}/index.ts`,
+        },
     },
     test: {
         include: ['src/**/*.test.ts'],

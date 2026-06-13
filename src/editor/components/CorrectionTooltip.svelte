@@ -78,7 +78,7 @@
 	>
 		<div class="correction-tooltip__header">
 			<span class="correction-tooltip__word">{correction.original}</span>
-			<button class="correction-tooltip__close" onclick={handleDismiss} aria-label="Dismiss">
+			<button type="button" class="correction-tooltip__close" onclick={handleDismiss} aria-label="Dismiss">
 				×
 			</button>
 		</div>
@@ -86,7 +86,7 @@
 			<ul class="correction-tooltip__suggestions">
 				{#each correction.suggestions as s}
 					<li>
-						<button class="correction-tooltip__suggestion" onclick={() => handleAccept(s)}>
+						<button type="button" class="correction-tooltip__suggestion" onclick={() => handleAccept(s)}>
 							{s}
 						</button>
 					</li>
@@ -94,7 +94,7 @@
 			</ul>
 		{/if}
 		<div class="correction-tooltip__actions">
-			<button class="correction-tooltip__action" onclick={handleAddToDictionary}>
+			<button type="button" class="correction-tooltip__action" onclick={handleAddToDictionary}>
 				Add to Dictionary
 			</button>
 		</div>

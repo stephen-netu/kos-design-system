@@ -6,6 +6,8 @@ export interface SpellCheckDictionary {
     addWord(word: string): void;
 }
 
+const MAX_WORDS_PER_LINT = 4096;
+
 function extractWords(text: string): { word: string; from: number; to: number }[] {
     const words: { word: string; from: number; to: number }[] = [];
     let i = 0;
@@ -28,7 +30,7 @@ export function spellcheck(dictionary: SpellCheckDictionary) {
         const diagnostics: Diagnostic[] = [];
         const words = extractWords(view.state.doc.toString());
 
-        for (const { word, from, to } of words) {
+        for (const { word, from, to } of words.slice(0, MAX_WORDS_PER_LINT)) {
             if (word.length > 1 && !(await dictionary.check(word))) {
                 const suggestions = (await dictionary.suggest(word))
                     .slice(0, 8)

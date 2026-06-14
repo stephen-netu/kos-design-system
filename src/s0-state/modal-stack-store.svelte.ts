@@ -1,5 +1,5 @@
 /**
- * Modal Stack Store — Stack-based modal management for @kos/design-system.
+ * Modal Stack Store — Stack-based modal management for @stephen-netu/design-system.
  *
  * Manages a stack of modals (not just one). Opening a modal pushes onto the
  * stack; closing pops. Enables "back" navigation when opening modals from
@@ -8,7 +8,7 @@
  * Adopted from Chronicler's modalStack.ts pattern (2026-05-25 investigation).
  *
  * Usage:
- *   import { modalStackStore } from '@kos/design-system';
+ *   import { modalStackStore } from '@stephen-netu/design-system/s0-state';
  *
  *   // Push a modal
  *   modalStackStore.push({ id: 'confirm-delete', props: { itemId: 'abc' } });
@@ -34,7 +34,7 @@
  * @module s0-state/modal-stack-store
  * @example
  * ```ts
- * import { modalStackStore } from '@kos/design-system/s0-state';
+ * import { modalStackStore } from '@stephen-netu/design-system/s0-state';
  * console.log(modalStackStore.depth);
  * ```
  */

@@ -22,7 +22,8 @@ export * from './l0-layout';
 // S0 Lifecycle — Component lifecycle phases (constrain → layout → interact → render)
 export * from './s0-lifecycle';
 // S0 State — Store primitives (Svelte 5 runes)
-export * from './s0-state';
+// Subpath only: consumers must import via @stephen-netu/design-system/s0-state
+// to avoid module-scope singleton side effects from the root barrel.
 // T0 Transport — Tauri IPC
 export * from './t0-transport';
 // F0 Forms — Form primitives

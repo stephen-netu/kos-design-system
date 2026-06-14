@@ -373,7 +373,8 @@
   />
 {/if}
 
-<style>
+  <!-- svelte-ignore css_unused_selector -->
+  <style>
   .markdown-editor {
     display: flex;
     flex-direction: column;
@@ -493,18 +494,18 @@
     line-height: 1.6;
   }
 
-  .preview-content :global(h1),
-  .preview-content :global(h2),
-  .preview-content :global(h3) {
+  .preview-content h1,
+  .preview-content h2,
+  .preview-content h3 {
     margin-top: 0;
     margin-bottom: 16px;
   }
 
-  .preview-content :global(p) {
+  .preview-content p {
     margin-bottom: 12px;
   }
 
-  .preview-content :global(code) {
+  .preview-content code {
     background: var(--color-bg-panel-elevated, #252525);
     padding: 2px 6px;
     border-radius: var(--radius-sm, 3px);
@@ -512,7 +513,7 @@
     font-size: 0.9em;
   }
 
-  .preview-content :global(pre) {
+  .preview-content pre {
     background: var(--color-bg-panel-elevated, #252525);
     padding: 12px;
     border-radius: var(--radius-md, 6px);
@@ -520,22 +521,22 @@
     margin-bottom: 12px;
   }
 
-  .preview-content :global(pre code) {
+  .preview-content pre code {
     background: none;
     padding: 0;
   }
 
-  .preview-content :global(ul),
-  .preview-content :global(ol) {
+  .preview-content ul,
+  .preview-content ol {
     margin-bottom: 12px;
     padding-left: 24px;
   }
 
-  .preview-content :global(li) {
+  .preview-content li {
     margin-bottom: 4px;
   }
 
-  .preview-content :global(blockquote) {
+  .preview-content blockquote {
     border-left: 3px solid var(--color-accent);
     padding-left: 12px;
     margin-left: 0;
@@ -543,12 +544,12 @@
     color: var(--color-text-secondary);
   }
 
-  .preview-content :global(a) {
+  .preview-content a {
     color: var(--color-accent);
     text-decoration: none;
   }
 
-  .preview-content :global(a:hover) {
+  .preview-content a:hover {
     text-decoration: underline;
   }
 

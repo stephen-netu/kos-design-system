@@ -11,20 +11,14 @@
     */
 
   import { onMount, onDestroy, untrack } from 'svelte';
-  import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
-           drawSelection, dropCursor, rectangularSelection, crosshairCursor,
-           highlightActiveLine, type ViewUpdate } from '@codemirror/view';
-  import { EditorState, type Extension } from '@codemirror/state';
-  import { markdown } from '@codemirror/lang-markdown';
-  import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-  import { search } from '@codemirror/search';
+  import { EditorView } from '@codemirror/view';
+  import { EditorState } from '@codemirror/state';
   import { writeTextFile, readTextFile, getMtimeMs, isTauri } from '../t0-transport/fs';
   import FindReplaceDialog from './FindReplaceDialog.svelte';
   import CorrectionTooltip from './components/CorrectionTooltip.svelte';
-  import { autoFormat } from './extensions/autoformat';
-  import { expansion } from './extensions/expansion';
-  import { autocomplete } from './extensions/autocomplete';
-  import { spellcheck } from './extensions/spellcheck';
+  import ExternalChangeDialog from './ExternalChangeDialog.svelte';
+  import { buildExtensions } from './codemirror-config';
+  import { markdownToHtml } from './markdown-preview';
   import type { CompletionSource } from './extensions/autocomplete';
   import type { SpellCheckCorrection, SpellCheckDictionary } from './extensions/spellcheck';
 
@@ -82,30 +76,6 @@
     isDirty ? 'Unsaved' : 'Saved'
   );
 
-  // Custom keymap for save and find/replace
-  const saveKeymap = keymap.of([{
-    key: 'Ctrl-s',
-    mac: 'Cmd-s',
-    run: () => {
-      saveContent();
-      return true;
-    }
-  }, {
-    key: 'Ctrl-f',
-    mac: 'Cmd-f',
-    run: () => {
-      openFindReplace(false);
-      return true;
-    }
-  }, {
-    key: 'Ctrl-Shift-f',
-    mac: 'Cmd-Shift-f',
-    run: () => {
-      openFindReplace(true);
-      return true;
-    }
-  }]);
-
   // Open find/replace dialog
   function openFindReplace(withReplace: boolean) {
     showFindReplace = true;
@@ -145,38 +115,6 @@
   function handleDismissCorrection() {
     activeCorrection = null;
   }
-
-  // Custom dark theme matching Atelier - uses CSS variables via style injection
-  const atelierTheme = EditorView.theme({
-    '&': {
-      backgroundColor: 'var(--color-bg-canvas)',
-      color: 'var(--color-text-primary)',
-      fontSize: '14px',
-      fontFamily: "var(--font-mono)"
-    },
-    '.cm-content': {
-      caretColor: 'var(--color-accent)',
-      padding: '16px'
-    },
-    '.cm-cursor': {
-      borderLeftColor: 'var(--color-accent)'
-    },
-    '.cm-activeLine': {
-      backgroundColor: 'var(--color-accent-subtle)'
-    },
-    '.cm-gutters': {
-      backgroundColor: 'var(--color-bg-app)',
-      borderRight: '1px solid var(--border-subtle)',
-      color: 'var(--color-text-tertiary)'
-    },
-    '.cm-activeLineGutter': {
-      backgroundColor: 'var(--color-accent-subtle)',
-      color: 'var(--color-accent)'
-    },
-    '.cm-selectionBackground': {
-      backgroundColor: 'var(--color-accent-subtle)'
-    }
-  }, { dark: true });
 
   // Check for external file changes (mtime-based via T0 transport)
   async function checkExternalChanges() {
@@ -239,50 +177,31 @@
     isDirty = true;
   }
 
-  // Minimal editor setup (replaces basicSetup)
-  const minimalSetup: Extension[] = [
-    lineNumbers(),
-    highlightActiveLineGutter(),
-    highlightSpecialChars(),
-    history(),
-    keymap.of(defaultKeymap),
-    keymap.of(historyKeymap),
-    drawSelection(),
-    dropCursor(),
-    rectangularSelection(),
-    crosshairCursor(),
-    highlightActiveLine(),
-  ];
-
   // Initialize CodeMirror
   onMount(() => {
-    const extensions: Extension[] = [
-      minimalSetup,
-      markdown(),
-      atelierTheme,
-      saveKeymap,
-      autoFormat(),
-      expansion(),
-      ...(completionSource ? [autocomplete({ source: completionSource })] : []),
-      ...(spellCheckDictionary ? spellcheck(spellCheckDictionary, { onCorrectionClick: handleCorrectionClick }) : []),
-      EditorView.updateListener.of((update: ViewUpdate) => {
-        if (update.docChanged) {
-          content = update.state.doc.toString();
-          activeCorrection = null;
-          isDirty = true;
-          saveError = null;
-           onChange?.(content);
-           // Auto-save: debounced 800ms after last keystroke
-           if (filePath) {
-            if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
-            autoSaveTimeout = setTimeout(() => saveContent(), 800);
-          }
+    const extensions = buildExtensions({
+      completionSource,
+      spellCheckDictionary,
+      onCorrectionClick: handleCorrectionClick,
+      onSave: saveContent,
+      onFind: () => openFindReplace(false),
+      onFindReplace: () => openFindReplace(true),
+      onDocChanged: (newContent) => {
+        content = newContent;
+        activeCorrection = null;
+        isDirty = true;
+        saveError = null;
+        onChange?.(content);
+        // Auto-save: debounced 800ms after last keystroke
+        if (filePath) {
+          if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+          autoSaveTimeout = setTimeout(() => saveContent(), 800);
         }
-      })
-    ];
+      }
+    });
 
     const state = EditorState.create({
-        doc: initialContent,
+      doc: initialContent,
       extensions
     });
 
@@ -370,20 +289,6 @@
   function togglePreview() {
     showPreview = !showPreview;
   }
-
-  // Simple markdown preview
-  function markdownToHtml(md: string): string {
-    return md
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-      .replace(/`([^`]+)`/gim, '<code>$1</code>')
-      .replace(/^- (.*$)/gim, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-      .replace(/\n/gim, '<br>');
-  }
 </script>
 
 <div class="markdown-editor" data-testid="markdown-editor">
@@ -462,31 +367,10 @@
 
 <!-- External Change Detection Dialog -->
 {#if showExternalChangeDialog}
-  <div class="dialog-overlay">
-    <div class="dialog">
-      <div class="dialog-header">
-        <h3>File Changed Externally</h3>
-      </div>
-      <div class="dialog-body">
-        <p>This file has been modified outside of Atelier.</p>
-        <p>Would you like to reload it from disk, or keep your current changes?</p>
-      </div>
-      <div class="dialog-footer">
-        <button 
-          class="action-btn"
-          onclick={handleKeepCurrent}
-        >
-          Keep Current
-        </button>
-        <button 
-          class="action-btn primary"
-          onclick={handleReloadFromDisk}
-        >
-          Reload from Disk
-        </button>
-      </div>
-    </div>
-  </div>
+  <ExternalChangeDialog
+    onReload={handleReloadFromDisk}
+    onKeepCurrent={handleKeepCurrent}
+  />
 {/if}
 
 <style>
@@ -673,60 +557,5 @@
     background: var(--color-error, #ef4444);
     color: white;
     font-size: 13px;
-  }
-
-  /* Dialog Styles */
-  .dialog-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-
-  .dialog {
-    background: var(--color-bg-panel, #1a1a1a);
-    border: 1px solid var(--border-subtle, #2a2a2a);
-    border-radius: var(--radius-lg, 8px);
-    min-width: 400px;
-    max-width: 500px;
-    box-shadow: var(--shadow-lg, 0 10px 40px rgba(0,0,0,0.5));
-  }
-
-  .dialog-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border-subtle, #2a2a2a);
-  }
-
-  .dialog-header h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--color-text-primary, #f5f2eb);
-  }
-
-  .dialog-body {
-    padding: 20px;
-  }
-
-  .dialog-body p {
-    margin: 0 0 12px 0;
-    color: var(--color-text-secondary, #a0a0a0);
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  .dialog-body p:last-child {
-    margin-bottom: 0;
-  }
-
-  .dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--space-3);
-    padding: 16px 20px;
-    border-top: 1px solid var(--border-subtle, #2a2a2a);
   }
 </style>

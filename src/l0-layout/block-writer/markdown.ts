@@ -45,6 +45,19 @@ export function renderMarkdown(md: string): string {
   const processed: string[] = [];
 
   for (const line of lines) {
+    // Blockquotes — match raw line before escaping
+    const bq = line.match(/^> (.+)$/);
+    if (bq) {
+      processed.push(`<blockquote class="md-bq">${renderInline(escapeHtml(bq[1]))}</blockquote>`);
+      continue;
+    }
+
+    // Horizontal rule — match raw line before escaping
+    if (/^[-*]{3,}$/.test(line.trim())) {
+      processed.push('<hr class="md-hr">');
+      continue;
+    }
+
     const escaped = escapeHtml(line);
 
     // Headings
@@ -65,19 +78,6 @@ export function renderMarkdown(md: string): string {
     const ol = escaped.match(/^(\d+)\. (.+)$/);
     if (ol) {
       processed.push(`<li class="md-li">${renderInline(ol[2])}</li>`);
-      continue;
-    }
-
-    // Blockquotes
-    const bq = escaped.match(/^> (.+)$/);
-    if (bq) {
-      processed.push(`<blockquote class="md-bq">${renderInline(bq[1])}</blockquote>`);
-      continue;
-    }
-
-    // Horizontal rule
-    if (/^[-*]{3,}$/.test(escaped.trim())) {
-      processed.push('<hr class="md-hr">');
       continue;
     }
 

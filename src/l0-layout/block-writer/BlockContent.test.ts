@@ -29,7 +29,7 @@ describe('BlockContent', () => {
     expect(container.querySelector('.ds-block-rendered')).not.toBeNull();
     expect(container.querySelector('.md-h1')?.textContent).toBe('Heading');
     expect(Array.from(container.querySelectorAll('.md-li')).map(node => node.textContent)).toEqual(['alpha', 'beta']);
-    expect(Array.from(container.querySelectorAll('.md-p')).map(node => node.textContent)).toContain('> quote');
+    expect(container.querySelector('.md-bq')?.textContent).toBe('quote');
     expect(container.querySelector('.md-hr')).not.toBeNull();
     expect(container.querySelector('.md-code')?.textContent).toBe('code');
     expect(container.querySelector('.md-wiki')?.textContent).toBe('label');

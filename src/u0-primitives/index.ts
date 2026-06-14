@@ -44,3 +44,6 @@ export type {
 
 // Grant Status Badge — Grant lifecycle status indicator
 export { default as GrantStatusBadge } from './grant-badge/GrantStatusBadge.svelte';
+
+// Allay Gauge — Allay-pipeline stage + confidence indicator
+export { default as AllayGauge } from './allay-gauge/AllayGauge.svelte';

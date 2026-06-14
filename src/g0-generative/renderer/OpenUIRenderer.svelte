@@ -24,11 +24,7 @@
   const componentRegistry = $derived(buildRegistry(library));
 
   function buildRegistry(library: ComponentLibrary): Map<string, import('svelte').Component<Record<string, unknown>>> {
-    // TODO: Implement component registration from library schemas
-    // This requires mapping ComponentLibrary schemas to actual Svelte imports
-    // Example: if (library.hasComponent('Card')) registry.set('Card', CardComponent);
-    // For now, return empty - consumers must register components manually
-    return new Map();
+    return library.getRegisteredComponents();
   }
 
   function isResolved(node: OpenUINode): boolean {

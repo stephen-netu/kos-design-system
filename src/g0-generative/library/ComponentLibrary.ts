@@ -10,6 +10,7 @@ import type { ComponentSchema, ComponentRegistry, LibraryConfig, PropSchema } fr
 export class ComponentLibrary {
   private registry: ComponentRegistry = new Map();
   private config: LibraryConfig;
+  private components: Map<string, import('svelte').Component<Record<string, unknown>>> = new Map();
 
   constructor(config: LibraryConfig) {
     this.config = config;
@@ -28,6 +29,18 @@ export class ComponentLibrary {
 
   listComponents(): string[] {
     return Array.from(this.registry.keys()).sort();
+  }
+
+  registerComponent(name: string, component: import('svelte').Component<Record<string, unknown>>): void {
+    this.components.set(name, component);
+  }
+
+  getRegisteredComponent(name: string): import('svelte').Component<Record<string, unknown>> | undefined {
+    return this.components.get(name);
+  }
+
+  getRegisteredComponents(): Map<string, import('svelte').Component<Record<string, unknown>>> {
+    return new Map(this.components);
   }
 
   /**

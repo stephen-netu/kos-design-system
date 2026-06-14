@@ -13,3 +13,23 @@ Object.defineProperty(globalThis, 'localStorage', {
   writable: true,
   configurable: true,
 });
+
+Object.defineProperty(globalThis, 'matchMedia', {
+  value: (query: string) => ({
+    matches: query.includes('dark'),
+    media: query,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  }),
+  writable: true,
+  configurable: true,
+});
+
+globalThis.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};

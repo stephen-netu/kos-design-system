@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { debug } from '../src/p0-primitives/debug';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -201,7 +202,7 @@ function main(): void {
 
   const output = JSON.stringify(json, null, 2) + '\n';
   writeFileSync(TOKENS_JSON_PATH, output, 'utf-8');
-  console.log(`Generated tokens.json: ${tokens.length} tokens → ${TOKENS_JSON_PATH}`);
+  debug.log(`Generated tokens.json: ${tokens.length} tokens → ${TOKENS_JSON_PATH}`);
 }
 
 main();

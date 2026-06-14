@@ -2,6 +2,8 @@
 // NOTE: $derived runes only work inside Svelte component context (.svelte files).
 // This module is meant to be used from .svelte.ts files or component <script> blocks.
 
+import { debug } from '../p0-primitives/debug';
+
 export interface DerivedOptions<T> {
   debug?: boolean;
 }
@@ -24,7 +26,7 @@ export function createDerived<T>(
 
   if (options?.debug) {
     $effect(() => {
-      console.log(`[derived] Value:`, value);
+      debug.log(`[derived] Value:`, value);
     });
   }
 

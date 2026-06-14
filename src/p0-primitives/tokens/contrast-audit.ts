@@ -13,6 +13,7 @@
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { debug } from '../debug';
 
 // ---------------------------------------------------------------------------
 // 1. Color parsing utilities
@@ -372,7 +373,7 @@ async function main(): Promise<number> {
 
   const results = auditContrast(combinedCss);
 
-  console.log(formatAuditReport(results));
+  debug.log(formatAuditReport(results));
 
   const failures = results.filter((r) => r.status === 'fail');
   if (failures.length > 0) {

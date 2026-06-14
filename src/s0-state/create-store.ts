@@ -1,3 +1,5 @@
+import { debug } from '../p0-primitives/debug';
+
 // Base store factory using Svelte 5 runes
 // This provides reactive state management without Svelte 4's writable/readable
 
@@ -60,7 +62,7 @@ export function createStore<T>(options: StoreOptions<T>): Store<T> {
   function set(newValue: T) {
     value = newValue;
     if (options.debug) {
-      console.log(`[store] Set:`, value);
+      debug.log(`[store] Set:`, value);
     }
     subscribers.forEach(fn => fn(value));
   }

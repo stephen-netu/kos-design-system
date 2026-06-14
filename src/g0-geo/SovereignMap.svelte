@@ -9,6 +9,7 @@
 
   import { onMount, onDestroy } from 'svelte';
   import 'leaflet/dist/leaflet.css';
+  import type { LayerGroup, Map } from 'leaflet';
 
   interface GeoPoint {
     lat: number;
@@ -32,29 +33,28 @@
 
   let { center, zoom = 12, markers = [], onMarkerSelect }: Props = $props();
 
+  type LeafletApi = typeof import('leaflet');
+
   let mapEl: HTMLDivElement;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let map: any = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let markerLayer: any = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let L: any = null;
+  let map: Map | null = null;
+  let markerLayer: LayerGroup | null = null;
+  let leafletApi: LeafletApi | null = null;
 
   onMount(async () => {
     // Dynamic import keeps Leaflet out of the critical bundle path.
     // CSS is statically imported at top of file — resolved from node_modules at build time (ADR: 2026-04-05-sovereign-map-css-delivery-adr.md).
     const leafletModule = await import('leaflet');
-    L = leafletModule.default;
+    leafletApi = leafletModule.default as LeafletApi;
 
-    map = L.map(mapEl).setView([center.lat, center.lon], zoom);
+    map = leafletApi.map(mapEl).setView([center.lat, center.lon], zoom);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    leafletApi.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19,
     }).addTo(map);
 
-    markerLayer = L.layerGroup().addTo(map);
+    markerLayer = leafletApi.layerGroup().addTo(map);
     syncMarkers();
   });
 
@@ -74,18 +74,18 @@
   });
 
   function syncMarkers() {
-    if (!markerLayer || !L) return;
+    if (!markerLayer || !leafletApi) return;
     markerLayer.clearLayers();
 
     for (const m of markers) {
-      const icon = L.divIcon({
+      const icon = leafletApi.divIcon({
         className: '',
         html: `<div class="sov-marker${m.selected ? ' sov-marker--selected' : ''}"></div>`,
         iconSize: [12, 12],
         iconAnchor: [6, 6],
       });
 
-      const leafletMarker = L.marker([m.lat, m.lon], { icon }).addTo(markerLayer);
+      const leafletMarker = leafletApi.marker([m.lat, m.lon], { icon }).addTo(markerLayer);
       leafletMarker.bindTooltip(m.label, { permanent: false, direction: 'top' });
 
       if (onMarkerSelect) {

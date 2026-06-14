@@ -95,7 +95,8 @@
   {/if}
 </div>
 
-<style>
+  <!-- svelte-ignore css_unused_selector -->
+  <style>
   .ds-block-content {
     flex: 1;
     min-height: 0;
@@ -125,40 +126,40 @@
     min-height: 2em;
   }
 
-  /* Markdown rendered styles — scoped under :global for {@html} content */
-  .ds-block-rendered :global(.md-h) {
+  /* Markdown rendered styles — scoped descendants for {@html} content */
+  .ds-block-rendered .md-h {
     margin: 12px 0 6px 0;
     font-weight: 600;
     color: var(--color-text-primary, #e8e0d0);
   }
 
-  .ds-block-rendered :global(.md-h1) { font-size: 1.4em; }
-  .ds-block-rendered :global(.md-h2) { font-size: 1.2em; }
-  .ds-block-rendered :global(.md-h3) { font-size: 1.1em; }
-  .ds-block-rendered :global(.md-h4),
-  .ds-block-rendered :global(.md-h5),
-  .ds-block-rendered :global(.md-h6) { font-size: 1em; }
+  .ds-block-rendered .md-h1 { font-size: 1.4em; }
+  .ds-block-rendered .md-h2 { font-size: 1.2em; }
+  .ds-block-rendered .md-h3 { font-size: 1.1em; }
+  .ds-block-rendered .md-h4,
+  .ds-block-rendered .md-h5,
+  .ds-block-rendered .md-h6 { font-size: 1em; }
 
-  .ds-block-rendered :global(.md-p) {
+  .ds-block-rendered .md-p {
     margin: 6px 0;
   }
 
-  .ds-block-rendered :global(.md-ul) {
+  .ds-block-rendered .md-ul {
     margin: 6px 0;
     padding-left: 20px;
     list-style: none;
   }
 
-  .ds-block-rendered :global(.md-li) {
+  .ds-block-rendered .md-li {
     margin: 3px 0;
   }
 
-  .ds-block-rendered :global(.md-li)::before {
+  .ds-block-rendered .md-li::before {
     content: '• ';
     color: var(--color-accent, var(--color-accent));
   }
 
-  .ds-block-rendered :global(.md-bq) {
+  .ds-block-rendered .md-bq {
     margin: 6px 0;
     padding: 6px 10px;
     border-left: 3px solid var(--color-accent, var(--color-accent));
@@ -166,17 +167,17 @@
     font-style: italic;
   }
 
-  .ds-block-rendered :global(.md-hr) {
+  .ds-block-rendered .md-hr {
     border: none;
     border-top: 1px solid var(--color-border, #333);
     margin: 12px 0;
   }
 
-  .ds-block-rendered :global(.md-gap) {
+  .ds-block-rendered .md-gap {
     height: 6px;
   }
 
-  .ds-block-rendered :global(.md-code) {
+  .ds-block-rendered .md-code {
     padding: 1px 5px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: var(--radius-sm, 3px);
@@ -185,29 +186,29 @@
     color: var(--color-accent, var(--color-accent));
   }
 
-  .ds-block-rendered :global(strong) {
+  .ds-block-rendered strong {
     font-weight: 600;
     color: var(--color-text-primary, #e8e0d0);
   }
 
-  .ds-block-rendered :global(em) {
+  .ds-block-rendered em {
     font-style: italic;
     color: var(--color-text-muted, #a09880);
   }
 
-  .ds-block-rendered :global(del) {
+  .ds-block-rendered del {
     text-decoration: line-through;
     color: var(--color-text-muted, #a09880);
   }
 
-  .ds-block-rendered :global(.md-wiki) {
+  .ds-block-rendered .md-wiki {
     color: var(--color-accent, var(--color-accent));
     text-decoration: underline;
     text-decoration-style: dotted;
     cursor: pointer;
   }
 
-  .ds-block-rendered :global(.md-wiki:hover) {
+  .ds-block-rendered .md-wiki:hover {
     text-decoration-style: solid;
   }
 </style>

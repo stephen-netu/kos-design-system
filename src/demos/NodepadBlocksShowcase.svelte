@@ -6,6 +6,7 @@
   // - NO collapse button (content flows naturally)
   
   import { NodepadBlock, type EnchantedBlockData } from '../x0-enchanted-blocks';
+  import { debug } from '../p0-primitives/debug';
   
   // Mock blocks as EnchantedBlockData (not wrapped in TaskView)
   const mockBlocks: EnchantedBlockData[] = [
@@ -72,7 +73,7 @@ The block should just flow naturally—no collapse buttons needed.`,
       block.content = newContent;
       block.modifiedAt = Date.now();
     }
-    console.log(`Changed ${id}: ${newContent.slice(0, 30)}...`);
+    debug.log(`Changed ${id}: ${newContent.slice(0, 30)}...`);
   }
   
   function handleTypeChange(id: string, newType: string) {

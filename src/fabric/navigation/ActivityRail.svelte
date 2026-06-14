@@ -8,9 +8,7 @@
    * @package @kos/design-system/fabric/navigation
    * @adr 2026-04-12-leap-substrate-refactor-001
    */
-  // Lucide icons are Svelte 4 class components - use permissive typing
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type IconComponent = any;
+  import type { LucideIcon } from '@lucide/svelte';
   import {
     LayoutGrid, FileText, Network, Columns2, Globe,
     FolderTree, MessageSquare, HelpCircle, Layers, Gauge, Wifi, Folder,
@@ -56,7 +54,7 @@
     ondropstreamcard,
   }: Props = $props();
 
-  const ICON_MAP: Record<string, IconComponent> = {
+  const ICON_MAP: Record<string, LucideIcon> = {
     'layout-grid': LayoutGrid,
     'file-text': FileText,
     'network': Network,
@@ -75,7 +73,7 @@
     'help-circle': HelpCircle,
   };
 
-  function getIcon(name: string): IconComponent {
+  function getIcon(name: string): LucideIcon {
     return ICON_MAP[name.toLowerCase()] ?? FileText;
   }
 

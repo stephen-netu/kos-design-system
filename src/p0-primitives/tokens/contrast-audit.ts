@@ -373,7 +373,7 @@ async function main(): Promise<number> {
 
   const results = auditContrast(combinedCss);
 
-  debug.log(formatAuditReport(results));
+  console.log(formatAuditReport(results));
 
   const failures = results.filter((r) => r.status === 'fail');
   if (failures.length > 0) {

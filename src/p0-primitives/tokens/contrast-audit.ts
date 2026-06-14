@@ -13,7 +13,6 @@
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { debug } from '../debug';
 
 // ---------------------------------------------------------------------------
 // 1. Color parsing utilities

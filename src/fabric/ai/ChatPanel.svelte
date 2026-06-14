@@ -260,7 +260,8 @@
   </div>
 </div>
 
-<style>
+  <!-- svelte-ignore css_unused_selector -->
+  <style>
   .chat-panel {
     display: flex;
     flex-direction: column;
@@ -372,18 +373,18 @@
     border-bottom-left-radius: 4px;
   }
 
-  .message-content :global(h1),
-  .message-content :global(h2),
-  .message-content :global(h3) {
+  .message-content h1,
+  .message-content h2,
+  .message-content h3 {
     font-size: 14px;
     margin: 8px 0 4px 0;
   }
 
-  .message-content :global(p) {
+  .message-content p {
     margin: 0 0 4px 0;
   }
 
-  .message-content :global(code) {
+  .message-content code {
     background: rgba(0, 0, 0, 0.2);
     padding: 2px 4px;
     border-radius: var(--radius-sm, 3px);
@@ -391,7 +392,7 @@
     font-size: 0.9em;
   }
 
-  .message-content :global(pre) {
+  .message-content pre {
     background: rgba(0, 0, 0, 0.3);
     padding: 8px;
     border-radius: var(--radius-md, 6px);
@@ -399,12 +400,12 @@
     margin: 4px 0;
   }
 
-  .message-content :global(pre code) {
+  .message-content pre code {
     background: none;
     padding: 0;
   }
 
-  .message-content :global(ul) {
+  .message-content ul {
     margin: 4px 0;
     padding-left: 20px;
   }

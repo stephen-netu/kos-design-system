@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ComponentLibrary, defineComponent } from '../library/ComponentLibrary';
 
-const MockComponent = {} as import('svelte').Component<Record<string, unknown>>;
 const MockButton = {} as import('svelte').Component<Record<string, unknown>>;
 const MockText = {} as import('svelte').Component<Record<string, unknown>>;
 const MockCard = {} as import('svelte').Component<Record<string, unknown>>;

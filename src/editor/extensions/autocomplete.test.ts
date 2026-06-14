@@ -1,7 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { autocompletion } from '@codemirror/autocomplete';
 import { autocomplete, type AutocompleteConfig } from './autocomplete';
 
 function createView(doc: string, config: AutocompleteConfig): EditorView {
@@ -12,14 +11,6 @@ function createView(doc: string, config: AutocompleteConfig): EditorView {
         }),
         parent: document.body,
     });
-}
-
-function openCompletion(view: EditorView, pos?: number): void {
-    const p = pos ?? view.state.doc.length;
-    view.dispatch({ selection: { anchor: p } });
-    const plugin = autocompletion();
-    const ext = plugin.value as any;
-    ext?.activate?.({ state: view.state, dispatch: view.dispatch });
 }
 
 describe('autocomplete', () => {
@@ -125,15 +116,13 @@ describe('autocomplete', () => {
         expect(view.state.doc.toString()).toBe('hello world');
     });
 
-    it('CompletionSource receives context', () => {
-        let receivedContext: any = null;
-        const capturingSource = (context: any) => {
-            receivedContext = context;
-            return { from: 0, options: [] };
-        };
-        view = createView('test', { source: capturingSource });
-        expect(view).toBeDefined();
-        view.destroy();
+    it('CompletionSource receives typed context', () => {
+        const capturingSource = (context: Parameters<AutocompleteConfig['source']>[0]) => ({
+            from: context.state.doc.length,
+            options: [],
+        });
+        const ext = autocomplete({ source: capturingSource });
+        expect(ext).toBeDefined();
     });
 
     it('multiple autocomplete instances do not conflict', () => {

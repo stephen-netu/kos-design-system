@@ -12,7 +12,7 @@
    */
 
   import { tick, untrack } from 'svelte';
-  import { modalStackStore } from '@stephen-netu/design-system/s0-state';
+  import { modalStackStore } from '../../s0-state/modal-stack-store.svelte';
 
   export interface Props {
     /** Controls modal visibility */

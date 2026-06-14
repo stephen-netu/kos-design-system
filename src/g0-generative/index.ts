@@ -10,6 +10,7 @@
  */
 
 export { default as OpenUIRenderer } from './renderer/OpenUIRenderer.svelte';
+export { default as Text } from './components/Text.svelte';
 export { parseOpenUILang, type ParseResult } from './parser/parseOpenUILang';
 export { ComponentLibrary, defineComponent } from './library/ComponentLibrary';
 export { generateSystemPrompt } from './prompt-gen/generateSystemPrompt';

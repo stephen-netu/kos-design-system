@@ -1,15 +1,16 @@
+import type { Snippet } from 'svelte';
 import { describe, it, expect, afterEach } from 'vitest';
 import { cleanup, render } from '@testing-library/svelte';
 import { ComponentLibrary, defineComponent } from '../library/ComponentLibrary';
 import OpenUIRenderer from './OpenUIRenderer.svelte';
-import type { OpenUIAST } from '../parser/types';
+import Card from '../../u0-primitives/card/Card.svelte';
+import Button from '../../u0-primitives/button/Button.svelte';
+import Text from '../components/Text.svelte';
+import type { OpenUIAST, OpenUINode } from '../parser/types';
 
-function createAST(rootId: string, nodes: Map<string, any>): OpenUIAST {
+function createAST(rootId: string, nodes: Map<string, OpenUINode>): OpenUIAST {
     return { root: rootId, nodes, errors: [] };
 }
-
-const MockCard = () => {};
-MockCard.__svelte_meta = null;
 
 describe('OpenUIRenderer', () => {
     afterEach(() => cleanup());
@@ -18,9 +19,18 @@ describe('OpenUIRenderer', () => {
         name: 'Test Library',
         description: 'Test',
         components: [
-            defineComponent('Card', 'A card', {}, { children: true }),
-            defineComponent('Button', 'A button', { label: { type: 'string' } }),
-            defineComponent('Text', 'Text', { content: { type: 'string' } }),
+            defineComponent('Card', 'A card', {
+                class: { type: 'string', optional: true },
+            }, { children: true }),
+            defineComponent('Button', 'A button', {
+                label: { type: 'string' },
+                class: { type: 'string', optional: true },
+            }),
+            defineComponent('Text', 'Text', {
+                content: { type: 'string' },
+                size: { type: 'enum', values: ['sm', 'md', 'lg', 'xl'], optional: true },
+                class: { type: 'string', optional: true },
+            }),
         ],
     });
 
@@ -43,7 +53,7 @@ describe('OpenUIRenderer', () => {
     });
 
     it('renders element root with registered component', () => {
-        lib.registerComponent('Card', MockCard as any);
+        lib.registerComponent('Card', Card);
         const nodes = new Map([
             ['root', { type: 'element', identifier: 'root', component: 'Card', args: [], line: 1 }],
         ]);
@@ -51,6 +61,7 @@ describe('OpenUIRenderer', () => {
         const { container } = render(OpenUIRenderer, {
             props: { ast, library: lib },
         });
+        expect(container.querySelector('.ds-card')).not.toBeNull();
         expect(container.querySelector('.openui-empty')).toBeNull();
         expect(container.querySelector('.openui-skeleton')).toBeNull();
     });
@@ -67,7 +78,7 @@ describe('OpenUIRenderer', () => {
     });
 
     it('passes props to registered components', () => {
-        lib.registerComponent('Button', MockCard as any);
+        lib.registerComponent('Button', Button);
         const nodes = new Map([
             ['root', { type: 'element', identifier: 'root', component: 'Button', args: ['Click me'], line: 1 }],
         ]);
@@ -75,30 +86,46 @@ describe('OpenUIRenderer', () => {
         const { container } = render(OpenUIRenderer, {
             props: { ast, library: lib },
         });
-        expect(container.querySelector('.openui-empty')).toBeNull();
+        const button = container.querySelector('.ds-button');
+        expect(button).not.toBeNull();
+        expect(button?.getAttribute('type')).toBe('button');
     });
 
-    it('renders children for registered parent component', () => {
-        lib.registerComponent('Card', MockCard as any);
-        lib.registerComponent('Text', MockCard as any);
+    it('renders Text from OpenUI DSL', () => {
+        lib.registerComponent('Text', Text);
         const nodes = new Map([
-            ['root', { type: 'element', identifier: 'root', component: 'Card', args: [['child1']], line: 1 }],
-            ['child1', { type: 'element', identifier: 'child1', component: 'Text', args: ['Hello'], line: 2 }],
+            ['root', { type: 'element', identifier: 'root', component: 'Text', args: ['Hello OpenUI'], line: 1 }],
         ]);
         const ast = createAST('root', nodes);
         const { container } = render(OpenUIRenderer, {
             props: { ast, library: lib },
         });
-        expect(container.querySelector('.openui-empty')).toBeNull();
+        expect(container.querySelector('.openui-text')?.textContent).toBe('Hello OpenUI');
+    });
+
+    it('renders nested children through registered components', () => {
+        lib.registerComponent('Card', Card);
+        lib.registerComponent('Text', Text);
+        const nodes = new Map([
+            ['root', { type: 'element', identifier: 'root', component: 'Card', args: [['child1']], line: 1 }],
+            ['child1', { type: 'element', identifier: 'child1', component: 'Text', args: ['Nested text'], line: 2 }],
+        ]);
+        const ast = createAST('root', nodes);
+        const { container } = render(OpenUIRenderer, {
+            props: { ast, library: lib },
+        });
+        expect(container.querySelectorAll('.ds-card').length).toBe(1);
+        expect(container.querySelector('.openui-text')?.textContent).toBe('Nested text');
     });
 
     it('renders fallback snippet when provided and ast is null', () => {
+        const fallback: Snippet = () => '<div class="custom-fallback">Loading</div>';
         const { container } = render(OpenUIRenderer, {
             props: {
                 ast: null,
                 library: lib,
-                fallback: () => ({ render: () => '<div class="custom-fallback">Loading</div>' }),
-            } as any,
+                fallback,
+            },
         });
         expect(container.querySelector('.openui-empty')).not.toBeNull();
     });
@@ -117,15 +144,15 @@ describe('OpenUIRenderer', () => {
     });
 
     it('buildRegistry returns registered components from library', () => {
-        lib.registerComponent('Card', MockCard as any);
-        lib.registerComponent('Button', MockCard as any);
+        lib.registerComponent('Card', Card);
+        lib.registerComponent('Button', Button);
         const nodes = new Map([
-            ['root', { type: 'element', identifier: 'root', component: 'Card', args: [], line: 1 }],
+            ['root', { type: 'element', identifier: 'root', component: 'Button', args: ['Save'], line: 1 }],
         ]);
         const ast = createAST('root', nodes);
         const { container } = render(OpenUIRenderer, {
             props: { ast, library: lib },
         });
-        expect(container.querySelector('.openui-empty')).toBeNull();
+        expect(container.querySelector('.ds-button')).not.toBeNull();
     });
 });

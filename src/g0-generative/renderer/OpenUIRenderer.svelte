@@ -39,22 +39,18 @@
     component: import('svelte').Component<Record<string, unknown>> | null;
     props: Record<string, unknown>;
     children: string[];
-    grandchildren: string[];
   } {
     const Component = getComponent(element.component);
     const schema = library.getComponent(element.component);
-    
+
     const componentProps: Record<string, unknown> = {};
     const children: string[] = [];
-    const grandchildren: string[] = [];
 
     if (schema) {
-      // Map positional args to named props
       for (let i = 0; i < element.args.length; i++) {
         const propName = schema.propOrder[i];
         if (propName) {
           const value = element.args[i];
-          // If this is an identifier array, treat as children
           if (Array.isArray(value) && value.every(v => typeof v === 'string')) {
             children.push(...value);
           } else {
@@ -63,7 +59,6 @@
         }
       }
     } else {
-      // No schema - treat all array args as children
       for (const arg of element.args) {
         if (Array.isArray(arg) && arg.every(v => typeof v === 'string')) {
           children.push(...arg);
@@ -71,19 +66,7 @@
       }
     }
 
-    // Extract grandchildren from children (nested structure)
-    for (const childId of children) {
-      const childNode = ast?.nodes.get(childId);
-      if (childNode?.type === 'element') {
-        for (const arg of childNode.args) {
-          if (Array.isArray(arg) && arg.every(v => typeof v === 'string')) {
-            grandchildren.push(...arg);
-          }
-        }
-      }
-    }
-
-    return { component: Component, props: componentProps, children, grandchildren };
+    return { component: Component, props: componentProps, children };
   }
 </script>
 
@@ -103,25 +86,11 @@
       {@const { component: RootComponent, props: rootProps, children } = renderElement(rootNode)}
       {#if RootComponent}
         <RootComponent {...rootProps}>
-          {#each children as childId}
-            {@const childNode = ast!.nodes.get(childId)}
-            {#if childNode}
-              <!-- Recursive child rendering via snippet -->
-              {@render renderChild(childId, childNode)}
-            {/if}
-          {/each}
+          {@render renderChildren(children)}
         </RootComponent>
       {:else}
         <!-- Unregistered component - render children inline -->
-        {#each children as childId}
-          {@const childNode = ast!.nodes.get(childId)}
-          {#if childNode?.type === 'element'}
-            {@const { component: ChildComponent, props: childProps } = renderElement(childNode)}
-            {#if ChildComponent}
-              <ChildComponent {...childProps} />
-            {/if}
-          {/if}
-        {/each}
+        {@render renderChildren(children)}
       {/if}
     {/if}
   {/if}
@@ -131,29 +100,24 @@
       <div class="openui-loading">Loading...</div>
     </div>
   {:else if childNode.type === 'element'}
-    {@const { component: ChildComponent, props: childProps, grandchildren } = renderElement(childNode)}
+    {@const { component: ChildComponent, props: childProps, children } = renderElement(childNode)}
     {#if ChildComponent}
       <ChildComponent {...childProps}>
-        {#each grandchildren as grandchildId}
-          {@const grandchildNode = ast!.nodes.get(grandchildId)}
-          {#if grandchildNode}
-            {@render renderChild(grandchildId, grandchildNode)}
-          {/if}
-        {/each}
+        {@render renderChildren(children)}
       </ChildComponent>
     {:else}
       <!-- Unregistered component - render children inline -->
-      {#each grandchildren as grandchildId}
-        {@const grandchildNode = ast!.nodes.get(grandchildId)}
-        {#if grandchildNode?.type === 'element'}
-          {@const { component: GC, props: gp } = renderElement(grandchildNode)}
-          {#if GC}
-            <GC {...gp} />
-          {/if}
-        {/if}
-      {/each}
+      {@render renderChildren(children)}
     {/if}
   {/if}
+{/snippet}
+{#snippet renderChildren(childIds: string[])}
+  {#each childIds as childId}
+    {@const childNode = ast!.nodes.get(childId)}
+    {#if childNode}
+      {@render renderChild(childId, childNode)}
+    {/if}
+  {/each}
 {/snippet}
 
 {:else}

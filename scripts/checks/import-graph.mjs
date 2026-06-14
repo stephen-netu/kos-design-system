@@ -3,9 +3,10 @@
 // Fails (exit 1) when:
 //  1. A core layer imports upward (p0 ← u0 ← f0 ← l0 ← fabric must flow down).
 //  2. Any directory-level import cycle exists under src/.
-//  3. Shipped (non-test) code imports a package that is not declared in
-//     dependencies or peerDependencies — the bug class where a devDependency
-//     is imported at runtime and breaks published consumers (F-01/F-02).
+//  3. Shipped (non-test) code imports a package other than itself that is not
+//     declared in dependencies or peerDependencies — the bug class where a
+//     devDependency is imported at runtime and breaks published consumers
+//     (F-01/F-02).
 //
 // Origin: external review @ 51b3401 (REVIEW-FINDINGS.md).
 
@@ -90,6 +91,7 @@ for (const f of files) {
 			continue;
 		}
 		if (pkgName === 'svelte') continue; // peer
+		if (pkgName === pkg.name) continue;
 		if (!declared.has(pkgName)) {
 			errors.push(`UNDECLARED-DEP: ${rel} imports "${pkgName}" which is not in dependencies/peerDependencies`);
 		}

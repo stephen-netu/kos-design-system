@@ -1,7 +1,7 @@
-import { autocompletion, type CompletionSource } from '@codemirror/autocomplete';
+import { autocompletion, type Completion, type CompletionSource } from '@codemirror/autocomplete';
 
 export { autocompletion };
-export type { CompletionSource };
+export type { Completion, CompletionSource };
 
 export interface AutocompleteConfig {
     source: CompletionSource;

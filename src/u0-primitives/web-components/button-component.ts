@@ -1,13 +1,14 @@
-/**
- * KosButton Web Component
- *
- * Web Component wrapper for the KosButton Svelte component.
- * Enables usage of KosButton in vanilla JS, React, or other frameworks.
- *
- * @package @kos/design-system/u0-primitives
- */
-import { mount } from 'svelte';
+import { createRawSnippet, mount, unmount } from 'svelte';
+import type { Props as ButtonProps } from '../button/Button.svelte';
 import Button from '../button/Button.svelte';
+
+const variants = ['primary', 'secondary', 'ghost', 'danger'] as const;
+const sizes = ['sm', 'md', 'lg'] as const;
+const types = ['button', 'submit', 'reset'] as const;
+
+type Variant = (typeof variants)[number];
+type Size = (typeof sizes)[number];
+type Type = (typeof types)[number];
 
 class KosButton extends HTMLElement {
   static observedAttributes = [
@@ -15,10 +16,15 @@ class KosButton extends HTMLElement {
     'loading',
     'variant',
     'size',
+    'type',
+    'class',
+    'aria-label',
+    'aria-expanded',
     'children'
   ];
 
   private svelteRoot: HTMLElement | null = null;
+  private svelteComponent: Record<string, unknown> | null = null;
 
   constructor() {
     super();
@@ -30,10 +36,7 @@ class KosButton extends HTMLElement {
   }
 
   disconnectedCallback() {
-    if (this.svelteRoot) {
-      this.svelteRoot.innerHTML = '';
-      this.svelteRoot = null;
-    }
+    this.destroy();
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
@@ -42,8 +45,15 @@ class KosButton extends HTMLElement {
     }
   }
 
-  getComponentProps(): Record<string, unknown> {
-    const props: Record<string, unknown> = {};
+  getComponentProps(): ButtonProps {
+    const props: ButtonProps = {};
+    const variant = this.getAttribute('variant');
+    const size = this.getAttribute('size');
+    const type = this.getAttribute('type');
+    const className = this.getAttribute('class');
+    const ariaLabel = this.getAttribute('aria-label');
+    const ariaExpanded = this.getAttribute('aria-expanded');
+    const children = this.getAttribute('children');
 
     if (this.hasAttribute('disabled')) {
       props.disabled = true;
@@ -51,16 +61,26 @@ class KosButton extends HTMLElement {
     if (this.hasAttribute('loading')) {
       props.loading = true;
     }
-
-    if (this.hasAttribute('variant')) {
-      props.variant = this.getAttribute('variant') ?? 'primary';
+    if (variant) {
+      props.variant = readOption(variant, variants, 'primary');
     }
-    if (this.hasAttribute('size')) {
-      props.size = this.getAttribute('size') ?? 'md';
+    if (size) {
+      props.size = readOption(size, sizes, 'md');
     }
-
-    if (this.hasAttribute('children')) {
-      props.children = this.getAttribute('children');
+    if (type) {
+      props.type = readOption(type, types, 'button');
+    }
+    if (className) {
+      props.class = className;
+    }
+    if (ariaLabel) {
+      props['aria-label'] = ariaLabel;
+    }
+    if (ariaExpanded !== null) {
+      props['aria-expanded'] = ariaExpanded !== 'false';
+    }
+    if (children !== null) {
+      props.children = createTextSnippet(children);
     }
 
     return props;
@@ -69,31 +89,56 @@ class KosButton extends HTMLElement {
   render() {
     if (!this.shadowRoot) return;
 
-    if (this.svelteRoot) {
-      this.svelteRoot.innerHTML = '';
-    }
-
+    this.destroy();
     this.svelteRoot = document.createElement('div');
     this.shadowRoot.appendChild(this.svelteRoot);
-
-    mount(Button, {
+    this.svelteComponent = mount(Button, {
       target: this.svelteRoot,
       props: this.getComponentProps()
-    });
+    }) as Record<string, unknown>;
+    this.ensureHostStyle();
+  }
 
-    if (!this.shadowRoot.querySelector('style')) {
-      const style = document.createElement('style');
-      style.textContent = `
-        :host {
-          display: inline-block;
-          font-family: var(--font-sans, 'Outfit', system-ui, sans-serif);
-        }
-        ::slotted(*) {
-        }
-      `;
-      this.shadowRoot.appendChild(style);
+  destroy() {
+    if (this.svelteComponent) {
+      void unmount(this.svelteComponent);
+      this.svelteComponent = null;
+    }
+    if (this.svelteRoot) {
+      this.svelteRoot.remove();
+      this.svelteRoot = null;
     }
   }
+
+  private ensureHostStyle() {
+    if (!this.shadowRoot || this.shadowRoot.querySelector('style')) return;
+
+    const style = document.createElement('style');
+    style.textContent = `
+      :host {
+        display: inline-block;
+        font-family: var(--font-sans, 'Outfit', system-ui, sans-serif);
+      }
+    `;
+    this.shadowRoot.appendChild(style);
+  }
+}
+
+function readOption<T extends readonly string[]>(value: string, options: T, fallback: T[number]): T[number] {
+  return options.includes(value as T[number]) ? value as T[number] : fallback;
+}
+
+function createTextSnippet(value: string) {
+  return createRawSnippet(() => ({
+    render: () => `<span>${escapeHtml(value)}</span>`
+  }));
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 if (!customElements.get('kos-button')) {

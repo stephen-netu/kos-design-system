@@ -47,3 +47,7 @@ export { default as GrantStatusBadge } from './grant-badge/GrantStatusBadge.svel
 
 // Allay Gauge — Allay-pipeline stage + confidence indicator
 export { default as AllayGauge } from './allay-gauge/AllayGauge.svelte';
+
+// Web Component wrappers for non-Svelte consumers
+export { KosButton } from './web-components/button-component';
+export { KosInput } from './web-components/input-component';

@@ -57,6 +57,18 @@
       "svelte": "./dist/u0-primitives/index.js",
       "default": "./dist/u0-primitives/index.js"
     },
+    "./u0-primitives/web-components": {
+      "types": "./dist/u0-primitives/web-components/index.d.ts",
+      "default": "./dist/u0-primitives/web-components/index.js"
+    },
+    "./u0-primitives/web-components/button-component": {
+      "types": "./dist/u0-primitives/web-components/button-component.d.ts",
+      "default": "./dist/u0-primitives/web-components/button-component.js"
+    },
+    "./u0-primitives/web-components/input-component": {
+      "types": "./dist/u0-primitives/web-components/input-component.d.ts",
+      "default": "./dist/u0-primitives/web-components/input-component.js"
+    },
     "./u0-primitives/surface-state/SurfaceState.svelte": "./dist/u0-primitives/surface-state/SurfaceState.svelte",
     "./u0-primitives/badge/ValidityBadge.svelte": "./dist/u0-primitives/badge/ValidityBadge.svelte",
     "./u0-primitives/badge/validity-utils": "./dist/u0-primitives/badge/validity-utils.js",

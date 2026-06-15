@@ -46,6 +46,8 @@
   let showCompletions = $state(false);
   let selectedIndex = $state(0);
   let fetchSeq = $state(0);
+  let completionFrom = $state(0);
+  let completionTo = $state(0);
 
   onDestroy(() => {
     fetchSeq += 1;
@@ -94,6 +96,9 @@
 
       const options = result?.options ?? [];
 
+      completionFrom = result?.from ?? 0;
+      completionTo = result?.to ?? query.length;
+
       completions = options.slice(0, maxVisible).map((completion) => ({
         label: completion.label,
         type: completion.type,
@@ -109,7 +114,7 @@
   }
 
   function applyCompletion(completion: CompletionItem) {
-    value = completion.label;
+    value = value.slice(0, completionFrom) + completion.label + value.slice(completionTo);
     completions = [];
     showCompletions = false;
   }

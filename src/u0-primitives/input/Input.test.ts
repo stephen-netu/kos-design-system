@@ -5,11 +5,15 @@ import type { Completion, CompletionSource } from '../../editor/extensions/types
 import Input from './Input.svelte';
 
 function createSource(completions: Completion[]): CompletionSource {
-  return async () => ({
-    from: 0,
-    to: 0,
-    options: completions,
-  });
+  return async (context) => {
+    const match = context.matchBefore(/\w+$/);
+    if (!match) return null;
+    return {
+      from: match.from,
+      to: match.to,
+      options: completions,
+    };
+  };
 }
 
 describe('Input', () => {
@@ -144,6 +148,24 @@ describe('Input', () => {
     });
     await fireEvent.keyDown(input, { key: 'Escape' });
 
+    expect(container.querySelector('.ds-input-autocomplete')).toBeNull();
+  });
+
+  it('replaces only the current token, preserving prefix and suffix', async () => {
+    const source = createSource([
+      { label: 'project', type: 'word' },
+    ]);
+    const { container } = render(Input, { autocomplete: { source } });
+    const input = container.querySelector('input')!;
+
+    await fireEvent.input(input, { target: { value: 'create a p' } });
+
+    await waitFor(() => {
+      expect(container.querySelector('.ds-input-autocomplete')).not.toBeNull();
+    });
+    await fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(input.value).toBe('create a project');
     expect(container.querySelector('.ds-input-autocomplete')).toBeNull();
   });
 

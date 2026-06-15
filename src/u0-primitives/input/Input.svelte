@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { EditorState } from '@codemirror/state';
   import type { Snippet } from 'svelte';
   import type { Completion, CompletionSource } from '../../editor/extensions/types';
@@ -44,6 +45,11 @@
   let completions = $state<CompletionItem[]>([]);
   let showCompletions = $state(false);
   let selectedIndex = $state(0);
+  let fetchSeq = $state(0);
+
+  onDestroy(() => {
+    fetchSeq += 1;
+  });
 
   let currentType = $derived(type === 'password' && showPassword ? 'text' : type);
   let maxVisible = $derived(autocomplete?.maxVisible ?? 8);
@@ -79,8 +85,13 @@
       return;
     }
 
+    const seq = fetchSeq;
+
     try {
       const result = await autocomplete.source(createCompletionContext(query));
+
+      if (seq !== fetchSeq) return;
+
       const options = result?.options ?? [];
 
       completions = options.slice(0, maxVisible).map((completion) => ({
@@ -91,6 +102,7 @@
       selectedIndex = 0;
       showCompletions = completions.length > 0;
     } catch {
+      if (seq !== fetchSeq) return;
       completions = [];
       showCompletions = false;
     }
@@ -173,6 +185,7 @@
     aria-invalid={error ? 'true' : undefined}
     aria-disabled={disabled ? 'true' : undefined}
     aria-autocomplete={autocomplete ? 'list' : undefined}
+    aria-controls={showCompletions ? 'autocomplete-list' : undefined}
     aria-expanded={showCompletions ? 'true' : 'false'}
     aria-activedescendant={showCompletions ? `autocomplete-option-${selectedIndex}` : undefined}
     autocomplete="off"

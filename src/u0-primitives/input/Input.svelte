@@ -1,12 +1,10 @@
 <script lang="ts">
+  import { EditorState } from '@codemirror/state';
   import type { Snippet } from 'svelte';
-
-  export interface AutocompleteResult {
-    completions: Array<{ label: string; type?: string; detail?: string }>;
-  }
+  import type { Completion, CompletionSource } from '../../editor/extensions/types';
 
   export interface AutocompleteConfig {
-    source: { complete: (query: string) => Promise<AutocompleteResult> | AutocompleteResult };
+    source: CompletionSource;
     maxVisible?: number;
     minChars?: number;
   }
@@ -25,6 +23,8 @@
     autocomplete?: AutocompleteConfig;
   }
 
+  type CompletionItem = Pick<Completion, 'label' | 'type' | 'detail'>;
+
   let {
     value = $bindable(''),
     type = 'text',
@@ -41,7 +41,7 @@
 
   let isFocused = $state(false);
   let showPassword = $state(false);
-  let completions = $state<Array<{ label: string; type?: string; detail?: string }>>([]);
+  let completions = $state<CompletionItem[]>([]);
   let showCompletions = $state(false);
   let selectedIndex = $state(0);
 
@@ -49,25 +49,60 @@
   let maxVisible = $derived(autocomplete?.maxVisible ?? 8);
   let minChars = $derived(autocomplete?.minChars ?? 1);
 
+  function createCompletionContext(query: string): Parameters<CompletionSource>[0] {
+    const state = EditorState.create({ doc: query });
+
+    return {
+      state,
+      pos: query.length,
+      explicit: true,
+      matchBefore: (regexp) => {
+        const match = query.match(regexp);
+
+        if (!match || match.index === undefined) {
+          return null;
+        }
+
+        return {
+          from: match.index,
+          to: match.index + match[0].length,
+          text: match[0],
+        };
+      },
+    } as Parameters<CompletionSource>[0];
+  }
+
   async function fetchCompletions(query: string) {
-    if (!autocomplete || query.length < minChars) {
+    if (!autocomplete || disabled || query.length < minChars) {
       completions = [];
       showCompletions = false;
       return;
     }
-    const result = await autocomplete.source.complete(query);
-    completions = result.completions.slice(0, maxVisible);
-    selectedIndex = 0;
-    showCompletions = completions.length > 0;
+
+    try {
+      const result = await autocomplete.source(createCompletionContext(query));
+      const options = result?.options ?? [];
+
+      completions = options.slice(0, maxVisible).map((completion) => ({
+        label: completion.label,
+        type: completion.type,
+        detail: completion.detail,
+      }));
+      selectedIndex = 0;
+      showCompletions = completions.length > 0;
+    } catch {
+      completions = [];
+      showCompletions = false;
+    }
   }
 
-  function applyCompletion(completion: { label: string }) {
+  function applyCompletion(completion: CompletionItem) {
     value = completion.label;
     completions = [];
     showCompletions = false;
   }
 
-  function handleCompletionKeydown(e: KeyboardEvent, completion: { label: string }) {
+  function handleCompletionKeydown(e: KeyboardEvent, completion: CompletionItem) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       applyCompletion(completion);

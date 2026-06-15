@@ -1,7 +1,16 @@
-import { afterEach, describe, it, expect, vi } from 'vitest';
-import { cleanup, render, fireEvent } from '@testing-library/svelte';
+import { afterEach, describe, it, expect } from 'vitest';
+import { cleanup, render, fireEvent, waitFor } from '@testing-library/svelte';
 import type { Snippet } from 'svelte';
+import type { Completion, CompletionSource } from '../../editor/extensions/types';
 import Input from './Input.svelte';
+
+function createSource(completions: Completion[]): CompletionSource {
+  return async () => ({
+    from: 0,
+    to: 0,
+    options: completions,
+  });
+}
 
 describe('Input', () => {
   afterEach(() => cleanup());
@@ -76,5 +85,75 @@ describe('Input', () => {
   it('does not set aria-invalid when no error', () => {
     const { container } = render(Input, {});
     expect(container.querySelector('input')?.getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it('does not render autocomplete controls without autocomplete prop', () => {
+    const { container } = render(Input);
+
+    expect(container.querySelector('[aria-autocomplete="list"]')).toBeNull();
+    expect(container.querySelector('.ds-input-autocomplete')).toBeNull();
+  });
+
+  it('renders autocomplete suggestions when autocomplete prop is provided', async () => {
+    const source = createSource([
+      { label: 'apple', type: 'word' },
+      { label: 'application', type: 'word', detail: 'common' },
+    ]);
+    const { container } = render(Input, { autocomplete: { source } });
+    const input = container.querySelector('input')!;
+
+    await fireEvent.input(input, { target: { value: 'app' } });
+
+    await waitFor(() => {
+      expect(container.querySelector('.ds-input-autocomplete')).not.toBeNull();
+    });
+    expect(container.querySelectorAll('[role="option"]').length).toBe(2);
+    expect(container.querySelector('.ds-input-autocomplete__label')?.textContent).toBe('apple');
+    expect(container.querySelector('.ds-input-autocomplete__detail')?.textContent).toBe('common');
+  });
+
+  it('applies the selected autocomplete suggestion with Enter', async () => {
+    const source = createSource([
+      { label: 'apple', type: 'word' },
+      { label: 'application', type: 'word' },
+    ]);
+    const { container } = render(Input, { autocomplete: { source } });
+    const input = container.querySelector('input')!;
+
+    await fireEvent.input(input, { target: { value: 'app' } });
+
+    await waitFor(() => {
+      expect(container.querySelector('.ds-input-autocomplete')).not.toBeNull();
+    });
+    await fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(input.value).toBe('application');
+    expect(container.querySelector('.ds-input-autocomplete')).toBeNull();
+  });
+
+  it('dismisses autocomplete suggestions with Escape', async () => {
+    const source = createSource([{ label: 'apple', type: 'word' }]);
+    const { container } = render(Input, { autocomplete: { source } });
+    const input = container.querySelector('input')!;
+
+    await fireEvent.input(input, { target: { value: 'app' } });
+
+    await waitFor(() => {
+      expect(container.querySelector('.ds-input-autocomplete')).not.toBeNull();
+    });
+    await fireEvent.keyDown(input, { key: 'Escape' });
+
+    expect(container.querySelector('.ds-input-autocomplete')).toBeNull();
+  });
+
+  it('respects minChars before fetching autocomplete suggestions', async () => {
+    const source = createSource([{ label: 'apple', type: 'word' }]);
+    const { container } = render(Input, { autocomplete: { source, minChars: 3 } });
+    const input = container.querySelector('input')!;
+
+    await fireEvent.input(input, { target: { value: 'ap' } });
+
+    expect(container.querySelector('.ds-input-autocomplete')).toBeNull();
   });
 });

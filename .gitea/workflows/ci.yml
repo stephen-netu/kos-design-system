@@ -39,5 +39,9 @@ jobs:
       - name: publish
         if: github.ref == 'refs/heads/main'
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm publish --access public --no-git-checks
+          GITEA_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # pnpm ignores auth in project-level .npmrc (security).
+          # pnpm config set writes to ~/.npmrc which pnpm DOES read.
+          pnpm config set '//gitea.beast.ruun.network/api/packages/K-W/npm/:_authToken' "$GITEA_TOKEN"
+          pnpm publish --access public --no-git-checks

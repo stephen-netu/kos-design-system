@@ -5,6 +5,8 @@
 # Attempts to auto-complete a TOS task from the commit message.
 # Safe no-op if realm-substrate is not installed.
 #
+# WARNING: CANONICAL SOURCE — edit this file, then run 'kos-repos install-peer-hooks <repo>'
+# to propagate. Hand-edits to .githooks/ will be overwritten on re-install.
 # Installed by: kos-repos install-peer-hooks <repo>
 
 set -euo pipefail

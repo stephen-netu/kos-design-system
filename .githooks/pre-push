@@ -13,12 +13,17 @@
 # path references and cannot be cargo-checked in isolation. Compilation gates live
 # in each repo's .gitea/workflows/ci.yml.
 #
+# WARNING: CANONICAL SOURCE — edit this file, then run 'kos-repos install-peer-hooks <repo>'
+# to propagate. Hand-edits to .githooks/ will be overwritten on re-install.
 # Installed by: kos-repos install-peer-hooks <repo>
 
 set -euo pipefail
 
-# REPO_ROOT = this peer repo's root (one level up from .githooks/)
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# REPO_ROOT = worktree root (via git rev-parse --show-toplevel, not dirname)
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "")"
+if [ -z "$REPO_ROOT" ]; then
+  REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+fi
 PEER_NAME="$(basename "$REPO_ROOT")"
 
 # T-02: Worktree Lifecycle Integrity (lifecycle-validate.sh lives at KOS root).

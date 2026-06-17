@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#
+# Installed by: kos-repos install-peer-hooks <peer> (copied from .gears/gates/post-merge)
+# WARNING: Edit this file, then re-run install-peer-hooks to propagate.
+# Hand-edits to .githooks/post-merge will be overwritten on re-install.
+
+set -euo pipefail
+
+if ! command -v realm-substrate >/dev/null 2>&1; then
+  exit 0
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  exit 0
+fi
+
+base="${ORIG_HEAD:-}"
+if [[ -z "$base" ]]; then
+  base="$(git rev-parse --verify --quiet HEAD^1 2>/dev/null || true)"
+fi
+
+if [[ -z "$base" ]]; then
+  exit 0
+fi
+
+base_commit="$(git rev-parse --verify --quiet "${base}^{commit}" 2>/dev/null || true)"
+if [[ -z "$base_commit" ]]; then
+  exit 0
+fi
+
+commits="$(git rev-list --reverse "${base_commit}..HEAD" 2>/dev/null || true)"
+if [[ -z "$commits" ]]; then
+  exit 0
+fi
+
+closing_ref='(^|[[:space:][:punct:]])(closes|fixes)[[:space:]]+(kos:)?[a-zA-Z][a-zA-Z0-9]*-[0-9]+'
+
+while IFS= read -r sha; do
+  [[ -z "$sha" ]] && continue
+
+  parents="$(git rev-list --parents --max-count=1 "$sha" 2>/dev/null || true)"
+  if [[ -z "$parents" ]]; then
+    continue
+  fi
+
+  set -- $parents
+  parent_count=$(($# - 1))
+  if [[ "$parent_count" -gt 1 ]]; then
+    continue
+  fi
+
+  message="$(git log --format=%B -n 1 "$sha" 2>/dev/null || true)"
+  if printf '%s\n' "$message" | grep -Eiq "$closing_ref"; then
+    realm-substrate task complete-from-commit "$sha" 2>/dev/null || true
+  fi
+done <<< "$commits"

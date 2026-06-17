@@ -12,15 +12,18 @@
 #
 # See: realm-doc-topology-001
 #
+# WARNING: CANONICAL SOURCE — edit this file, then run 'kos-repos install-peer-hooks <repo>'
+# to propagate. Hand-edits to .githooks/ will be overwritten on re-install.
 # Installed by: kos-repos install-peer-hooks <repo>
 #
-# Also chains the T-02 Worktree Lifecycle gate (lifecycle-validate.sh) which
-# lives at the KOS root and is resolved by walking up from this peer's
-# .githooks/ directory.
+# Also chains the T-02 Worktree Lifecycle gate (lifecycle-validate.sh).
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "")"
+if [ -z "$REPO_ROOT" ]; then
+  REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+fi
 
 # Block .gears/ inside this peer repo
 STRAY=$(git diff --cached --name-only --diff-filter=A 2>/dev/null | grep -E '^\.gears/' || true)
@@ -51,8 +54,6 @@ if [[ -n "$STRAY" ]]; then
 fi
 
 # T-02: Worktree Lifecycle Integrity (lifecycle-validate.sh lives at KOS root).
-# Walk up from this peer's .githooks/ to find KOS root, identified by
-# .gears/repos.toml.
 kos_root=""
 dir="$REPO_ROOT"
 while [[ "$dir" != "/" ]]; do

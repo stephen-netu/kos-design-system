@@ -163,7 +163,7 @@
 	}
 
 	.correction-tooltip__suggestion:hover {
-		background: var(--color-accent, #b87333);
+		background: var(--color-accent, #888);
 		color: #fff;
 	}
 
@@ -175,7 +175,7 @@
 	.correction-tooltip__action {
 		background: none;
 		border: none;
-		color: var(--color-accent, #b87333);
+		color: var(--color-accent, #888);
 		cursor: pointer;
 		font-size: 12px;
 		padding: 0;

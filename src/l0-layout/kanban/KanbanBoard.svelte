@@ -246,7 +246,7 @@
 
   .ds-kanban-move-toast {
     padding: var(--space-2) var(--space-5);
-    background: var(--color-accent-faint, rgba(184,115,51,0.1));
+    background: var(--color-accent-faint, rgba(128,128,128,0.08));
     border-bottom: var(--border-width-thin) solid var(--border-subtle);
     color: var(--color-text-secondary);
     font-size: var(--text-sm);

@@ -22,7 +22,7 @@
   } from './types.js';
   import { DEFAULT_LAYOUT_PREFERENCES } from './types.js';
   import { resolvePhaseTheme, DEFAULT_PHASE_THEME } from './phase-theme.js';
-  import { getCanvasTheme } from '../p0-primitives/canvas-theme';
+  import { getCanvasTheme, resolveAccentRamp } from '../p0-primitives/canvas-theme';
   import { LayoutOrchestrator } from './orchestrator.js';
   import { ManifoldProvider } from './providers/manifold-provider.js';
   import { GravitationalProvider } from './providers/gravitational-provider.js';
@@ -113,18 +113,21 @@
     const get = (prop: string, fallback: string) => cs.getPropertyValue(prop).trim() || fallback;
     colors = {
       canvasBg: get('--n4-canvas-bg', '#1a1a1a'),
-      nodeActive: get('--n4-node-border-selected', '#b87333'),
+      nodeActive: get('--n4-node-border-selected', '#888'),
       nodeIdle: get('--n4-node-text-muted', '#a09880'),
       nodeBlocked: get('--color-status-warning', '#f39c12'),
       nodeCompleted: get('--n4-node-text-muted', '#a09880'),
       nodeCritical: get('--color-status-error', '#c0392b'),
       nodeBg: get('--n4-node-bg', '#222'),
-      nodeBorder: get('--n4-node-border', 'rgba(184, 115, 51, 0.15)'),
-      nodeText: get('--n4-node-text', '#e8e0d0'),
-      edgeColor: get('--n4-edge-color', 'rgba(184, 115, 51, 0.25)'),
-      edgeActive: get('--n4-edge-color-active', '#b87333'),
-      pulseColor: get('--color-accent', '#b87333'),
+      nodeBorder: get('--n4-node-border', 'rgba(128,128,128,0.15)'),
+      nodeText: get('--n4-node-text', '#e7e9eb'),
+      edgeColor: get('--n4-edge-color', 'rgba(128,128,128,0.25)'),
+      edgeActive: get('--n4-edge-color-active', '#888'),
+      pulseColor: get('--color-accent', '#888'),
       pulseCritical: get('--color-status-error', '#c0392b'),
+      // accentRamp: resolve --accent-primary directly so inline canvas paint
+      // calls respond to the user's chosen accent without reading n4-token CSS.
+      accentRamp: resolveAccentRamp(containerEl),
     };
     phaseTheme = resolvePhaseTheme(containerEl);
   }
@@ -618,7 +621,7 @@
     const GRID = 22;
     const gridStartX = Math.floor(worldLeft  / GRID) * GRID;
     const gridStartY = Math.floor(worldTop   / GRID) * GRID;
-    context.fillStyle = 'rgba(184, 115, 51, 0.055)';
+    context.fillStyle = colors.accentRamp.alpha(0.055);
     for (let gx = gridStartX; gx < worldRight; gx += GRID) {
       for (let gy = gridStartY; gy < worldBottom; gy += GRID) {
         context.beginPath();
@@ -682,8 +685,8 @@
       const edgeStrength = (edge.metadata as Record<string, unknown>)?.strength as number | undefined ?? 0.5;
       context.save();
       context.strokeStyle = progress >= 1.0
-        ? `rgba(184, 115, 51, ${0.45 + edgeStrength * 0.35})`
-        : 'rgba(184, 115, 51, 0.30)';
+        ? colors.accentRamp.alpha(0.45 + edgeStrength * 0.35)
+        : colors.accentRamp.alpha(0.30);
       context.lineWidth = 1.5;
       // Permanently dashed when fully revealed — individual lines are traceable in dense graphs.
       // During reveal animation keep a solid growing stroke, then settle to dashes.
@@ -705,7 +708,7 @@
     const FLAG_R     = 3;
 
     const PRIORITY_COLORS: Record<string, string> = {
-      p0: '#c0392b', p1: '#b87333', p2: '#c8a84b', p3: '#4a4438',
+      p0: '#c0392b', p1: colors.accentRamp.solid, p2: '#c8a84b', p3: '#4a4438',
     };
 
     // ── Node rendering: LOD-aware ─────────────────────────────────────────────
@@ -728,7 +731,7 @@
       // ── Signals: always a small dot ─────────────────────────────────────
       if (node.kind === 'signal') {
         const sr = lodTier === 'overview' ? 3 : 5;
-        context.shadowColor = 'rgba(184, 115, 51, 0.4)';
+        context.shadowColor = colors.accentRamp.alpha(0.4);
         context.shadowBlur = isSelected ? 10 : 4;
         context.beginPath();
         context.arc(ncx, ncy, sr, 0, Math.PI * 2);
@@ -761,14 +764,14 @@
             context.beginPath();
             context.moveTo(ncx, ncy);
             context.lineTo(ncx - Math.cos(angle) * tailLen, ncy - Math.sin(angle) * tailLen);
-            context.strokeStyle = `rgba(184, 115, 51, 0.5)`;
+            context.strokeStyle = colors.accentRamp.alpha(0.5);
             context.lineWidth = 2;
             context.stroke();
           }
 
           context.beginPath();
           context.arc(ncx, ncy, r, 0, Math.PI * 2);
-          context.fillStyle = isActiveLoop ? 'rgba(184, 115, 51, 0.9)' : 'rgba(184, 115, 51, 0.4)';
+          context.fillStyle = isActiveLoop ? colors.accentRamp.alpha(0.9) : colors.accentRamp.alpha(0.4);
           context.fill();
           if (isSelected) {
             context.strokeStyle = colors.nodeActive;
@@ -993,7 +996,7 @@
             beginShape(context, 'hexagon',
               ncx - HEX_IND_W / 2 - P, ncy - HEX_IND_H / 2 - P,
               HEX_IND_W + 2 * P, HEX_IND_H + 2 * P);
-            context.strokeStyle = `rgba(184, 115, 51, ${alpha})`;
+            context.strokeStyle = colors.accentRamp.alpha(alpha);
             context.lineWidth = 2;
             context.stroke();
             break;
@@ -1007,7 +1010,7 @@
                 context.beginPath();
                 context.moveTo(ncx, ncy);
                 context.lineTo(tx, ty);
-                context.strokeStyle = `rgba(184, 115, 51, ${0.6 * phaseIntensity})`;
+                context.strokeStyle = colors.accentRamp.alpha(0.6 * phaseIntensity);
                 context.lineWidth = 1;
                 context.setLineDash([4, 4]);
                 context.stroke();
@@ -1044,7 +1047,7 @@
               }
               context.beginPath();
               context.arc(px, py, particleR, 0, Math.PI * 2);
-              context.fillStyle = `rgba(184, 115, 51, ${alpha})`;
+              context.fillStyle = colors.accentRamp.alpha(alpha);
               context.fill();
             }
             break;
@@ -1071,7 +1074,7 @@
           // Claimed: solid brass outline
           context.beginPath();
           context.roundRect(px - 3, py - 3, TASK_W + 6, TASK_H + 6, 6);
-          context.strokeStyle = `rgba(184, 115, 51, ${0.6 * phaseIntensity})`;
+          context.strokeStyle = colors.accentRamp.alpha(0.6 * phaseIntensity);
           context.lineWidth = 2;
           context.stroke();
         } else if (node.status === 'idle') {
@@ -1080,7 +1083,7 @@
           const alpha = phaseIntensity * (0.1 + 0.2 * Math.sin(pulsePhase * Math.PI * 2));
           context.beginPath();
           context.roundRect(px - 2, py - 2, TASK_W + 4, TASK_H + 4, 5);
-          context.strokeStyle = `rgba(184, 115, 51, ${alpha})`;
+          context.strokeStyle = colors.accentRamp.alpha(alpha);
           context.lineWidth = 1.5;
           context.stroke();
         }

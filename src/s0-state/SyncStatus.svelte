@@ -68,7 +68,7 @@
       case 'syncing':
         return {
           icon: 'sync',
-          color: 'var(--color-accent, #b87333)',
+          color: 'var(--color-accent, #888)',
           label: 'Syncing...',
           message: pendingCount > 0 ? `${pendingCount} items pending` : 'Synchronizing changes'
         };

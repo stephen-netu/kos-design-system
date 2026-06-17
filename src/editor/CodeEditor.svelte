@@ -15,6 +15,7 @@
   import { autocomplete } from './extensions/autocomplete';
   import { spellcheck } from './extensions/spellcheck';
   import CorrectionTooltip from './components/CorrectionTooltip.svelte';
+  import { resolveAccentRamp } from '../p0-primitives/canvas-theme.js';
   import type { CompletionSource } from './extensions/autocomplete';
   import type { SpellCheckCorrection, SpellCheckDictionary } from './extensions/spellcheck';
 
@@ -118,32 +119,44 @@
     activeCorrection = null;
   }
 
-  // Loge dark theme (matches MarkdownEditor)
-  const logeTheme = EditorView.theme({
-    '&': { background: 'transparent', height: '100%', color: '#e8e0d0' },
-    '.cm-scroller': {
-      fontFamily: 'var(--font-mono, monospace)',
-      fontSize: '11px',
-      lineHeight: '1.6',
-      overflow: 'auto',
-    },
-    '.cm-content': { padding: '6px 8px', caretColor: '#b87333' },
-    '.cm-cursor': { borderLeftColor: '#b87333' },
-    '.cm-focused': { outline: 'none' },
-    '.cm-selectionBackground, ::selection': { background: 'rgba(184,115,51,0.2)' },
-    '.cm-gutters': {
-      background: '#1a1a1a',
-      borderRight: '1px solid #2a2a2a',
-      color: '#5a5248',
-      fontSize: '10px',
-    },
-    '.cm-lineNumbers .cm-gutterElement': { padding: '0 6px 0 4px' },
-    '.cm-activeLine': { background: 'rgba(184,115,51,0.05)' },
-    '.cm-activeLineGutter': { background: 'rgba(184,115,51,0.08)' },
-  }, { dark: true });
+  // Loge dark theme — built from runtime CSS tokens so the user's accent
+  // and any overriding ThemeProvider are respected. Constructed in onMount
+  // where the DOM is available for getComputedStyle.
+  function buildLogeTheme(): Extension {
+    const acc = resolveAccentRamp(document.documentElement);
+    const cs = getComputedStyle(document.documentElement);
+    const rv = (p: string, fb: string) => cs.getPropertyValue(p).trim() || fb;
+    return EditorView.theme({
+      '&': { background: 'transparent', height: '100%', color: rv('--color-text-primary', '#e7e9eb') },
+      '.cm-scroller': {
+        fontFamily: 'var(--font-mono, monospace)',
+        fontSize: '11px',
+        lineHeight: '1.6',
+        overflow: 'auto',
+      },
+      '.cm-content': { padding: '6px 8px', caretColor: acc.solid },
+      '.cm-cursor': { borderLeftColor: acc.solid },
+      '.cm-focused': { outline: 'none' },
+      '.cm-selectionBackground, ::selection': { background: acc.alpha(0.2) },
+      '.cm-gutters': {
+        background: rv('--color-bg-app', '#0a0b0c'),
+        borderRight: `1px solid ${rv('--border-default', '#262b30')}`,
+        color: rv('--color-text-tertiary', '#646b72'),
+        fontSize: '10px',
+      },
+      '.cm-lineNumbers .cm-gutterElement': { padding: '0 6px 0 4px' },
+      '.cm-activeLine': { background: acc.alpha(0.05) },
+      '.cm-activeLineGutter': { background: acc.alpha(0.08) },
+    }, { dark: true });
+  }
+  // Placeholder until onMount — replaced before EditorView construction.
+  let logeTheme: Extension = [];
 
   onMount(async () => {
     if (!container) return;
+
+    // Build theme now that DOM is available — accent reads --accent-primary.
+    logeTheme = buildLogeTheme();
 
     const langExtension = await detectLanguageExtension();
 

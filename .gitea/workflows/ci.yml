@@ -39,14 +39,7 @@ jobs:
       - name: publish
         if: github.ref == 'refs/heads/main'
         env:
-          GITEA_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITEA_TOKEN: ${{ secrets.NPM_DESIGN_SYSTEM }}
         run: |
-          echo "HOME=$HOME"
-          id
-          ls -la "$HOME" 2>/dev/null
-          test -f "$HOME/.npmrc" && stat --format="%s bytes" "$HOME/.npmrc" || echo "no .npmrc yet"
-          test -d "$HOME" && echo "HOME writable: $(touch "$HOME/test_write" 2>&1 && rm "$HOME/test_write" && echo yes || echo no)"
-          echo "publish token length: $(echo -n "$GITEA_TOKEN" | wc -c) chars"
           echo "//gitea.beast.ruun.network/api/packages/K-W/npm/:_authToken=${GITEA_TOKEN}" >> "${HOME}/.npmrc"
-          echo "npmrc file bytes after write: $(wc -c < "${HOME}/.npmrc")"
           pnpm publish --access public --no-git-checks

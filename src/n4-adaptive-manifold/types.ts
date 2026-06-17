@@ -3,6 +3,7 @@
 // S-02: deterministic ordering, no HashMap/Set iteration
 
 import type { NodeLayout, LayoutResult } from '../n1-flow-canvas/types.js';
+import type { AccentRamp } from '../p0-primitives/canvas-theme.js';
 
 // === Topology Kinds ===
 
@@ -224,6 +225,8 @@ export interface ResolvedThemeColors {
   edgeActive: string;
   pulseColor: string;
   pulseCritical: string;
+  /** Runtime-derived accent ramp for inline canvas 2D paint calls. */
+  accentRamp: AccentRamp;
 }
 
 // === Garden Observer Types ===

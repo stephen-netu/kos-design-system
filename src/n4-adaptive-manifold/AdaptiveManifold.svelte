@@ -104,6 +104,7 @@
     edgeActive: getCanvasTheme().nodeBorder,
     pulseColor: getCanvasTheme().nodeBorder,
     pulseCritical: '#c0392b',
+    accentRamp: resolveAccentRamp(),
   });
 
   function resolveTokens(): void {

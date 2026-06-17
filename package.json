@@ -5,7 +5,7 @@
   "type": "module",
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://gitea.beast.ruun.network/api/packages/K-W/npm/"
   },
   "scripts": {
     "tokens:generate": "tsx scripts/generate-tokens-json.ts",

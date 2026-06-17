@@ -137,10 +137,11 @@ export const brassAccentTheme: ThemeConfig = createTheme(defaultDarkTheme, {
 /**
  * Copper accent theme variant — reddish metallic (preserved for compatibility)
  */
-// NOTE: under the single-seed engine, copper and brass share the seed #b87333
-// and are now equivalent. Give copper a distinct seed to make it a distinct accent.
+// Copper = reddish metallic, distinct from brass (#b87333 is yellow-gold).
+// The CSS engine derives the ramp from this seed, so hover/active/glow
+// all shift toward the red-copper character automatically.
 export const copperAccentTheme: ThemeConfig = createTheme(defaultDarkTheme, {
-  colorAccent: '#b87333', // seed only
+  colorAccent: '#b85533', // seed only — reddish copper
 });
 
 /**

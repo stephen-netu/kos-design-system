@@ -1,5 +1,19 @@
 # @stephen-netu/design-system
 
+## 0.3.0
+
+### Minor Changes
+
+- Single-seed accent engine: all accent tokens derived from `--accent-primary` via `color-mix`. JS theme layer unified to seed-only. Canvas paint layer resolved via `resolveAccentRamp()` — zero brass literals outside the seed.
+
+  Density tiers: `[data-density]` system with compact (default), comfortable, and cockpit calibrations.
+
+  INSTRUMENT migration: 20+ primitives migrated — Button (inverted-neutral), Card (de-glassed), Badge (mono uppercase), Input (live-edge focus), Modal (sharp, 2px border, no shadow), Tabs/Tooltip/Toggle/Dropdown/CommandPalette/Steps/Spinner all sharp, density-aware, accent-disciplined.
+
+  Fabric & data-viz cleanup: last `backdrop-filter`, Material colors (`#e53935`/`#ff9800`/`#4caf50`), Tailwind red (`#ef4444`), and brass literals removed.
+
+  Phase 4 done — design system is color-agnostic, fully INSTRUMENT.
+
 ## 0.2.1
 
 ### Patch Changes

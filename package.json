@@ -137,6 +137,7 @@
     "./fabric/navigation": "./dist/fabric/navigation/index.js",
     "./fabric/navigation/ActivityRail.svelte": "./dist/fabric/navigation/ActivityRail.svelte",
     "./fabric/data": "./dist/fabric/data/index.js",
+    "./fabric/data/FileTree.svelte": "./dist/fabric/data/FileTree.svelte",
     "./fabric/input": "./dist/fabric/input/index.js",
     "./fabric/input/AppHeaderBar.svelte": "./dist/fabric/input/AppHeaderBar.svelte",
     "./fabric/input/KeyboardShortcuts.svelte": "./dist/fabric/input/KeyboardShortcuts.svelte",

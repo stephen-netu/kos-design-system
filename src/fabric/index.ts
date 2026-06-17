@@ -21,6 +21,7 @@ export { ActivityRail } from './navigation';
 export type { RailItem, RailItemType } from './navigation';
 
 // Data
+export { FileTree } from './data';
 export type { FileEntry } from './data';
 
 // Input

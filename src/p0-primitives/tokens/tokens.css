@@ -28,14 +28,20 @@
   --color-card-text-secondary: #a8a08c;
   --color-card-text-tertiary: #6b6558;
 
-   /* --- Accent (default: brass, user-controllable via --accent-*) --- */
+   /* --- Accent — SINGLE-SEED ENGINE ----------------------------------------
+      A consumer sets ONE value, --accent-primary (the in-app accent dropdown),
+      and the whole accent system recomputes via color-mix. No value below is
+      pinned to a hue, so any user color stays coherent across light/dark.
+      (Was: 7 hand-picked brass values + brass rgba ramps that ignored the
+      user's choice — the "brass leak".) --accent-* remain consumer override
+      hooks (token-audit ACCENT_HOOKS); components consume --color-accent* only. */
    --accent-primary: #b87333;
-   --accent-hover: #d4892f;
-   --accent-active: #8a5526;
-   --accent-glow: rgba(184, 115, 51, 0.28);
-   --accent-muted: rgba(184, 115, 51, 0.16);
-   --accent-subtle: rgba(184, 115, 51, 0.08);
-   --accent-faint: rgba(184, 115, 51, 0.04);
+   --accent-hover: color-mix(in oklab, var(--accent-primary), #fff 16%);
+   --accent-active: color-mix(in oklab, var(--accent-primary), #000 22%);
+   --accent-glow: color-mix(in srgb, var(--accent-primary) 28%, transparent);
+   --accent-muted: color-mix(in srgb, var(--accent-primary) 16%, transparent);
+   --accent-subtle: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+   --accent-faint: color-mix(in srgb, var(--accent-primary) 4%, transparent);
    --color-accent: var(--accent-primary);
    --color-accent-hover: var(--accent-hover);
    --color-accent-active: var(--accent-active);
@@ -43,7 +49,7 @@
    --color-accent-muted: var(--accent-muted);
    --color-accent-subtle: var(--accent-subtle);
    --color-accent-faint: var(--accent-faint);
-   --color-accent-secondary: #d4a574;  /* Companion warm tone (n4 kind colors) */
+   --color-accent-secondary: color-mix(in oklab, var(--accent-primary), #fff 26%);  /* Companion warm tone (n4 kind colors) */
 
    /* Overlay levels — white opacity ramps for borders, backgrounds, hover states */
    --overlay-white-02: rgba(255, 255, 255, 0.02);
@@ -58,14 +64,14 @@
    --overlay-white-25: rgba(255, 255, 255, 0.25);
 
    /* Overlay levels — accent color opacity ramps */
-   --overlay-accent-06: rgba(184, 115, 51, 0.06);
-   --overlay-accent-08: rgba(184, 115, 51, 0.08);
-   --overlay-accent-12: rgba(184, 115, 51, 0.12);
-   --overlay-accent-18: rgba(184, 115, 51, 0.18);
-   --overlay-accent-30: rgba(184, 115, 51, 0.30);
-   --overlay-accent-45: rgba(184, 115, 51, 0.45);
-   --overlay-accent-50: rgba(184, 115, 51, 0.50);
-   --overlay-accent-55: rgba(184, 115, 51, 0.55);
+   --overlay-accent-06: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+   --overlay-accent-08: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+   --overlay-accent-12: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+   --overlay-accent-18: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+   --overlay-accent-30: color-mix(in srgb, var(--accent-primary) 30%, transparent);
+   --overlay-accent-45: color-mix(in srgb, var(--accent-primary) 45%, transparent);
+   --overlay-accent-50: color-mix(in srgb, var(--accent-primary) 50%, transparent);
+   --overlay-accent-55: color-mix(in srgb, var(--accent-primary) 55%, transparent);
 
     /* Overlay levels — status color opacity ramps */
     --overlay-success-06: rgba(79, 168, 162, 0.06);
@@ -128,7 +134,7 @@
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-default: #3a3630;
   --border-hover: #6b6558;
-  --border-focus: #b87333;
+  --border-focus: var(--accent-primary);
   --border-alert: #c14a4a;
   --border-warning: #d4a04c;
   --divider-color: #181c20;
@@ -139,9 +145,9 @@
   --color-border-default: var(--border-default);
 
   /* --- Grid (canvas patterns) --- */
-  --grid-line: rgba(184, 115, 51, 0.03);
-  --grid-dot: rgba(184, 115, 51, 0.06);
-  --grid-major: rgba(184, 115, 51, 0.1);
+  --grid-line: color-mix(in srgb, var(--accent-primary) 3%, transparent);
+  --grid-dot: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+  --grid-major: color-mix(in srgb, var(--accent-primary) 10%, transparent);
 
   /* --- Typography --- */
   --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
@@ -157,6 +163,17 @@
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
   --text-4xl: 2.25rem;
+
+  /* --- Font weight (fixes phantom --font-weight-* referenced by g0 Text.svelte) --- */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* --- Line height (fixes phantom --line-height-* referenced by g0 Text.svelte) --- */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
 
   /* --- Spacing --- */
   --space-05: 0.125rem;
@@ -194,12 +211,12 @@
   --shadow-md: none;
   --shadow-lg: none;
   --shadow-xl: none;
-  --shadow-glow: 0 0 12px rgba(184, 115, 51, 0.15);
-  --shadow-glow-lg: 0 0 24px rgba(184, 115, 51, 0.25);
+  --shadow-glow: 0 0 12px color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  --shadow-glow-lg: 0 0 24px color-mix(in srgb, var(--accent-primary) 25%, transparent);
   --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.4);
   --shadow-card: none;
   --shadow-card-hover: none;
-  --shadow-accent-glow: 0 0 16px rgba(184, 115, 51, 0.15), 0 0 32px rgba(184, 115, 51, 0.05);
+  --shadow-accent-glow: 0 0 16px color-mix(in srgb, var(--accent-primary) 15%, transparent), 0 0 32px color-mix(in srgb, var(--accent-primary) 5%, transparent);
 
   /* --- Transitions --- */
   --transition-fast: 120ms ease;
@@ -255,4 +272,42 @@
   --z-tooltip: 1070;
   --z-toast: 1080;
   --z-glass-box: 9000;
+
+  /* --- Density (system default = COMPACT) ----------------------------------
+     A first-class density tier. Surfaces opt into a calibration with
+     [data-density]: comfortable (reading/writing — editor, prose, forms),
+     compact (default, general UI), cockpit (monitoring/data-dense — dashboards,
+     logs, registries, manifold panels). Same components, three calibrations.
+     Components consume these --ui-* tokens for sizing/type instead of raw px.
+     Cockpit sits at the legibility floors: data 10px, label 9px, row/target
+     20px, pad 3px, leading 1.22 (note: 20px trips WCAG 2.5.8's 24px pref, so
+     cockpit is opt-in, never the global default). */
+  --ui-control-h: 24px;  /* button / input / select height */
+  --ui-row-h: 24px;      /* table / list row height (pointer target) */
+  --ui-pad-x: 8px;
+  --ui-pad-y: 5px;
+  --ui-gap: 1px;         /* hairline grid gap — the ruled spine */
+  --ui-font: 13px;       /* body / control text */
+  --ui-font-sm: 12px;
+  --ui-data: 11px;       /* monospace data / table cells */
+  --ui-label: 10px;      /* uppercase micro-labels */
+  --ui-leading: 1.35;
+  --ui-icon: 14px;
+}
+
+/* Density calibrations — set [data-density] on any container or surface. */
+[data-density="comfortable"] {
+  --ui-control-h: 30px; --ui-row-h: 30px; --ui-pad-x: 12px; --ui-pad-y: 8px;
+  --ui-gap: 1px; --ui-font: 14px; --ui-font-sm: 13px; --ui-data: 13px;
+  --ui-label: 11px; --ui-leading: 1.45; --ui-icon: 16px;
+}
+[data-density="compact"] {
+  --ui-control-h: 24px; --ui-row-h: 24px; --ui-pad-x: 8px; --ui-pad-y: 5px;
+  --ui-gap: 1px; --ui-font: 13px; --ui-font-sm: 12px; --ui-data: 11px;
+  --ui-label: 10px; --ui-leading: 1.35; --ui-icon: 14px;
+}
+[data-density="cockpit"] {
+  --ui-control-h: 20px; --ui-row-h: 20px; --ui-pad-x: 6px; --ui-pad-y: 3px;
+  --ui-gap: 1px; --ui-font: 12px; --ui-font-sm: 11px; --ui-data: 10px;
+  --ui-label: 9px; --ui-leading: 1.22; --ui-icon: 13px;
 }

@@ -258,8 +258,8 @@
   .modal-dialog {
     position: relative;
     background: var(--color-bg-panel-elevated);
-    border: var(--border-width-thin) solid var(--border-default);
-    border-radius: var(--radius-xl);
+    border: var(--border-width-default) solid var(--border-default);
+    border-radius: 0;
     width: 90%;
     max-width: 37.5rem;
     max-height: 80vh;
@@ -267,9 +267,9 @@
     flex-direction: column;
     z-index: 1;
     outline: none;
-    box-shadow: var(--shadow-xl);
-    transform: translateY(1.25rem) scale(0.98);
-    transition: transform var(--transition-normal), opacity var(--transition-normal);
+    box-shadow: none;
+    transform: translateY(0.5rem);
+    transition: transform var(--transition-fast) linear, opacity var(--transition-fast) linear;
     opacity: 0;
   }
 
@@ -279,27 +279,30 @@
   }
 
   .modal-dialog:focus {
-    box-shadow: 0 0 0 var(--border-width-default) var(--color-accent), var(--shadow-xl);
+    outline: var(--border-width-default) solid var(--color-accent);
+    outline-offset: 2px;
   }
 
   .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-5) var(--space-6);
+    padding: var(--ui-pad-y) var(--ui-pad-x);
     border-bottom: var(--border-width-thin) solid var(--border-default);
     flex-shrink: 0;
   }
 
   .modal-title {
     margin: 0;
-    font-size: var(--text-lg);
-    color: var(--color-text-primary);
+    font-size: var(--ui-label);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
     display: flex;
     align-items: center;
     gap: var(--space-3);
     font-weight: 600;
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
   }
 
   .modal-header-actions {
@@ -310,19 +313,18 @@
 
   .modal-close-btn {
     background: none;
-    border: none;
+    border: 1px solid transparent;
     color: var(--color-text-secondary);
     cursor: pointer;
-    padding: var(--space-1);
+    padding: 3px;
     display: flex;
     align-items: center;
-    border-radius: var(--radius-sm);
-    transition: all var(--transition-fast);
+    transition: color var(--transition-fast) linear, border-color var(--transition-fast) linear;
   }
 
   .modal-close-btn:hover {
     color: var(--color-text-primary);
-    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--border-default);
   }
 
   .modal-close-btn:focus-visible {
@@ -332,17 +334,18 @@
 
   .modal-content {
     overflow-y: auto;
-    padding: var(--space-6);
+    padding: var(--ui-pad-x);
     flex: 1;
     min-height: 0;
+    font-size: var(--ui-font);
   }
 
   .modal-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--space-3);
-    padding: var(--space-4) var(--space-6);
+    gap: var(--ui-pad-y);
+    padding: var(--ui-pad-y) var(--ui-pad-x);
     border-top: var(--border-width-thin) solid var(--border-default);
     flex-shrink: 0;
   }

@@ -204,14 +204,14 @@
 
   .ds-dropdown-menu {
     position: absolute;
-    top: calc(100% + var(--space-2));
+    top: calc(100% + 2px);
     background: var(--color-bg-panel-elevated);
     border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
-     box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0,0,0,0.3);
-    padding: var(--space-1);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
     z-index: 1000;
-    animation: ds-scale-in var(--transition-fast) transform-origin;
+    animation: ds-fade-in var(--transition-fast) linear;
   }
 
   /* Alignments */
@@ -223,17 +223,21 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: var(--space-2) var(--space-3);
+    height: var(--ui-row-h);
+    padding: 0 var(--ui-pad-x);
     border: none;
+    border-bottom: 1px solid var(--border-default);
     background: transparent;
-    border-radius: var(--radius-sm);
+    border-radius: 0;
     color: var(--color-text-primary);
     font-family: var(--font-sans);
-    font-size: var(--text-sm);
+    font-size: var(--ui-font);
     text-align: left;
     cursor: pointer;
-    transition: background var(--transition-fast), color var(--transition-fast);
+    transition: background var(--transition-fast) linear;
   }
+
+  .ds-dropdown-item:last-child { border-bottom: 0; }
 
   .ds-dropdown-item:hover,
   .ds-dropdown-item:focus {
@@ -242,7 +246,8 @@
   }
 
   .ds-dropdown-item:focus-visible {
-    background: var(--color-accent-muted); /* Suble brass focus */
+    background: var(--color-accent-subtle);
+    box-shadow: inset 2px 0 0 var(--color-accent);
   }
 
   .ds-dropdown-item:disabled {
@@ -284,25 +289,15 @@
   .ds-dropdown-shortcut {
     margin-left: var(--space-4);
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: var(--ui-label);
     color: var(--color-text-muted);
     background: var(--color-bg-app);
-    padding: 2px 6px;
-    border-radius: var(--radius-sm, 4px);
+    padding: 1px 5px;
     border: 1px solid var(--border-subtle);
   }
 
-  @keyframes ds-scale-in {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .align-center {
-    animation-name: ds-scale-in-center;
-  }
-
-  @keyframes ds-scale-in-center {
-    from { opacity: 0; transform: translateX(-50%) scale(0.95); }
-    to { opacity: 1; transform: translateX(-50%) scale(1); }
+  @keyframes ds-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 </style>

@@ -151,15 +151,18 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--ui-pad-y) var(--ui-pad-x);
+    height: var(--ui-control-h);
     background: transparent;
     border: none;
     color: var(--color-text-secondary);
-    font-family: var(--font-sans);
-    font-size: var(--text-sm);
-    font-weight: 500;
+    font-family: var(--font-mono);
+    font-size: var(--ui-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: color var(--transition-fast), background var(--transition-fast);
+    transition: color var(--transition-fast) linear, background var(--transition-fast) linear;
     white-space: nowrap;
     z-index: 1;
   }
@@ -197,6 +200,7 @@
     height: 1.1em;
   }
 
+  /* Active indicator: crisp 2px live edge, no bounce, no glow */
   .ds-tab::after {
     content: '';
     position: absolute;
@@ -206,9 +210,8 @@
     height: 2px;
     background: var(--color-accent);
     transform: scaleX(0);
-    transition: transform var(--transition-bounce);
-    transform-origin: center;
-    box-shadow: 0 -1px 4px var(--color-accent-glow);
+    transition: transform var(--transition-fast) linear;
+    transform-origin: left;
   }
 
   .ds-tab.is-active::after {
@@ -218,8 +221,7 @@
   .ds-tab:focus-visible::before {
     content: '';
     position: absolute;
-    inset: 4px;
-    border-radius: var(--radius-sm);
-    border: 2px solid var(--color-accent-subtle);
+    inset: 2px;
+    border: 1.5px solid var(--color-accent);
   }
 </style>

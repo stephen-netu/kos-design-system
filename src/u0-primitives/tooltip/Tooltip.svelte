@@ -99,19 +99,19 @@
     max-width: 250px;
     background: var(--color-bg-panel-elevated);
     border: 1px solid var(--border-default);
-    box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0,0,0,0.5);
-    border-radius: var(--radius-md);
-    animation: ds-fade-in var(--transition-fast) ease-out;
-    pointer-events: none; /* Don't interfere with mouse */
+    box-shadow: none;
+    border-radius: 0;
+    animation: ds-fade-in var(--transition-fast) linear;
+    pointer-events: none;
   }
 
   .ds-tooltip-inner {
-    padding: var(--space-2) var(--space-3);
+    padding: var(--ui-pad-y) var(--ui-pad-x);
     color: var(--color-text-primary);
-    font-family: var(--font-sans);
-    font-size: var(--text-xs);
-    line-height: 1.4;
-    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--ui-label);
+    line-height: var(--ui-leading);
+    text-align: left;
   }
 
   /* Arrow Base */

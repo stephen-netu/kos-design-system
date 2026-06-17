@@ -253,7 +253,7 @@
   }
 
   .ds-kanban-column-content.is-drag-target {
-    background: var(--color-accent-faint, rgba(184,115,51,0.06));
+    background: var(--color-accent-faint, rgba(128,128,128,0.05));
   }
 
   .ds-kanban-drop-indicator {

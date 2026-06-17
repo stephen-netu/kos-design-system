@@ -49,7 +49,7 @@
 
   // Color for current component type
   let componentColor = $derived(
-    displayCheckpoint ? getCheckpointColor(displayCheckpoint.componentType, true) : '#b87333'
+    displayCheckpoint ? getCheckpointColor(displayCheckpoint.componentType, true) : 'var(--color-accent, #888)'
   );
 
   // Toggle expanded state

@@ -14,6 +14,7 @@
   import { GraphState } from '../n1-flow-canvas/graph-state.svelte.js';
   import { EDGE_REVEAL_STAGGER_MS } from '../n1-flow-canvas/types.js';
   import { projectToDisk, quaternionToDisk } from './poincare.js';
+  import { resolveAccentRamp } from '../p0-primitives/canvas-theme.js';
 
   // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -98,48 +99,74 @@
     }
   });
 
-  // ── Design tokens ──────────────────────────────────────────────────────────
+  // ── Design tokens — resolved at runtime from CSS custom properties ─────────
+  // resolveAccentRamp() reads --accent-primary so any user accent propagates
+  // into canvas paint calls without hardcoding a hue.
 
-  const COLORS = {
-    bg:         '#1a1a1a',
-    diskBg:     '#111111',
-    diskBorder: '#3a3020',
-    node:       '#2a2a2a',
-    nodeBorder: '#b87333',
-    nodeText:   '#e8e0d0',
-    edgeLine:   '#b87333',
-    edgeFade:   '#5a4a30',
-    focus:      '#d4943a',
-    grid:       '#1e1e1e',
-    selected:   '#d4943a',
-  };
+  function resolveColors(el: Element) {
+    const cs = getComputedStyle(el);
+    const rv = (p: string, fb: string) => cs.getPropertyValue(p).trim() || fb;
+    const acc = resolveAccentRamp(el);
+    return {
+      bg:         rv('--color-bg-canvas',         '#121518'),
+      diskBg:     rv('--color-bg-app',             '#0a0b0c'),
+      diskBorder: rv('--border-default',           '#262b30'),
+      node:       rv('--color-bg-panel',           '#181c20'),
+      nodeBorder: acc.solid,
+      nodeText:   rv('--color-text-primary',       '#e7e9eb'),
+      edgeLine:   acc.solid,
+      edgeFade:   acc.alpha(0.3),
+      focus:      rv('--color-warning',            '#d8a23c'),
+      grid:       rv('--color-bg-panel',           '#181c20'),
+      selected:   acc.hi,
+      // column fills — accent for active states, fixed semantic for others
+      colFill: {
+        GO:      acc.alpha(0.35),
+        CONSULT: acc.alpha(0.18),
+        WEED:    'rgba(200, 160, 50, 0.22)',
+        SPROUT:  'rgba(70, 130, 200, 0.20)',
+        FREEZE:  'rgba(80, 110, 180, 0.16)',
+        SEED:    'rgba(42, 42, 42, 0.60)',
+      } as Record<string, string>,
+      colBorder: {
+        GO:      acc.solid,
+        CONSULT: acc.alpha(0.6),
+        WEED:    '#c8a032',
+        SPROUT:  '#4682c8',
+        FREEZE:  '#506eb4',
+        SEED:    '#3a3a3a',
+      } as Record<string, string>,
+    };
+  }
 
-  // Column-based node fill colors — matches KOS brass/copper theme.
-  // Semi-transparent fills let the dark disk background show through.
-  const COLUMN_FILL: Record<string, string> = {
-    GO:      'rgba(184, 115, 51, 0.35)',   // brass — active
-    CONSULT: 'rgba(184, 115, 51, 0.18)',   // brass outline — advisory
-    WEED:    'rgba(200, 160, 50, 0.22)',   // warning amber
-    SPROUT:  'rgba(70,  130, 200, 0.20)', // info blue — growing
-    FREEZE:  'rgba(80,  110, 180, 0.16)', // cool blue — frozen
-    SEED:    'rgba(42,   42,  42, 0.60)', // muted — backlog
-  };
-
-  const COLUMN_BORDER: Record<string, string> = {
-    GO:      '#b87333',
-    CONSULT: 'rgba(184, 115, 51, 0.6)',
-    WEED:    '#c8a032',
-    SPROUT:  '#4682c8',
-    FREEZE:  '#506eb4',
-    SEED:    '#3a3a3a',
-  };
+  // Resolved lazily in onMount / on theme change.
+  let COLORS = $state<ReturnType<typeof resolveColors> | null>(null);
+  // Shims so existing draw code using COLUMN_FILL/COLUMN_BORDER still compiles.
+  let COLUMN_FILL: Record<string, string> = {};
+  let COLUMN_BORDER: Record<string, string> = {};
 
   const NODE_RADIUS = 4;
   const FONT = '11px var(--font-mono, monospace)';
 
+  // Resolve colors on mount and whenever --accent-primary might change.
+  // Using document.documentElement so the accent reflects the ThemeProvider seed.
+  $effect(() => {
+    function resolve() {
+      const c = resolveColors(document.documentElement);
+      COLORS = c;
+      COLUMN_FILL = c.colFill;
+      COLUMN_BORDER = c.colBorder;
+    }
+    resolve();
+    // Re-resolve if ThemeProvider emits a CSS variable change event (optional).
+    document.documentElement.addEventListener('kos-theme-change', resolve);
+    return () => document.documentElement.removeEventListener('kos-theme-change', resolve);
+  });
+
   // ── Render ──────────────────────────────────────────────────────────────────
 
   function render({ context }: { context: CanvasRenderingContext2D }) {
+    if (!COLORS) return; // not yet resolved after mount
     const r = diskRadius;
     const cx = diskCx, cy = diskCy;
 

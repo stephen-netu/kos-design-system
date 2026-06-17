@@ -99,7 +99,6 @@
     min-height: 14rem;
     padding: var(--space-6);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
     background: var(--color-bg-panel-elevated);
     color: var(--color-text-primary);
     text-align: center;
@@ -109,11 +108,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
     flex-shrink: 0;
     border: 1px solid var(--border-default);
-    border-radius: var(--radius-full);
     background: var(--color-bg-app);
   }
 
@@ -152,10 +150,12 @@
 
   .ds-surface-state__title {
     margin: 0;
-    font-size: var(--text-lg);
+    font-family: var(--font-mono);
+    font-size: var(--ui-font);
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--color-text-primary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
   }
 
   .ds-surface-state__message {

@@ -94,7 +94,7 @@
     transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
     background: transparent;
     color: var(--color-text-primary);
-    padding: 0 var(--space-3);
+    padding: 0 var(--ui-pad-x);
     line-height: 1;
   }
 
@@ -142,20 +142,23 @@
 
   /* --- Variants --- */
 
+  /* Primary = inverted neutral (high-contrast), NOT an accent fill.
+     Locked rule: accent = live edge, never a fill. Accent shows on
+     :focus-visible. Reads as primary under any theme and any user accent. */
   .variant-primary {
-    background: var(--color-accent);
+    background: var(--color-text-primary);
     color: var(--color-bg-app);
-    border-color: var(--color-accent);
+    border-color: var(--color-text-primary);
   }
 
   .variant-primary:hover:not(:disabled) {
-    background: var(--color-accent-hover);
-    border-color: var(--color-accent-hover);
+    background: var(--color-text-secondary);
+    border-color: var(--color-text-secondary);
   }
 
   .variant-primary.is-pressed:not(:disabled) {
-    background: var(--color-accent-active);
-    border-color: var(--color-accent-active);
+    background: var(--color-text-secondary);
+    border-color: var(--color-text-secondary);
   }
 
   .variant-secondary {
@@ -195,18 +198,18 @@
   }
 
   .variant-danger:hover:not(:disabled) {
-    background: rgba(193, 74, 74, 0.1);
+    background: color-mix(in srgb, var(--color-error) 12%, transparent);
   }
 
   .variant-danger.is-pressed:not(:disabled) {
-    background: rgba(193, 74, 74, 0.2);
+    background: color-mix(in srgb, var(--color-error) 22%, transparent);
   }
 
   /* --- Sizes --- */
 
-  .size-sm { height: 2rem; font-size: var(--text-xs); }
-  .size-md { height: 2.5rem; font-size: var(--text-sm); }
-  .size-lg { height: 3rem; font-size: var(--text-base); }
+  .size-sm { height: calc(var(--ui-control-h) - 4px); font-size: var(--ui-font-sm); }
+  .size-md { height: var(--ui-control-h); font-size: var(--ui-font); }
+  .size-lg { height: calc(var(--ui-control-h) + 6px); font-size: var(--ui-font); }
 
   /* --- Loading Spinner --- */
 

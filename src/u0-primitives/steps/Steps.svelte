@@ -104,26 +104,30 @@
     gap: var(--space-3, 0.75rem);
   }
 
+  /* Square step indicator — mechanical numbering, not progress pills */
   .step-circle {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-full, 9999px);
-    background: var(--color-bg-secondary, #222);
-    color: var(--color-text-primary, #e8e0d0);
+    border-radius: 0;
+    border: 1px solid var(--border-default);
+    background: var(--color-bg-panel);
+    color: var(--color-text-secondary);
     flex-shrink: 0;
+    font-family: var(--font-mono);
     font-weight: 600;
   }
 
-   .step-circle.completed {
-     background: var(--color-success);
-      color: var(--color-text-inverse);
-    }
+  .step-circle.completed {
+    background: color-mix(in srgb, var(--color-success) 15%, transparent);
+    border-color: var(--color-success);
+    color: var(--color-success);
+  }
 
-    .step-circle.active {
-      background: var(--color-accent);
-      color: var(--color-text-inverse);
-    box-shadow: 0 0 0 2px var(--color-accent-subtle, var(--color-accent-subtle));
+  .step-circle.active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-accent-subtle);
   }
 
   .step-content {
@@ -143,18 +147,13 @@
   }
 
   .connector-line {
-    background: var(--color-border, #333);
+    background: var(--border-default);
     flex-shrink: 0;
   }
 
-  .connector-line.first {
-    border-top-left-radius: var(--radius-sm, 0.125rem);
-    border-top-right-radius: var(--radius-sm, 0.125rem);
-  }
-
+  .connector-line.first,
   .connector-line.last {
-    border-bottom-left-radius: var(--radius-sm, 0.125rem);
-    border-bottom-right-radius: var(--radius-sm, 0.125rem);
+    border-radius: 0;
   }
 
   /* Responsive adjustments */

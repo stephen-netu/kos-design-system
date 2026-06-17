@@ -58,7 +58,7 @@ export class ForceSimulation implements Lifecycle {
       const r = pos.radius;
       ctx.drawRect(
         { x: pos.x - r, y: pos.y - r, width: r * 2, height: r * 2 },
-        '#b87333'
+        'var(--color-accent, #888)'
       );
     }
   }

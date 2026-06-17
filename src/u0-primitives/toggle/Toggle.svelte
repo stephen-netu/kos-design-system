@@ -67,13 +67,13 @@
     opacity: 0.5;
   }
 
+  /* Track: square (not pill) — mechanical, not soft */
   .ds-toggle-track {
     position: relative;
     background: var(--color-bg-panel-elevated);
     border: 1px solid var(--border-default);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-inner);
+    border-radius: 0;
+    transition: border-color var(--transition-fast) linear, background var(--transition-fast) linear;
   }
 
   /* Track Focus */
@@ -87,20 +87,19 @@
     top: 2px;
     left: 2px;
     background: var(--color-text-secondary);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-bounce);
-    box-shadow: var(--shadow-sm);
+    border-radius: 0;
+    transition: transform var(--transition-fast) linear, background var(--transition-fast) linear;
   }
 
-  /* Checked State */
+  /* Checked: accent border + filled thumb — accent as a live edge/fill on a
+     control is acceptable here because the thumb IS the state indicator */
   .ds-toggle-track.is-checked {
-    background: var(--color-accent);
-    border-color: var(--color-accent-hover);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3), 0 0 8px var(--color-accent-subtle);
+    background: var(--color-accent-subtle);
+    border-color: var(--color-accent);
   }
 
   .ds-toggle-track.is-checked .ds-toggle-thumb {
-    background: var(--color-text-inverse);
+    background: var(--color-accent);
   }
 
   /* Label */

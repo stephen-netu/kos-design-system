@@ -303,14 +303,14 @@
   .ds-input-element {
     flex: 1;
     width: 100%;
-    height: 2.25rem;
-    padding: 0 var(--space-3);
+    height: var(--ui-control-h);
+    padding: 0 var(--ui-pad-x);
     background: transparent;
     border: none;
     outline: none;
     color: var(--color-text-primary);
     font-family: var(--font-sans);
-    font-size: var(--text-sm);
+    font-size: var(--ui-font);
   }
 
   .ds-input-wrapper.has-leading .ds-input-element {
@@ -378,12 +378,12 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 1px;
+    height: 2px;
     background: var(--color-accent);
     transform: scaleX(0);
     transform-origin: center;
     transition: transform var(--transition-normal);
-    box-shadow: 0 -1px 4px var(--color-accent-glow);
+    /* crisp accent live-edge on focus — no glow halo (depth by edge, not blur) */
   }
 
   .ds-input-wrapper.is-focused .ds-input-glow {
@@ -430,8 +430,9 @@
 
   .ds-input-autocomplete__item:hover,
   .ds-input-autocomplete__item.selected {
-    background: var(--color-accent, #b87333);
-    color: #fff;
+    background: var(--color-accent-subtle);
+    color: var(--color-text-primary);
+    box-shadow: inset 2px 0 0 var(--color-accent);
   }
 
   .ds-input-autocomplete__type {
@@ -447,8 +448,7 @@
 
   .ds-input-autocomplete__item:hover .ds-input-autocomplete__type,
   .ds-input-autocomplete__item.selected .ds-input-autocomplete__type {
-    background: rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--color-text-secondary);
   }
 
   .ds-input-autocomplete__label {
@@ -467,6 +467,6 @@
 
   .ds-input-autocomplete__item:hover .ds-input-autocomplete__detail,
   .ds-input-autocomplete__item.selected .ds-input-autocomplete__detail {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--color-text-tertiary);
   }
 </style>

@@ -396,21 +396,21 @@
     bottom: 100%;
     left: 0;
     right: 0;
-    margin-bottom: var(--space-2);
-    background: var(--color-bg-panel-elevated, #2a2a2a);
-    border: 1px solid var(--border-default, #333);
-    border-radius: var(--radius-lg, 0.5rem);
-    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.3));
+    margin-bottom: 2px;
+    background: var(--color-bg-panel-elevated);
+    border: var(--border-width-default) solid var(--border-default);
+    border-radius: 0;
+    box-shadow: none;
     overflow: hidden;
     z-index: 100;
   }
-  
+
   .input-bar {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+    padding: var(--ui-pad-y) var(--ui-pad-x);
+    border-bottom: 1px solid var(--border-default);
   }
   
   .input-bar.executing {
@@ -448,42 +448,48 @@
   }
   
   .spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--border-default);
-    border-top-color: var(--color-accent, var(--color-accent));
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--border-default);
+    border-top-color: var(--color-accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
-  
+
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
-  
+
   .command-list,
   .suggestion-list {
     list-style: none;
     margin: 0;
-    padding: var(--space-2) 0;
-    max-height: 200px;
+    padding: 0;
+    max-height: 220px;
     overflow-y: auto;
   }
-  
+
   .command-list li,
   .suggestion-list li {
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-2) var(--space-4);
+    height: var(--ui-row-h);
+    padding: 0 var(--ui-pad-x);
     cursor: pointer;
-    transition: background var(--transition-fast, 120ms);
+    border-bottom: 1px solid var(--border-default);
+    transition: background var(--transition-fast) linear;
   }
-  
+
+  .command-list li:last-child,
+  .suggestion-list li:last-child { border-bottom: 0; }
+
   .command-list li:hover,
   .command-list li.selected,
   .suggestion-list li:hover,
   .suggestion-list li.selected {
-    background: var(--color-accent-subtle, var(--color-accent-muted));
+    background: var(--color-accent-subtle);
+    box-shadow: inset 2px 0 0 var(--color-accent);
   }
   
   .command-name {
@@ -512,26 +518,25 @@
   }
   
   .param-chip {
-    font-size: var(--text-xs);
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
-    background: var(--color-bg-panel, #222);
-    color: var(--color-text-tertiary, #706858);
+    font-size: var(--ui-label);
+    font-family: var(--font-mono);
+    padding: 2px var(--ui-pad-y);
+    background: var(--color-bg-panel);
+    color: var(--color-text-tertiary);
     border: 1px solid transparent;
   }
-  
+
   .param-chip.required {
-    border-color: var(--color-accent-muted, var(--color-accent-muted));
+    border-color: var(--color-accent-muted);
   }
-  
+
   .param-chip.filled {
-    background: var(--color-accent-subtle, var(--color-accent-muted));
-    color: var(--color-accent, var(--color-accent));
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
   }
-  
+
   .param-chip.current {
-    border-color: var(--color-accent, var(--color-accent));
-    box-shadow: 0 0 0 1px var(--color-accent);
+    border-color: var(--color-accent);
   }
   
   .feedback {
@@ -541,13 +546,13 @@
   }
   
   .feedback.success {
-    color: var(--color-success, #27ae60);
-    background: rgba(39, 174, 96, 0.1);
+    color: var(--color-success);
+    background: color-mix(in srgb, var(--color-success) 10%, transparent);
   }
-  
+
   .feedback.error {
-    color: var(--color-error, #c0392b);
-    background: rgba(192, 57, 43, 0.1);
+    color: var(--color-error);
+    background: color-mix(in srgb, var(--color-error) 10%, transparent);
   }
   
   .help {
@@ -560,10 +565,10 @@
   }
   
   kbd {
-    background: var(--color-bg-canvas, #1a1a1a);
-    padding: 2px 6px;
-    border-radius: var(--radius-sm);
+    background: var(--color-bg-canvas);
+    padding: 1px 5px;
+    border: 1px solid var(--border-subtle);
     font-family: var(--font-mono);
-    font-size: 0.9em;
+    font-size: var(--ui-label);
   }
 </style>

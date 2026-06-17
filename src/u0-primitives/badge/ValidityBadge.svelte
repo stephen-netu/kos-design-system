@@ -53,9 +53,10 @@
     font-family: var(--font-mono);
     font-weight: 700;
     white-space: nowrap;
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
+    border-radius: 0;
+    transition: border-color var(--transition-fast) linear, background var(--transition-fast) linear;
     gap: 0.125rem;
+    font-variant-numeric: tabular-nums;
   }
 
   /* High Validity (900-1000) */
@@ -125,29 +126,5 @@
     margin-left: 0.25rem;
   }
 
-  /* Hover effect */
-  .ds-validity-badge:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .validity-color-high:hover {
-    background: var(--validity-high);
-    color: #fff;
-  }
-
-  .validity-color-medium:hover {
-    background: var(--validity-medium);
-    color: #fff;
-  }
-
-  .validity-color-low:hover {
-    background: var(--validity-low);
-    color: #fff;
-  }
-
-  .validity-color-critical:hover {
-    background: var(--validity-critical);
-    color: #fff;
-  }
+  /* No lift/shadow hover — reads as data, not interactive decoration */
 </style>

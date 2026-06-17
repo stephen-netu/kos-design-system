@@ -44,10 +44,13 @@ export interface StorageMapConfig {
 
 /** Color palette per owner tier */
 export const TIER_COLORS: Record<OwnerTier, { fill: string; stroke: string; text: string }> = {
+  // kos tier: accent-driven. These literals are canvas paint values, not CSS;
+  // consumers should call resolveAccentRamp() and replace with ramp.alpha(N).
+  // Until wired: neutral fallback so the visual is at least color-agnostic.
   kos: {
-    fill: 'rgba(184, 115, 51, 0.25)',
-    stroke: 'rgba(184, 115, 51, 0.6)',
-    text: '#d4a06a',
+    fill: 'rgba(128, 128, 128, 0.20)',
+    stroke: 'rgba(128, 128, 128, 0.50)',
+    text: 'var(--color-text-secondary, #9aa1a8)',
   },
   external: {
     fill: 'rgba(160, 152, 128, 0.15)',

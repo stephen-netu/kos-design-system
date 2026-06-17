@@ -293,15 +293,15 @@
     padding: 6px;
     background: transparent;
     border: none;
-    border-radius: var(--radius-sm, 4px);
+    border-radius: 0;
     color: var(--color-text-tertiary, #6b6b6b);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: color var(--transition-fast, 110ms) linear, background var(--transition-fast, 110ms) linear;
   }
 
   .clear-btn:hover {
-    background: var(--border-subtle, #2a2a2a);
-    color: var(--color-error, #ef4444);
+    background: var(--border-subtle, #262b30);
+    color: var(--color-error, #c14a4a);
   }
 
   .messages-container {
@@ -354,23 +354,24 @@
   }
 
   .message-bubble {
-    padding: 10px 14px;
-    border-radius: var(--radius-xl, 12px);
-    font-size: 13px;
-    line-height: 1.5;
+    padding: var(--ui-pad-y, 5px) var(--ui-pad-x, 8px);
+    font-size: var(--ui-font, 13px);
+    line-height: var(--ui-leading, 1.35);
   }
 
+  /* User bubble: accent-subtle bg + live edge. Accent fill (subtle) justified:
+     this is a sender-identity readout, same logic as toggle thumb. */
   .message.user .message-bubble {
-    background: var(--color-accent);
-    color: white;
-    border-bottom-right-radius: 4px;
+    background: var(--color-accent-subtle);
+    color: var(--color-text-primary);
+    box-shadow: inset -2px 0 0 var(--color-accent);
   }
 
   .message.assistant .message-bubble {
-    background: var(--color-bg-panel-elevated, #252525);
-    color: var(--color-text-primary, #e0e0e0);
-    border: 1px solid var(--border-subtle, #2a2a2a);
-    border-bottom-left-radius: 4px;
+    background: var(--color-bg-panel-elevated, #1c2024);
+    color: var(--color-text-primary);
+    border: 1px solid var(--border-default, #262b30);
+    box-shadow: inset 2px 0 0 var(--border-default);
   }
 
   .message-content h1,
@@ -387,7 +388,7 @@
   .message-content code {
     background: rgba(0, 0, 0, 0.2);
     padding: 2px 4px;
-    border-radius: var(--radius-sm, 3px);
+    border-radius: 0;
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 0.9em;
   }
@@ -395,7 +396,7 @@
   .message-content pre {
     background: rgba(0, 0, 0, 0.3);
     padding: 8px;
-    border-radius: var(--radius-md, 6px);
+    border-radius: 0;
     overflow-x: auto;
     margin: 4px 0;
   }
@@ -438,20 +439,21 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    padding: 4px 8px;
+    padding: 2px 6px;
     background: var(--color-accent-subtle);
-    border: 1px solid var(--color-accent);
-    border-radius: var(--radius-xl, 12px);
+    border: 1px solid var(--color-accent-muted);
     color: var(--color-accent);
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: var(--ui-label, 9px);
+    letter-spacing: 0.05em;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background var(--transition-fast, 110ms) linear, box-shadow var(--transition-fast, 110ms) linear;
     max-width: 150px;
   }
 
   .citation-chip:hover {
-    background: var(--color-accent);
-    color: white;
+    background: var(--color-accent-muted);
+    box-shadow: inset 2px 0 0 var(--color-accent);
   }
 
   .citation-source {
@@ -468,28 +470,26 @@
   .citation-popover {
     display: none;
     position: absolute;
-    bottom: calc(100% + 8px);
+    bottom: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%);
     width: 220px;
-    padding: 10px 12px;
-    background: var(--color-bg-panel-elevated, #252525);
-    border: 1px solid var(--border-subtle, #2a2a2a);
-    border-left: 3px solid var(--color-accent);
-    border-radius: var(--radius-md, 6px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: var(--ui-pad-y, 5px) var(--ui-pad-x, 8px);
+    background: var(--color-bg-panel-elevated, #1c2024);
+    border: 1px solid var(--border-default, #262b30);
+    border-left: 2px solid var(--color-accent);
     z-index: 10;
     pointer-events: none;
   }
 
   .citation-wrapper:hover .citation-popover {
     display: block;
-    animation: popover-fade 0.15s ease-out;
+    animation: popover-fade var(--transition-fast, 110ms) linear;
   }
 
   @keyframes popover-fade {
-    from { opacity: 0; transform: translateX(-50%) translateY(4px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 
   .citation-snippet {
@@ -507,13 +507,12 @@
   }
 
   .error-message {
-    padding: 10px 14px;
-    background: var(--color-error-bg, rgba(239, 68, 68, 0.1));
-    border: 1px solid var(--color-error, #ef4444);
-    border-radius: var(--radius-lg, 8px);
-    color: var(--color-error, #ef4444);
-    font-size: 13px;
-    margin-top: 8px;
+    padding: var(--ui-pad-y, 5px) var(--ui-pad-x, 8px);
+    background: var(--color-error-bg, rgba(193, 74, 74, 0.1));
+    border: 1px solid var(--color-error, #c14a4a);
+    color: var(--color-error, #c14a4a);
+    font-size: var(--ui-font, 13px);
+    margin-top: 6px;
   }
 
   .input-container {
@@ -533,7 +532,7 @@
     padding: 10px 14px;
     background: var(--color-bg-panel-elevated, #252525);
     border: 1px solid var(--border-subtle, #2a2a2a);
-    border-radius: var(--radius-xl, 20px);
+    border-radius: 0;
     color: var(--color-text-primary, #e0e0e0);
     font-size: 13px;
     outline: none;
@@ -553,25 +552,24 @@
     cursor: not-allowed;
   }
 
+  /* Send button: accent fill justified — submit = functional state (action, not decoration) */
   .send-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: var(--ui-control-h, 24px);
+    height: var(--ui-control-h, 24px);
     padding: 0;
     background: var(--color-accent);
     border: none;
-    border-radius: 50%;
-    color: white;
+    color: var(--color-bg-app, #0a0b0c);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background var(--transition-fast, 110ms) linear;
     flex-shrink: 0;
   }
 
   .send-btn:hover:not(:disabled) {
-    background: var(--color-accent-hover, #c9894f);
-    transform: scale(1.05);
+    background: var(--color-accent-hover);
   }
 
   .send-btn:disabled {
@@ -635,15 +633,15 @@
     padding: 4px;
     background: transparent;
     border: none;
-    border-radius: var(--radius-sm, 4px);
+    border-radius: 0;
     color: var(--color-text-tertiary, #6b6b6b);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: color var(--transition-fast, 110ms) linear, background var(--transition-fast, 110ms) linear;
     flex-shrink: 0;
   }
 
   .clear-context-btn:hover {
-    background: var(--border-subtle, #2a2a2a);
-    color: var(--color-error, #ef4444);
+    background: var(--border-subtle, #262b30);
+    color: var(--color-error, #c14a4a);
   }
 </style>

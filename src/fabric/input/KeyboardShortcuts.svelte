@@ -162,20 +162,20 @@
   .shortcuts-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.75);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    backdrop-filter: blur(4px);
+    /* No backdrop-filter: depth via border + contrast only */
   }
 
   .shortcuts-panel {
     width: min(560px, 90vw);
     max-height: 80vh;
     background: var(--color-bg-panel, #222222);
-    border: 1px solid var(--border-default, #333333);
-    border-radius: var(--radius-xl, 0.75rem);
+    border: var(--border-width-default, 2px) solid var(--border-default, #333333);
+    border-radius: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -185,33 +185,35 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+    padding: var(--ui-pad-y, 5px) var(--ui-pad-x, 8px);
+    border-bottom: 1px solid var(--border-default, #333333);
   }
 
   .panel-title {
-    font-size: 16px;
+    font-family: var(--font-mono);
+    font-size: var(--ui-label, 10px);
     font-weight: 600;
-    color: var(--color-text-primary, #f2efe9);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary, #a09880);
     margin: 0;
   }
 
   .close-btn {
     background: none;
-    border: none;
+    border: 1px solid transparent;
     color: var(--color-text-tertiary, #706858);
     cursor: pointer;
-    padding: 4px;
-    border-radius: var(--radius-sm, 0.25rem);
+    padding: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.15s, background 0.15s;
+    transition: color var(--transition-fast, 110ms) linear, border-color var(--transition-fast, 110ms) linear;
   }
 
   .close-btn:hover {
-    color: var(--color-text-primary, #f2efe9);
-    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-primary, #e7e9eb);
+    border-color: var(--border-default, #333333);
   }
 
   .search-box {
@@ -242,7 +244,7 @@
     color: var(--color-text-tertiary, #706858);
     cursor: pointer;
     padding: 2px;
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -292,15 +294,15 @@
     padding: 10px 12px;
     background: none;
     border: 1px solid transparent;
-    border-radius: var(--radius-md, 0.375rem);
+    border-radius: 0;
     cursor: pointer;
     text-align: left;
     transition: background 0.15s, border-color 0.15s;
   }
 
   .shortcut-btn:hover {
-    background: var(--color-bg-canvas, #1a1a1a);
-    border-color: var(--border-subtle, rgba(255,255,255,0.06));
+    background: var(--color-bg-canvas, #0f1113);
+    border-color: var(--border-default, #333333);
   }
 
   .shortcut-keys {
@@ -319,7 +321,7 @@
     padding: 0 6px;
     background: var(--color-bg-canvas, #1a1a1a);
     border: 1px solid var(--border-default, #333333);
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 11px;
     font-weight: 500;
@@ -340,7 +342,7 @@
     font-size: 10px;
     padding: 2px 6px;
     background: var(--color-bg-canvas, #1a1a1a);
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
     color: var(--color-text-tertiary, #706858);
   }
 
@@ -380,7 +382,7 @@
     margin: 0 2px;
     background: var(--color-bg-panel, #222222);
     border: 1px solid var(--border-default, #333333);
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 10px;
   }

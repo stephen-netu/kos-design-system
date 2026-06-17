@@ -56,7 +56,7 @@ export const CHECKPOINT_COLORS: Record<CheckpointComponentType, string> = {
 /** Get checkpoint color with fallback for when CSS vars aren't set */
 export function getCheckpointColor(type: CheckpointComponentType, isDark = true): string {
   const fallbacks: Record<CheckpointComponentType, { light: string; dark: string }> = {
-    'rust-crate': { light: '#8a5a28', dark: '#b87333' },
+    'rust-crate': { light: '#8a5a28', dark: '#b55533' },
     'ui-bundle': { light: '#2d6b6e', dark: '#5f9ea0' },
     'config': { light: '#7c6fae', dark: '#a99fd6' },
     'faculty-state': { light: '#d4a03d', dark: '#e6c470' },

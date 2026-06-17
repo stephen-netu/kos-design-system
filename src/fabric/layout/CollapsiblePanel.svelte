@@ -238,7 +238,7 @@
     --panel-border: var(--border-subtle, 1px solid rgba(255, 255, 255, 0.06));
     --handle-bg: var(--color-bg-inset, #0f0f0f);
     --handle-hover-bg: var(--color-bg-canvas, #141414);
-    --accent-color: var(--color-accent, #00ff41);
+    --accent-color: var(--color-accent);
     --transition-duration: 300ms;
 
     display: flex;
@@ -290,7 +290,7 @@
     border-right: var(--panel-border);
     border-left: var(--panel-border);
     overflow: hidden;
-    transition: width var(--transition-duration) cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: width var(--transition-duration) linear;
     flex-shrink: 0;
   }
 
@@ -316,7 +316,7 @@
     cursor: pointer;
     user-select: none;
     position: relative;
-    transition: background 0.15s ease;
+    transition: background var(--transition-fast, 110ms) linear;
     min-height: 100%;
   }
 
@@ -341,25 +341,23 @@
     width: 2px;
     height: 64px;
     background: var(--color-text-muted, #555);
-    border-radius: var(--shape-border-radius, 1px);
-    transition: all 0.15s ease;
+    transition: background var(--transition-fast, 110ms) linear;
     flex-shrink: 0;
   }
 
   .panel-handle:hover .panel-handle__bar {
-    background: var(--color-text-primary, #ccc);
-    box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+    background: var(--color-text-secondary, #9aa1a8);
   }
 
+  /* Expanded/dragging: accent fill on the drag handle bar — functional
+     state indicator (open/dragging vs closed), same logic as toggle thumb */
   .panel-handle--expanded .panel-handle__bar {
     background: var(--accent-color);
-    box-shadow: 0 0 6px var(--accent-color);
-    opacity: 0.6;
+    opacity: 0.7;
   }
 
   .collapsible-panel--dragging .panel-handle__bar {
     background: var(--accent-color);
-    box-shadow: 0 0 8px var(--accent-color);
     opacity: 1;
   }
 

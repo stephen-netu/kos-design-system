@@ -298,9 +298,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: var(--color-bg-panel, #222222);
-    border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
-    border-radius: var(--radius-md, 0.5rem);
+    background: var(--color-bg-panel, #181c20);
+    border: 1px solid var(--border-default, #262b30);
     overflow: hidden;
   }
 
@@ -324,7 +323,7 @@
     gap: var(--space-1);
     background: var(--color-bg-canvas, #1a1a1a);
     padding: 2px;
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
   }
 
   .mode-btn {
@@ -334,13 +333,15 @@
     border: none;
     color: var(--color-text-secondary, #a09880);
     cursor: pointer;
-    border-radius: var(--radius-sm, 0.25rem);
-    transition: all 0.15s;
+    border-radius: 0;
+    transition: background var(--transition-fast, 110ms) linear, color var(--transition-fast, 110ms) linear;
   }
 
+  /* Active mode fill justified — mode selection is a functional state readout */
   .mode-btn.active {
-    background: var(--color-accent, var(--color-accent));
-    color: var(--color-text-primary, #f2efe9);
+    background: var(--color-accent-subtle);
+    color: var(--color-text-primary);
+    box-shadow: inset 0 -2px 0 var(--color-accent);
   }
 
   .query-form {
@@ -356,7 +357,7 @@
     padding: 8px 12px;
     background: var(--color-bg-canvas, #1a1a1a);
     border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
     color: var(--color-text-primary, #f2efe9);
     font-size: 14px;
     outline: none;
@@ -387,7 +388,7 @@
     border: none;
     color: var(--color-text-secondary, #a09880);
     cursor: pointer;
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
   }
 
   .clear-btn:hover {
@@ -404,7 +405,7 @@
   .result-card {
     padding: 12px;
     background: var(--color-bg-canvas, #1a1a1a);
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: 0;
   }
 
   .result-header {
@@ -456,19 +457,22 @@
 
   .credibility {
     padding: 1px 6px;
-    border-radius: var(--radius-sm, 0.25rem);
-    background: rgba(229, 57, 53, 0.2);
-    color: #e53935;
+    font-family: var(--font-mono);
+    font-size: var(--ui-label, 9px);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--color-error) 12%, transparent);
+    color: var(--color-error);
   }
 
   .credibility.medium {
-    background: rgba(255, 152, 0, 0.2);
-    color: #ff9800;
+    background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+    color: var(--color-warning);
   }
 
   .credibility.high {
-    background: rgba(76, 175, 80, 0.2);
-    color: #4caf50;
+    background: color-mix(in srgb, var(--color-success) 12%, transparent);
+    color: var(--color-success);
   }
 
   .empty-state {
@@ -491,16 +495,19 @@
     display: flex;
     align-items: center;
     gap: var(--space-15);
-    padding: 6px 16px;
+    padding: 4px 12px;
     background: none;
-    border: 1px solid var(--color-error, #e53935);
-    border-radius: var(--radius-sm, 0.25rem);
-    color: var(--color-error, #e53935);
-    font-size: 12px;
+    border: 1px solid color-mix(in srgb, var(--color-error) 55%, transparent);
+    color: var(--color-error);
+    font-family: var(--font-mono);
+    font-size: var(--ui-label, 10px);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     cursor: pointer;
+    transition: background var(--transition-fast, 110ms) linear;
   }
 
   .cancel-btn:hover {
-    background: rgba(229, 57, 53, 0.1);
+    background: color-mix(in srgb, var(--color-error) 12%, transparent);
   }
 </style>

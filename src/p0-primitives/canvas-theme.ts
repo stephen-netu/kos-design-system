@@ -144,4 +144,4 @@ export function getCanvasTheme(el: Element = document.documentElement): CanvasTh
   };
 }
 
-export type { AccentRamp, CanvasTheme };
+export type { CanvasTheme };

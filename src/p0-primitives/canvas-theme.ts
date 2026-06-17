@@ -24,7 +24,7 @@ interface QuaternionPalette {
 }
 
 /** Runtime-derived accent ramp. Values are pre-parsed for Canvas 2D use. */
-interface AccentRamp {
+export interface AccentRamp {
   /** Solid accent — e.g. "rgb(184 115 51)" — use for borders, active edges, cursors. */
   solid: string;
   /** Lighter variant (+16% toward white in OKLab approximation). */

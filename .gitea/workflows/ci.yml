@@ -41,7 +41,7 @@ jobs:
         env:
           GITEA_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # pnpm ignores auth in project-level .npmrc (security).
-          # pnpm config set writes to ~/.npmrc which pnpm DOES read.
-          pnpm config set '//gitea.beast.ruun.network/api/packages/K-W/npm/:_authToken' "$GITEA_TOKEN"
+          # pnpm ignores auth in project-level .npmrc (security feature).
+          # Write directly to $HOME/.npmrc which pnpm DOES read.
+          echo "//gitea.beast.ruun.network/api/packages/K-W/npm/:_authToken=${GITEA_TOKEN}" >> "${HOME}/.npmrc"
           pnpm publish --access public --no-git-checks

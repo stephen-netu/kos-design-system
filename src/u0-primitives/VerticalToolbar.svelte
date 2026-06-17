@@ -112,14 +112,14 @@
     align-items: center;
     justify-content: center;
     width: 36px;
-    height: 36px;
+    height: var(--ui-control-h, 36px);
     padding: 0;
     background: transparent;
     border: 1px solid transparent;
-    border-radius: var(--radius-md, 4px);
+    border-radius: 0;
     color: var(--color-text-muted, #6b6558);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: color var(--transition-fast) linear, background var(--transition-fast) linear;
   }
 
   .toolbar-item:hover:not(:disabled) {
@@ -138,16 +138,15 @@
     border-color: var(--color-accent-muted, var(--color-accent-muted));
   }
 
+  /* Active live-edge on the left — accent as functional state indicator */
   .toolbar-item.active::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 20px;
-    background: var(--color-accent, var(--color-accent));
-    border-radius: 0 2px 2px 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-accent);
   }
 
   .toolbar-item:disabled {
@@ -168,34 +167,38 @@
     height: 100%;
   }
 
+  /* Badge fill justified: count is a functional readout (unread count), not decoration */
   .toolbar-badge {
     position: absolute;
     top: 2px;
     right: 2px;
     min-width: 14px;
     height: 14px;
-    padding: 0 4px;
-    background: var(--color-accent, var(--color-accent));
-    color: var(--color-bg-app, #141414);
-    font-size: 10px;
-    font-weight: 600;
-    border-radius: var(--radius-full, 9999px);
+    padding: 0 3px;
+    background: var(--color-accent);
+    color: var(--color-bg-app, #0a0b0c);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-variant-numeric: tabular-nums;
   }
 
   .toolbar-tooltip {
     position: absolute;
-    padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-    background: var(--color-bg-panel-elevated, #2a2a2a);
-    color: var(--color-text-primary, #f2efe9);
-    font-size: var(--text-xs, 0.75rem);
+    padding: 3px 7px;
+    background: var(--color-bg-panel-elevated);
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
+    font-size: var(--ui-label, 10px);
+    letter-spacing: 0.05em;
     white-space: nowrap;
-    border-radius: var(--radius-md, 4px);
+    border: 1px solid var(--border-default);
     pointer-events: none;
     z-index: 1000;
-    box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.3));
   }
 
   .toolbar-tooltip.tooltip-right {

@@ -74,11 +74,10 @@
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-full); /* circle — intentional, avatars are always round */
     overflow: hidden;
     background: var(--color-bg-panel-elevated);
     border: 1px solid var(--border-subtle);
-    box-shadow: var(--shadow-sm);
   }
 
   .ds-avatar-image {
@@ -93,7 +92,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--color-bg-panel-elevated), var(--color-bg-panel));
+    background: var(--color-bg-panel-elevated);
     color: var(--color-text-secondary);
   }
 
@@ -142,36 +141,37 @@
     z-index: 10;
   }
 
-   .status-online { background-color: var(--color-online); box-shadow: 0 0 6px var(--color-cyan-glow); }
+   .status-online { background-color: var(--color-online); }
   .status-away { background-color: var(--color-away); }
   .status-busy { background-color: var(--color-busy); }
   .status-offline { background-color: var(--color-offline); }
   
-  .status-typing { 
+  /* Typing: blinking dots — mechanical, no bounce, no glow */
+  .status-typing {
     background-color: var(--color-typing);
     display: flex;
     align-items: center;
     justify-content: space-evenly;
     width: auto;
-    padding: 0 4px;
+    padding: 0 3px;
     min-width: 16px;
     border-radius: var(--radius-full);
-    box-shadow: var(--shadow-glow);
   }
 
   .typing-dot {
     width: 3px;
     height: 3px;
-     background-color: var(--color-text-inverse);
+    background-color: var(--color-text-inverse);
     border-radius: var(--radius-full);
-    animation: typing-bounce 1.4s infinite ease-in-out both;
+    animation: typing-blink 1.2s step-end infinite;
   }
 
-  .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-  .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+  .typing-dot:nth-child(1) { animation-delay: 0s; }
+  .typing-dot:nth-child(2) { animation-delay: 0.4s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.8s; }
 
-  @keyframes typing-bounce {
-    0%, 80%, 100% { transform: scale(0); }
-    40% { transform: scale(1); }
+  @keyframes typing-blink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
   }
 </style>

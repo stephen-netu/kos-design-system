@@ -44,10 +44,10 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-weight: 600;
     white-space: nowrap;
-    border-radius: var(--radius-full);
+    border-radius: 0;
   }
 
   .ds-grant-status-dot {

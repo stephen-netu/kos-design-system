@@ -116,7 +116,7 @@
   {:else if name === 'power-plant'}
     <!-- Power plant silhouette with cooling tower -->
     <defs>
-      <linearGradient id="brassGrad-{size}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <linearGradient id="accentGrad-{size}" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="var(--color-accent-hover)"/>
         <stop offset="50%" stop-color="var(--color-accent)"/>
         <stop offset="100%" stop-color="var(--color-accent-active)"/>
@@ -125,7 +125,7 @@
     
     <!-- Cooling tower -->
     <path d="M8 35 Q4 25 12 15 L14 5 Q20 2 26 5 L28 15 Q36 25 32 35 Z" 
-          fill="url(#brassGrad-{size})" opacity="0.8"/>
+          fill="url(#accentGrad-{size})" opacity="0.8"/>
     
     <!-- Inner detail -->
     <path d="M12 32 Q8 24 15 15 L17 8 Q20 6 23 8 L25 15 Q32 24 28 32" 
@@ -200,7 +200,7 @@
   {:else if name === 'steam-tower'}
     <!-- Minimal steam tower with rising particles -->
     <path d="M12 38 L16 12 L24 12 L28 38 Z" fill="currentColor" opacity="0.3"/>
-    <path d="M14 38 L17 14 L23 14 L26 38 Z" fill="url(#brassGrad-{size})" opacity="0.7"/>
+    <path d="M14 38 L17 14 L23 14 L26 38 Z" fill="url(#accentGrad-{size})" opacity="0.7"/>
     
     {#if animation === 'steam'}
       <!-- Rising particles -->

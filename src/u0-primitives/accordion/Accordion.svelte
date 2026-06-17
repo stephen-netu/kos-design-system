@@ -126,8 +126,6 @@
 
 <style>
   .accordion {
-    border-radius: var(--radius-md);
-    overflow: hidden;
     border: var(--border-width-thin) solid var(--color-border);
     background: var(--color-bg-app);
   }
@@ -149,10 +147,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-4);
+    padding: var(--ui-pad-y) var(--ui-pad-x);
+    min-height: var(--ui-control-h);
     cursor: pointer;
     user-select: none;
-    transition: background-color var(--duration-normal) ease-in-out;
+    transition: background-color var(--transition-fast) linear;
   }
 
   .accordion-header:hover:not(.disabled) {
@@ -163,7 +162,8 @@
 
   /* Focus styles for keyboard navigation */
   .accordion-header:focus-visible {
-    box-shadow: 0 0 0 var(--border-width-default) var(--color-accent);
+    outline: var(--border-width-default) solid var(--color-accent);
+    outline-offset: -2px;
   }
 
   /* Disabled states */
@@ -180,7 +180,8 @@
   }
 
   .accordion-content {
-    padding: var(--space-4, 1rem);
-    padding-top: 0;
+    padding: var(--ui-pad-x);
+    padding-top: var(--ui-pad-y);
+    font-size: var(--ui-font);
   }
 </style>

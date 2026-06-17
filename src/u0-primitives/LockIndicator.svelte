@@ -122,7 +122,6 @@
   .lock-indicator {
     position: relative;
     background: var(--color-bg-panel, #181c20);
-    border-radius: var(--radius-md, 4px);
     overflow: hidden;
   }
 
@@ -151,7 +150,7 @@
   .lock-avatar {
     width: 28px;
     height: 28px;
-    border-radius: var(--radius-full, 9999px);
+    border-radius: var(--radius-full); /* avatar — intentionally round */
     flex-shrink: 0;
   }
 
@@ -186,20 +185,23 @@
   }
 
   .lock-request-btn {
-    padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-    background: var(--color-accent-subtle, var(--color-accent-muted));
-    color: var(--color-accent, var(--color-accent));
-    border: 1px solid var(--color-accent, var(--color-accent));
-    border-radius: var(--radius-sm, 2px);
-    font-size: var(--text-xs, 0.75rem);
+    padding: 3px 8px;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: var(--ui-label, 10px);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background var(--transition-fast) linear, color var(--transition-fast) linear;
     flex-shrink: 0;
   }
 
+  /* Hover fill justified: confirms destructive intent (same logic as toggle thumb) */
   .lock-request-btn:hover {
     background: var(--color-accent);
-    color: var(--color-text-inverse);
+    color: var(--color-bg-app);
   }
 
   .lock-bar {
@@ -214,10 +216,10 @@
   .lock-spinner {
     width: 16px;
     height: 16px;
-    border: 2px solid var(--color-accent, var(--color-accent));
-    border-top-color: transparent;
-    border-radius: var(--radius-full, 9999px);
-    animation: spin 1s linear infinite;
+    border: 1.5px solid var(--border-default);
+    border-top-color: var(--color-accent);
+    border-right-color: var(--color-accent);
+    animation: spin 0.7s linear infinite;
   }
 
   @keyframes spin {

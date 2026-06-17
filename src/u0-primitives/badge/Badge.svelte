@@ -36,11 +36,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     white-space: nowrap;
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
+    border-radius: 0;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
   }
 
   /* --- Variants --- */
@@ -88,7 +90,7 @@
 
   /* Count (Solid background, white/dark text) */
   .variant-count {
-    box-shadow: var(--shadow-sm);
+    font-variant-numeric: tabular-nums;
   }
 
   .variant-count.color-accent { background: var(--color-accent); color: var(--color-text-inverse); }

@@ -96,24 +96,26 @@
   }
 
   .ds-card-header {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--ui-pad-y) var(--ui-pad-x);
     border-bottom: var(--border-width-thin) solid var(--border-default);
+    font-family: var(--font-mono);
     font-weight: 600;
     background: var(--color-bg-panel);
-    font-size: var(--text-sm);
+    font-size: var(--ui-label);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
   }
 
   .ds-card-content {
-    padding: var(--space-4);
+    padding: var(--ui-pad-x);
     flex: 1;
   }
 
   .ds-card-footer {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--ui-pad-y) var(--ui-pad-x);
     border-top: var(--border-width-thin) solid var(--border-default);
-    background: var(--color-accent-faint);
+    background: var(--color-bg-panel);
   }
 
   /* --- Variants --- */
@@ -129,11 +131,12 @@
     border-color: var(--border-subtle);
   }
 
+  /* 'glass' kept as an API alias but DE-GLASSED: opaque elevated panel,
+     no backdrop-filter. Blur = web2/Material; INSTRUMENT builds depth from
+     border + contrast, never frosted translucency. */
   .variant-glass {
-    background: rgba(24, 28, 32, 0.6);
-    backdrop-filter: blur(var(--blur-md));
-    -webkit-backdrop-filter: blur(var(--blur-md));
-    border: var(--border-width-thin) solid rgba(255, 255, 255, 0.08);
+    background: var(--color-bg-panel-elevated);
+    border: var(--border-width-thin) solid var(--border-default);
     color: var(--color-text-primary);
   }
 
@@ -149,10 +152,11 @@
     );
   }
 
+  /* Hazard = destructive semantics → FIXED error hue, never the user accent. */
   .variant-hazard {
-    background: var(--color-accent-faint);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-error) 8%, transparent);
+    border-color: var(--color-error);
+    color: var(--color-error);
   }
 
   /* --- Interactive --- */
@@ -200,8 +204,8 @@
   }
 
   .is-selected.variant-hazard {
-    border-color: var(--color-accent);
-    background: var(--color-accent-subtle);
+    border-color: var(--color-error);
+    background: color-mix(in srgb, var(--color-error) 14%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {

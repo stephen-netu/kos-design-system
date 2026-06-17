@@ -33,6 +33,9 @@
     colorFgTertiary?: string;
 
     colorAccent?: string;
+    /** @deprecated The CSS engine (tokens.css) derives the accent ramp from the
+     *  seed --accent-primary via color-mix. These fields are ignored by
+     *  ThemeProvider; set `colorAccent` only. Kept for source compatibility. */
     colorAccentHover?: string;
     colorAccentActive?: string;
     colorAccentSubtle?: string;
@@ -121,13 +124,12 @@
     if (t.colorFgInverse) vars.push(`--color-fg-inverse: ${t.colorFgInverse};`);
     if (t.colorFgTertiary) vars.push(`--color-fg-tertiary: ${t.colorFgTertiary};`);
 
-    if (t.colorAccent) vars.push(`--color-accent: ${t.colorAccent};`);
-    if (t.colorAccentHover) vars.push(`--color-accent-hover: ${t.colorAccentHover};`);
-    if (t.colorAccentActive) vars.push(`--color-accent-active: ${t.colorAccentActive};`);
-    if (t.colorAccentSubtle) vars.push(`--color-accent-subtle: ${t.colorAccentSubtle};`);
-    if (t.colorAccentGlow) vars.push(`--color-accent-glow: ${t.colorAccentGlow};`);
-    if (t.colorAccentMuted) vars.push(`--color-accent-muted: ${t.colorAccentMuted};`);
-    if (t.colorAccentFaint) vars.push(`--color-accent-faint: ${t.colorAccentFaint};`);
+    // Accent: emit ONLY the seed (--accent-primary). tokens.css derives
+    // --color-accent + hover/active/subtle/glow/muted/faint from it via
+    // color-mix, and CSS resolves those var() refs per-element — so setting
+    // the seed on this wrapper recolors the whole subtree. Injecting the
+    // derived values here would override the engine and re-leak a fixed hue.
+    if (t.colorAccent) vars.push(`--accent-primary: ${t.colorAccent};`);
     if (t.colorAccentAmber) vars.push(`--color-accent-amber: ${t.colorAccentAmber};`);
     if (t.colorAccentCopper) vars.push(`--color-accent-copper: ${t.colorAccentCopper};`);
     if (t.colorAccentRust) vars.push(`--color-accent-rust: ${t.colorAccentRust};`);

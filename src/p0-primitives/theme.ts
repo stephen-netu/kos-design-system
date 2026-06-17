@@ -39,14 +39,10 @@ export const defaultDarkTheme: ThemeConfig = {
   colorFgTertiary: '#6b6558',
   colorFgMuted: '#3a3630',
 
-  // Accent (brass — energized signal, use sparingly)
+  // Accent — SEED ONLY. tokens.css derives hover/active/subtle/glow/muted/faint
+  // from --accent-primary via color-mix; emitting derived values here would
+  // override and de-sync the single-seed engine (re-introducing the brass leak).
   colorAccent: '#b87333',
-  colorAccentHover: '#d4892f',
-  colorAccentActive: '#8a5526',
-  colorAccentSubtle: 'rgba(184, 115, 51, 0.08)',
-  colorAccentGlow: 'rgba(184, 115, 51, 0.28)',
-  colorAccentMuted: 'rgba(184, 115, 51, 0.16)',
-  colorAccentFaint: 'rgba(184, 115, 51, 0.04)',
 
   // Telemetry
   colorSuccess: '#4fa8a2',
@@ -81,14 +77,8 @@ export const defaultLightTheme: ThemeConfig = {
   colorFgTertiary: '#8a8a8a',
   colorFgMuted: '#a0a0a0',
 
-  // Accent (brass — same in both modes)
+  // Accent — SEED ONLY (CSS engine derives the ramp).
   colorAccent: '#b87333',
-  colorAccentHover: '#c9894f',
-  colorAccentActive: '#9a5f2a',
-  colorAccentSubtle: 'rgba(184, 115, 51, 0.12)',
-  colorAccentGlow: 'rgba(184, 115, 51, 0.2)',
-  colorAccentMuted: 'rgba(184, 115, 51, 0.15)',
-  colorAccentFaint: 'rgba(184, 115, 51, 0.06)',
 
   // Feedback
   colorSuccess: '#5a8a6e',
@@ -121,13 +111,8 @@ export const controlRoomTheme: ThemeConfig = {
   colorFgTertiary: '#555555',
   colorFgMuted: '#333333',
 
+  // Accent — SEED ONLY (CSS engine derives the ramp).
   colorAccent: '#00ff41',
-  colorAccentHover: '#33ff66',
-  colorAccentActive: '#00cc33',
-  colorAccentSubtle: 'rgba(0, 255, 65, 0.1)',
-  colorAccentGlow: 'rgba(0, 255, 65, 0.3)',
-  colorAccentMuted: 'rgba(0, 255, 65, 0.2)',
-  colorAccentFaint: 'rgba(0, 255, 65, 0.05)',
 
   colorSuccess: '#00ff41',
   colorWarning: '#ff8c00',
@@ -146,20 +131,16 @@ export const controlRoomTheme: ThemeConfig = {
  * Brass accent theme variant — warm metallic (preserved for compatibility)
  */
 export const brassAccentTheme: ThemeConfig = createTheme(defaultDarkTheme, {
-  colorAccent: '#b87333',
-  colorAccentHover: '#d4892f',
-  colorAccentActive: '#8a5526',
-  colorAccentSubtle: 'rgba(184, 115, 51, 0.08)',
+  colorAccent: '#b87333', // seed only — ramp derived by the CSS engine
 });
 
 /**
  * Copper accent theme variant — reddish metallic (preserved for compatibility)
  */
+// NOTE: under the single-seed engine, copper and brass share the seed #b87333
+// and are now equivalent. Give copper a distinct seed to make it a distinct accent.
 export const copperAccentTheme: ThemeConfig = createTheme(defaultDarkTheme, {
-  colorAccent: '#b87333',
-  colorAccentHover: '#c98444',
-  colorAccentActive: '#a05f2a',
-  colorAccentSubtle: 'rgba(184, 115, 51, 0.08)',
+  colorAccent: '#b87333', // seed only
 });
 
 /**
@@ -171,7 +152,5 @@ export const highContrastTheme: ThemeConfig = createTheme(defaultDarkTheme, {
   colorFgPrimary: '#ffffff',
   colorFgSecondary: '#eeeeee',
   colorFgMuted: '#aaaaaa',
-  colorAccent: '#ffcc00',
-  colorAccentHover: '#ffdd33',
-  colorAccentActive: '#e6b800',
+  colorAccent: '#ffcc00', // seed only — ramp derived by the CSS engine
 });

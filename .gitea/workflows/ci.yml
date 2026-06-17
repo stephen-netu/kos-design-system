@@ -41,7 +41,12 @@ jobs:
         env:
           GITEA_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # pnpm ignores auth in project-level .npmrc (security feature).
-          # Write directly to $HOME/.npmrc which pnpm DOES read.
+          echo "HOME=$HOME"
+          id
+          ls -la "$HOME" 2>/dev/null
+          test -f "$HOME/.npmrc" && stat --format="%s bytes" "$HOME/.npmrc" || echo "no .npmrc yet"
+          test -d "$HOME" && echo "HOME writable: $(touch "$HOME/test_write" 2>&1 && rm "$HOME/test_write" && echo yes || echo no)"
+          echo "publish token length: $(echo -n "$GITEA_TOKEN" | wc -c) chars"
           echo "//gitea.beast.ruun.network/api/packages/K-W/npm/:_authToken=${GITEA_TOKEN}" >> "${HOME}/.npmrc"
+          echo "npmrc file bytes after write: $(wc -c < "${HOME}/.npmrc")"
           pnpm publish --access public --no-git-checks

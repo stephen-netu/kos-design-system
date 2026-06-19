@@ -7,10 +7,11 @@
   import { Canvas, Layer } from 'svelte-canvas';
   import { getArrow } from 'perfect-arrows';
   import type { GraphSnapshot, GraphStateApi } from './types.js';
+  import type { CanvasTheme } from '../p0-primitives/canvas-theme';
   import { GraphState } from './graph-state.svelte.js';
   import { runLayout } from './layout.js';
   import { EDGE_REVEAL_STAGGER_MS } from './types.js';
-   import { getCanvasTheme } from '../p0-primitives/canvas-theme';
+  import { getCanvasTheme } from '../p0-primitives/canvas-theme';
 
   // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -89,6 +90,18 @@
 
   const NODE_RADIUS = 4;
   const FONT = '12px var(--font-mono, monospace)';
+  const BADGE_FONT = '10px var(--font-mono, monospace)';
+
+  function statusColors(status: unknown, theme: CanvasTheme) {
+    switch (status) {
+      case 'Running': return { fill: theme.quaternion.j + '22', stroke: theme.quaternion.j, label: theme.quaternion.j };
+      case 'Passed':  return { fill: theme.quaternion.j + '18', stroke: theme.quaternion.j, label: theme.quaternion.j };
+      case 'Failed':  return { fill: theme.severity.critical + '22', stroke: theme.severity.critical, label: theme.severity.critical };
+      case 'Crashed': return { fill: theme.severity.critical + '22', stroke: theme.severity.critical, label: theme.severity.critical };
+      case 'Skipped': return { fill: theme.node, stroke: theme.severity.minor, label: theme.severity.minor };
+      default:        return { fill: theme.node, stroke: theme.nodeBorder, label: theme.nodeText };
+    }
+  }
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
@@ -165,10 +178,12 @@
 
       const isFocus  = node.id === focusId;
       const { x, y, width: w, height: h } = pos;
+      const status = node.data?.['status'];
+      const { fill, stroke, label: labelColor } = statusColors(status, COLORS);
 
       // Node body
-      context.fillStyle   = isFocus ? COLORS.focus : COLORS.node;
-      context.strokeStyle = COLORS.nodeBorder;
+      context.fillStyle   = isFocus ? COLORS.focus : fill;
+      context.strokeStyle = isFocus ? COLORS.focus : stroke;
       context.lineWidth   = isFocus ? 2 : 1;
 
       context.beginPath();
@@ -177,14 +192,43 @@
       context.stroke();
 
       // Label
-      context.fillStyle  = COLORS.nodeText;
+      context.fillStyle  = isFocus ? '#000' : labelColor;
       context.font       = FONT;
       context.textAlign  = 'center';
       context.textBaseline = 'middle';
-      // Truncate if needed
       const maxWidth = w - 16;
-      const label = node.label.length > 18 ? node.label.slice(0, 16) + '…' : node.label;
+      const label = node.label.length > 20 ? node.label.slice(0, 18) + '…' : node.label;
       context.fillText(label, x + w / 2, y + h / 2, maxWidth);
+
+      // Error indicator
+      if (node.data?.['error']) {
+        context.fillStyle = COLORS.severity.critical;
+        context.font = '11px var(--font-mono, monospace)';
+        context.textAlign = 'right';
+        context.textBaseline = 'top';
+        context.fillText('⚠', x + w - 4, y + 4);
+      }
+
+      // Attempt badge (when > 1)
+      const attempt = node.data?.['attempt'];
+      if (typeof attempt === 'number' && attempt > 1) {
+        const badge = `#${attempt}`;
+        context.font = BADGE_FONT;
+        const bw = context.measureText(badge).width + 8;
+        const bh = 14;
+        const bx = x + w - bw - 4;
+        const by = y + h - bh - 4;
+
+        context.fillStyle = COLORS.accentRamp.solid;
+        context.beginPath();
+        context.roundRect(bx, by, bw, bh, 3);
+        context.fill();
+
+        context.fillStyle = '#000';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(badge, bx + bw / 2, by + bh / 2);
+      }
     }
   }
 </script>

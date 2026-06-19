@@ -1,6 +1,6 @@
 {
   "name": "@stephen-netu/design-system",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "KOS LEAP Design System — Neo-brutalist industrial UI with brass accent",
   "type": "module",
   "publishConfig": {

@@ -208,6 +208,24 @@
     background: color-mix(in srgb, var(--color-error) 14%, transparent);
   }
 
+  /* Hazard interactive states kept on the fixed error hue — never the user accent. */
+  .variant-hazard.is-interactive:hover {
+    border-color: var(--color-error);
+    background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  }
+
+  .variant-hazard.is-interactive:focus-visible .ds-card-ring,
+  .is-selected.variant-hazard .ds-card-ring {
+    border-color: var(--color-error);
+    background: repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent var(--border-width-default),
+      var(--color-error) var(--border-width-default),
+      var(--color-error) var(--blur-md)
+    );
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .ds-card { transition: none; }
     .ds-card-ring { transition: none; }

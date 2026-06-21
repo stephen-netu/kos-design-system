@@ -34,14 +34,19 @@
       pinned to a hue, so any user color stays coherent across light/dark.
       (Was: 7 hand-picked brass values + brass rgba ramps that ignored the
       user's choice — the "brass leak".) --accent-* remain consumer override
-      hooks (token-audit ACCENT_HOOKS); components consume --color-accent* only. */
+      hooks (token-audit ACCENT_HOOKS); components consume --color-accent* only.
+
+      Browser support: color-mix() requires Chrome 111+, Safari 16.2+, Firefox
+      113+. Fallbacks below use var(--accent-primary) directly (no hue shift),
+      which is acceptable on legacy browsers — the seed itself is still
+      controllable. */
    --accent-primary: #b87333;
-   --accent-hover: color-mix(in oklab, var(--accent-primary), #fff 16%);
-   --accent-active: color-mix(in oklab, var(--accent-primary), #000 22%);
-   --accent-glow: color-mix(in srgb, var(--accent-primary) 28%, transparent);
-   --accent-muted: color-mix(in srgb, var(--accent-primary) 16%, transparent);
-   --accent-subtle: color-mix(in srgb, var(--accent-primary) 8%, transparent);
-   --accent-faint: color-mix(in srgb, var(--accent-primary) 4%, transparent);
+   --accent-hover: var(--accent-primary);
+   --accent-active: var(--accent-primary);
+   --accent-glow: var(--accent-primary);
+   --accent-muted: var(--accent-primary);
+   --accent-subtle: var(--accent-primary);
+   --accent-faint: var(--accent-primary);
    --color-accent: var(--accent-primary);
    --color-accent-hover: var(--accent-hover);
    --color-accent-active: var(--accent-active);
@@ -49,9 +54,43 @@
    --color-accent-muted: var(--accent-muted);
    --color-accent-subtle: var(--accent-subtle);
    --color-accent-faint: var(--accent-faint);
-   --color-accent-secondary: color-mix(in oklab, var(--accent-primary), #fff 26%);  /* Companion warm tone (n4 kind colors) */
+   --color-accent-secondary: var(--accent-primary);
+}
 
-   /* Overlay levels — white opacity ramps for borders, backgrounds, hover states */
+@supports (color-mix(in srgb, red, transparent)) {
+  :root {
+   --accent-hover: color-mix(in oklab, var(--accent-primary), #fff 16%);
+   --accent-active: color-mix(in oklab, var(--accent-primary), #000 22%);
+   --accent-glow: color-mix(in srgb, var(--accent-primary) 28%, transparent);
+   --accent-muted: color-mix(in srgb, var(--accent-primary) 16%, transparent);
+   --accent-subtle: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+   --accent-faint: color-mix(in srgb, var(--accent-primary) 4%, transparent);
+   --color-accent-hover: var(--accent-hover);
+   --color-accent-active: var(--accent-active);
+   --color-accent-glow: var(--accent-glow);
+   --color-accent-muted: var(--accent-muted);
+   --color-accent-subtle: var(--accent-subtle);
+   --color-accent-faint: var(--accent-faint);
+   --color-accent-secondary: color-mix(in oklab, var(--accent-primary), #fff 26%);
+   --overlay-accent-06: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+   --overlay-accent-08: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+   --overlay-accent-12: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+   --overlay-accent-18: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+   --overlay-accent-30: color-mix(in srgb, var(--accent-primary) 30%, transparent);
+   --overlay-accent-45: color-mix(in srgb, var(--accent-primary) 45%, transparent);
+   --overlay-accent-50: color-mix(in srgb, var(--accent-primary) 50%, transparent);
+   --overlay-accent-55: color-mix(in srgb, var(--accent-primary) 55%, transparent);
+   --grid-line: color-mix(in srgb, var(--accent-primary) 3%, transparent);
+   --grid-dot: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+   --grid-major: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+   --shadow-glow: 0 0 12px color-mix(in srgb, var(--accent-primary) 15%, transparent);
+   --shadow-glow-lg: 0 0 24px color-mix(in srgb, var(--accent-primary) 25%, transparent);
+   --shadow-accent-glow: 0 0 16px color-mix(in srgb, var(--accent-primary) 15%, transparent), 0 0 32px color-mix(in srgb, var(--accent-primary) 5%, transparent);
+  }
+}
+
+:root {
+   /* --- Overlay levels — white opacity ramps for borders, backgrounds, hover states */
    --overlay-white-02: rgba(255, 255, 255, 0.02);
    --overlay-white-03: rgba(255, 255, 255, 0.03);
    --overlay-white-04: rgba(255, 255, 255, 0.04);
@@ -63,15 +102,16 @@
    --overlay-white-22: rgba(255, 255, 255, 0.22);
    --overlay-white-25: rgba(255, 255, 255, 0.25);
 
-   /* Overlay levels — accent color opacity ramps */
-   --overlay-accent-06: color-mix(in srgb, var(--accent-primary) 6%, transparent);
-   --overlay-accent-08: color-mix(in srgb, var(--accent-primary) 8%, transparent);
-   --overlay-accent-12: color-mix(in srgb, var(--accent-primary) 12%, transparent);
-   --overlay-accent-18: color-mix(in srgb, var(--accent-primary) 18%, transparent);
-   --overlay-accent-30: color-mix(in srgb, var(--accent-primary) 30%, transparent);
-   --overlay-accent-45: color-mix(in srgb, var(--accent-primary) 45%, transparent);
-   --overlay-accent-50: color-mix(in srgb, var(--accent-primary) 50%, transparent);
-   --overlay-accent-55: color-mix(in srgb, var(--accent-primary) 55%, transparent);
+   /* Overlay levels — accent color opacity ramps
+      (fallback: transparent for browsers without color-mix) */
+   --overlay-accent-06: transparent;
+   --overlay-accent-08: transparent;
+   --overlay-accent-12: transparent;
+   --overlay-accent-18: transparent;
+   --overlay-accent-30: transparent;
+   --overlay-accent-45: transparent;
+   --overlay-accent-50: transparent;
+   --overlay-accent-55: transparent;
 
     /* Overlay levels — status color opacity ramps */
     --overlay-success-06: rgba(79, 168, 162, 0.06);
@@ -144,10 +184,10 @@
   --color-border-subtle: var(--border-subtle);
   --color-border-default: var(--border-default);
 
-  /* --- Grid (canvas patterns) --- */
-  --grid-line: color-mix(in srgb, var(--accent-primary) 3%, transparent);
-  --grid-dot: color-mix(in srgb, var(--accent-primary) 6%, transparent);
-  --grid-major: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+   /* --- Grid (canvas patterns) --- */
+   --grid-line: transparent;
+   --grid-dot: transparent;
+   --grid-major: transparent;
 
   /* --- Typography --- */
   --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
@@ -211,12 +251,12 @@
   --shadow-md: none;
   --shadow-lg: none;
   --shadow-xl: none;
-  --shadow-glow: 0 0 12px color-mix(in srgb, var(--accent-primary) 15%, transparent);
-  --shadow-glow-lg: 0 0 24px color-mix(in srgb, var(--accent-primary) 25%, transparent);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.4);
-  --shadow-card: none;
-  --shadow-card-hover: none;
-  --shadow-accent-glow: 0 0 16px color-mix(in srgb, var(--accent-primary) 15%, transparent), 0 0 32px color-mix(in srgb, var(--accent-primary) 5%, transparent);
+   --shadow-glow: 0 0 12px rgba(0, 0, 0, 0.4);
+   --shadow-glow-lg: 0 0 24px rgba(0, 0, 0, 0.4);
+   --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+   --shadow-card: none;
+   --shadow-card-hover: none;
+   --shadow-accent-glow: 0 0 16px rgba(0, 0, 0, 0.4), 0 0 32px rgba(0, 0, 0, 0.4);
 
   /* --- Transitions --- */
   --transition-fast: 120ms ease;

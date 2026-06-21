@@ -33,9 +33,11 @@
     colorFgTertiary?: string;
 
     colorAccent?: string;
-    /** @deprecated The CSS engine (tokens.css) derives the accent ramp from the
-     *  seed --accent-primary via color-mix. These fields are ignored by
-     *  ThemeProvider; set `colorAccent` only. Kept for source compatibility. */
+    /** @deprecated Accent ramp fields ignored by ThemeProvider — the ramp is
+     *  derived from `colorAccent` via tokens.css color-mix. Palette fields
+     *  (Amber, Copper, Rust, Sage, Gold) below are still emitted directly as
+     *  --color-accent-* custom properties for source compatibility. Set only
+     *  `colorAccent` for the primary accent. */
     colorAccentHover?: string;
     colorAccentActive?: string;
     colorAccentSubtle?: string;
@@ -124,12 +126,29 @@
     if (t.colorFgInverse) vars.push(`--color-fg-inverse: ${t.colorFgInverse};`);
     if (t.colorFgTertiary) vars.push(`--color-fg-tertiary: ${t.colorFgTertiary};`);
 
-    // Accent: emit ONLY the seed (--accent-primary). tokens.css derives
-    // --color-accent + hover/active/subtle/glow/muted/faint from it via
-    // color-mix, and CSS resolves those var() refs per-element — so setting
-    // the seed on this wrapper recolors the whole subtree. Injecting the
-    // derived values here would override the engine and re-leak a fixed hue.
-    if (t.colorAccent) vars.push(`--accent-primary: ${t.colorAccent};`);
+    // Accent: emit the seed AND redeclare the full alias/ramp chain on this
+    // wrapper. CSS resolves var() in unregistered custom properties at computed-
+    // value time on the declaring element (:root). Without redeclaring the
+    // derived variables here, --color-accent etc. stay baked to the root seed
+    // even when --accent-primary is overridden on this wrapper.
+    if (t.colorAccent) {
+      vars.push(`--accent-primary: ${t.colorAccent};`);
+      vars.push(`--accent-hover: color-mix(in oklab, var(--accent-primary), #fff 16%);`);
+      vars.push(`--accent-active: color-mix(in oklab, var(--accent-primary), #000 22%);`);
+      vars.push(`--accent-glow: color-mix(in srgb, var(--accent-primary) 28%, transparent);`);
+      vars.push(`--accent-muted: color-mix(in srgb, var(--accent-primary) 16%, transparent);`);
+      vars.push(`--accent-subtle: color-mix(in srgb, var(--accent-primary) 8%, transparent);`);
+      vars.push(`--accent-faint: color-mix(in srgb, var(--accent-primary) 4%, transparent);`);
+      vars.push(`--color-accent: var(--accent-primary);`);
+      vars.push(`--color-accent-hover: var(--accent-hover);`);
+      vars.push(`--color-accent-active: var(--accent-active);`);
+      vars.push(`--color-accent-glow: var(--accent-glow);`);
+      vars.push(`--color-accent-muted: var(--accent-muted);`);
+      vars.push(`--color-accent-subtle: var(--accent-subtle);`);
+      vars.push(`--color-accent-faint: var(--accent-faint);`);
+      vars.push(`--color-accent-secondary: color-mix(in oklab, var(--accent-primary), #fff 26%);`);
+      vars.push(`--border-focus: var(--accent-primary);`);
+    }
     if (t.colorAccentAmber) vars.push(`--color-accent-amber: ${t.colorAccentAmber};`);
     if (t.colorAccentCopper) vars.push(`--color-accent-copper: ${t.colorAccentCopper};`);
     if (t.colorAccentRust) vars.push(`--color-accent-rust: ${t.colorAccentRust};`);

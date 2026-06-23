@@ -45,15 +45,21 @@ class SubstrateConnectionImpl implements SubstrateConnection {
       return;
     }
 
-    try {
-      this.state = await invoke<SubstrateState>(this.options.getStateCommand ?? 'substrate_get_state');
-    } catch (error) {
-      this.state = { status: 'failed', reason: error instanceof Error ? error.message : 'Unable to read substrate state' };
-    }
-
+    // Register listener FIRST: prevents missing a Connected transition that fires
+    // while invoke() is in-flight (the race that caused the persistent OFFLINE overlay).
     this.unlisten = await listen<SubstrateState>(this.options.stateEvent ?? 'substrate:state', (event) => {
       this.state = event.payload;
     });
+
+    try {
+      this.state = await invoke<SubstrateState>(this.options.getStateCommand ?? 'substrate_get_state');
+    } catch (error) {
+      // A failed *read* of supervisor state is not a connection failure — don't
+      // paint the degraded overlay on it. Stay non-degraded (`starting`) and let
+      // the `substrate:state` listener deliver the real state.
+      console.warn('[SubstrateConnection] substrate_get_state read failed; awaiting events', error);
+      this.state = { status: 'starting' };
+    }
   }
 
   async retry(): Promise<void> {

@@ -47,6 +47,9 @@ importers:
       d3-force:
         specifier: ^3.0.0
         version: 3.0.0
+      dompurify:
+        specifier: ^3.4.9
+        version: 3.4.9
       elkjs:
         specifier: ^0.9.3
         version: 0.9.3

@@ -4,6 +4,7 @@
   import FindReplaceDialog from './FindReplaceDialog.svelte';
   import CorrectionTooltip from './components/CorrectionTooltip.svelte';
   import ExternalChangeDialog from './ExternalChangeDialog.svelte';
+  import DOMPurify from 'dompurify';
   import { markdownToHtml } from './markdown-preview';
   import { useCodeMirror } from './useCodeMirror';
   import { useFilePersistence } from './useFilePersistence';
@@ -158,7 +159,7 @@
       <FindReplaceDialog {editorView} isOpen={showFindReplace} onClose={closeFindReplace} />
     </div>
     {#if showPreview}
-      <div class="preview-pane"><div class="preview-content">{@html markdownToHtml(content)}</div></div>
+      <div class="preview-pane"><div class="preview-content">{@html DOMPurify.sanitize(markdownToHtml(content))}</div></div>
     {/if}
   </div>
   {#if activeCorrection}

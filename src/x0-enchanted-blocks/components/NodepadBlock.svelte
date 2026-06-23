@@ -85,10 +85,19 @@
   }
   
   function handleKeydown(e: KeyboardEvent) {
-    // Tab inserts spaces
+    // Tab inserts two spaces via Selection/Range (no deprecated execCommand)
     if (e.key === 'Tab') {
       e.preventDefault();
-      document.execCommand('insertText', false, '  ');
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(document.createTextNode('  '));
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        handleInput();
+      }
     }
   }
 </script>

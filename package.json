@@ -186,6 +186,7 @@
     "markmap-lib": "^0.18.0",
     "markmap-view": "^0.18.0",
     "mermaid": "^11.0.0",
+    "dompurify": "^3.4.9",
     "perfect-arrows": "^0.3.7",
     "svelte-canvas": "^2.1.0"
   },

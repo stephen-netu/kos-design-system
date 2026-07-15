@@ -51,18 +51,6 @@ run_completion() {
   fi
 }
 
-# run_ref_completion <task_id> <sha> — refs-on-main terminal completion.
-run_ref_completion() {
-  local task_id="$1" sha="$2" out rc
-  out="$(realm-substrate task update "$task_id" --status done --add-ref "commit:$sha" 2>&1)"
-  rc=$?
-  if [[ $rc -ne 0 ]]; then
-    gate_fail "task update $task_id --status done exited $rc: $(printf '%s' "$out" | tail -n 3 | tr '\n' ' ')" "$sha"
-  else
-    printf '%s\n' "$out"
-  fi
-}
-
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 0
 fi
@@ -86,41 +74,21 @@ if [[ -z "$commits" ]]; then
   exit 0
 fi
 
-# Merge-to-main refs handling — OPT-IN ONLY (narrowed 2026-07-14).
-#
 # `refs <task-id>` means "this commit is ABOUT that task", not "this commit
-# FINISHES it" (CLAUDE.md commit convention). Treating refs as terminal on
-# main by default auto-closes tasks that were merely cited — the exact
-# phantom-completion class the 2026-06-10 sweep found 29 of. It is also
-# redundant for the sanctioned flow: kos-integrate closes the task itself
-# after a verified merge.
-#
-# Terminal-refs therefore fires ONLY when the merging process explicitly
-# opts in by exporting KOS_REFS_TERMINAL=1 (an integrator declaring "refs
-# in this merge range are completions"). Ordinary pulls and merges never
-# auto-close on refs. closes/fixes remain always-on.
-target_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")"
-default_branch=""
-remote_head="$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || true)"
-if [[ -n "$remote_head" ]]; then
-  default_branch="${remote_head#refs/remotes/origin/}"
-fi
-if [[ -z "$default_branch" ]]; then
-  default_branch="main"
-fi
-
-on_main=0
-if [[ "${KOS_REFS_TERMINAL:-0}" == "1" && "$target_branch" == "$default_branch" ]]; then
-  on_main=1
-fi
-
+# FINISHES it" (CLAUDE.md commit convention). This hook never treats `refs`
+# as terminal, on main or anywhere else — auto-closing on a mere citation
+# manufactures phantom completions (the 2026-06-10 sweep found 29). It was
+# briefly kept behind a KOS_REFS_TERMINAL=1 opt-in (2026-07-14); that opt-in
+# was deleted (kos:sovereign-1502) once it was confirmed redundant for the
+# only path where landing-on-main genuinely means "complete" — kos-integrate
+# closes the task itself after a verified merge (scripts/kos-integrate).
+# closes/fixes remain the only terminal triggers, on every branch.
 closing_ref='(^|[[:space:][:punct:]])(closes|fixes)[[:space:]]+(kos:)?[a-zA-Z][a-zA-Z0-9]*-[0-9]+'
 
 # ── Pass 1: collect actionable work BEFORE requiring the binary, so a merge
-#    with no task references stays silent on machines without realm-substrate,
+#    with no closing references stays silent on machines without realm-substrate,
 #    while a merge that NEEDS a completion fails loud when the binary is absent.
 declare -a close_shas=()
-declare -a ref_pairs=()   # "task_id sha"
 
 while IFS= read -r sha; do
   [[ -z "$sha" ]] && continue
@@ -136,33 +104,20 @@ while IFS= read -r sha; do
   if printf '%s\n' "$message" | grep -Eiq "$closing_ref"; then
     close_shas+=("$sha")
   fi
-
-  if [[ "$on_main" -eq 1 ]]; then
-    extracted="$(printf '%s\n' "$message" | sed -nE 's/(^|[[:space:][:punct:]])([Rr][Ee][Ff][Ss])[[:space:]]+(kos:)?([a-zA-Z][a-zA-Z0-9]*-[0-9]+).*/\4/p' || true)"
-    if [[ -n "$extracted" ]]; then
-      while IFS= read -r task_id; do
-        [[ -n "$task_id" ]] && ref_pairs+=("$task_id $sha")
-      done <<< "$extracted"
-    fi
-  fi
 done <<< "$commits"
 
-if [[ ${#close_shas[@]} -eq 0 && ${#ref_pairs[@]} -eq 0 ]]; then
+if [[ ${#close_shas[@]} -eq 0 ]]; then
   exit 0
 fi
 
 if ! command -v realm-substrate >/dev/null 2>&1; then
-  gate_fail "realm-substrate not on PATH; ${#close_shas[@]} closing commit(s) and ${#ref_pairs[@]} refs-on-main completion(s) NOT recorded"
+  gate_fail "realm-substrate not on PATH; ${#close_shas[@]} closing commit(s) NOT recorded"
   exit 1
 fi
 
 # ── Pass 2: execute, surfacing every failure.
 for sha in ${close_shas[@]+"${close_shas[@]}"}; do
   run_completion "$sha"
-done
-
-for pair in ${ref_pairs[@]+"${ref_pairs[@]}"}; do
-  run_ref_completion ${pair}
 done
 
 exit "$HOOK_FAILED"

@@ -7,6 +7,7 @@
 // CSS imports
 import './base.css';
 /* NOTE: control-room.css is opt-in via data-theme="control-room" — import it explicitly if needed */
+/* NOTE: ambient.css is opt-in decorative tokens/utilities for marketing/docs surfaces — import it explicitly if needed */
 import './p0-primitives/tokens/validity-tokens.css';
 import './n0-node-graph/n0-tokens.css';
 import './d0-data-viz/d0-tokens.css';

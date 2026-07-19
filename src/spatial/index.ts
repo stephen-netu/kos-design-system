@@ -18,3 +18,4 @@ export { CameraController } from './CameraController.svelte.js';
 //   import LodRenderer from '@kos/design-system/spatial/LodRenderer.svelte';
 //   import SnapZoomCamera from '@kos/design-system/spatial/SnapZoomCamera.svelte';
 //   import BspTilingCanvas from '@kos/design-system/spatial/BspTilingCanvas.svelte';
+//   import ParticleAssembleMark from '@kos/design-system/spatial/ParticleAssembleMark.svelte';

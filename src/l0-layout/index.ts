@@ -1,5 +1,6 @@
 // L0 Layout — Layout composition templates
 
+export { default as StackedCard } from './card/StackedCard.svelte';
 export { default as WorkspaceLayout } from './workspace/WorkspaceLayout.svelte';
 export { default as ChatViewLayout } from './chat-view/ChatViewLayout.svelte';
 export { default as KanbanViewLayout } from './kanban/KanbanViewLayout.svelte';

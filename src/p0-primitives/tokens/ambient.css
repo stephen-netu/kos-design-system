@@ -1,0 +1,76 @@
+/* @kos/design-system — Ambient Layer
+   Opt-in decorative tokens for marketing/docs/onboarding surfaces —
+   NOT auto-imported (see src/index.ts). Import explicitly:
+     import '@stephen-netu/design-system/tokens/ambient.css';
+
+   Everything here derives from the existing single-seed accent engine
+   (--accent-primary → color-mix()) already defined in tokens.css. No
+   hardcoded hues are introduced — swapping --accent-primary re-themes
+   every gradient/glow defined here for free. Do not add hardcoded
+   parallel palettes; that reintroduces the "brass leak" anti-pattern
+   tokens.css's own comments warn against. */
+
+:root {
+  /* --- Gradient --- */
+  --gradient-accent: linear-gradient(135deg, var(--accent-primary) 0%, var(--color-accent-secondary) 100%);
+
+  /* --- Ambient glow layers — low-opacity radial fields for hero/empty-state backgrounds --- */
+  --glow-ambient-1: color-mix(in srgb, var(--accent-primary) 7%, transparent);
+  --glow-ambient-2: color-mix(in srgb, var(--color-accent-secondary) 5%, transparent);
+  --glow-ambient-3: color-mix(in srgb, var(--accent-primary) 3%, transparent);
+}
+
+/* --- Gradient text --- */
+.text-gradient-accent {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* --- Ambient background glow ---
+   Apply to a positioned container; renders a fixed-feel radial glow trio
+   behind its content. Marketing/docs surfaces only — do not use on
+   console/product chrome. */
+.bg-ambient-glow {
+  position: relative;
+}
+.bg-ambient-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 600px at 10% -10%, var(--glow-ambient-1), transparent 65%),
+    radial-gradient(700px 500px at 92% 8%, var(--glow-ambient-2), transparent 60%),
+    radial-gradient(1000px 800px at 50% 140%, var(--glow-ambient-3), transparent 70%);
+}
+.bg-ambient-glow > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Scroll reveal (see p0-primitives/utils/reveal.ts) ---
+   Marketing/docs surfaces only — never wire into console/product chrome. */
+@keyframes ds-reveal-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ds-reveal {
+  opacity: 0;
+}
+
+.ds-reveal.ds-reveal-in {
+  animation: ds-reveal-fade-up 0.7s cubic-bezier(0.16, 0.8, 0.3, 1) both;
+  animation-delay: var(--ds-reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-reveal,
+  .ds-reveal.ds-reveal-in {
+    opacity: 1;
+    animation: none;
+  }
+}

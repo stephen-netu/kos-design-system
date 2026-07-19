@@ -1,5 +1,8 @@
 // Utility functions for the design system
 
+export { reveal } from './reveal';
+export type { RevealOptions } from './reveal';
+
 /**
  * Class name merger - combines class names, filtering out falsy values
  */

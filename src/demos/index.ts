@@ -5,3 +5,4 @@ export { default as NodepadBlocksShowcase } from './NodepadBlocksShowcase.svelte
 export { default as BspZoneDemo } from './BspZoneDemo.svelte';
 export { default as BspSizingInfographic } from './BspSizingInfographic.svelte';
 export { default as ControlRoomDemo } from './ControlRoomDemo.svelte';
+export { default as AmbientPrimitivesDemo } from './AmbientPrimitivesDemo.svelte';

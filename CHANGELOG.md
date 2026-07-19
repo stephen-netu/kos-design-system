@@ -1,5 +1,11 @@
 # @stephen-netu/design-system
 
+## 0.5.0
+
+### Minor Changes
+
+- 917e036: Add opt-in ambient/marketing primitives: `tokens/ambient.css` (gradient text, ambient glow, scroll-reveal), `LiveDot`, `ThemeSwatchGroup`, `WindowFrame`, `StackedCard`, and `ParticleAssembleMark`. None of these are auto-imported or wired into console/product chrome — see `AmbientPrimitivesDemo` in `src/demos/`.
+
 ## 0.4.0
 
 ### Minor Changes

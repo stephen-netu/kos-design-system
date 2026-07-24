@@ -5,8 +5,11 @@
 // so the hardcoded fallback always wins and theming silently breaks.
 //
 // Exemptions:
-//  - PARAM_VARS: per-instance parameters set from markup style attributes,
-//    not theme tokens (e.g. --cx/--cy on NodePort, --type-color on blocks).
+//  - PARAM_VARS: per-instance parameters set at runtime rather than theme
+//    tokens — either from markup style attributes (e.g. --cx/--cy on NodePort,
+//    --type-color on blocks) or imperatively from JS (e.g. --ds-reveal-delay,
+//    set by p0-primitives/utils/reveal.ts). These are consumed with an explicit
+//    var(--x, fallback) and are correctly defined nowhere in src/.
 //  - ACCENT_HOOKS: consumer override hooks, deliberately undefined; only
 //    tokens.css may reference them (see the accent block comment there).
 //  - Dynamic names (template interpolation) can't be statically audited.
@@ -19,7 +22,10 @@ import path from 'node:path';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..');
 const SRC = path.join(ROOT, 'src');
 
-const PARAM_VARS = new Set(['--cx', '--cy', '--type-color', '--handle-width', '--shape-border-radius']);
+const PARAM_VARS = new Set([
+	'--cx', '--cy', '--type-color', '--handle-width', '--shape-border-radius',
+	'--ds-reveal-delay', // set by reveal.ts via node.style.setProperty
+]);
 const ACCENT_HOOKS = new Set([
 	'--accent-primary', '--accent-hover', '--accent-active', '--accent-glow',
 	'--accent-muted', '--accent-subtle', '--accent-faint',

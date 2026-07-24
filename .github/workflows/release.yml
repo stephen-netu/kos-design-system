@@ -1,0 +1,90 @@
+name: release
+
+# Publishes @stephen-netu/design-system to npmjs.org via TRUSTED PUBLISHING (OIDC).
+#
+# There is deliberately NO npm token here, and none should ever be added. Auth is a
+# short-lived credential minted per-run from the `id-token: write` permission below,
+# exchanged against the trusted publisher configured on npmjs for this package.
+# Long-lived npm tokens are being retired: bypass-2FA tokens lose management actions
+# in early Aug 2026 and lose direct publishing around Jan 2027.
+#
+# Why this lives on GitHub rather than the Beast Gitea runner: npm trusted publishing
+# supports GitHub-hosted runners, GitLab.com, and CircleCI cloud only. Self-hosted
+# runners are explicitly unsupported, so `runs-on` MUST stay a GitHub-hosted runner.
+# Gitea CI keeps running checks; it no longer publishes.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # REQUIRED — without this, OIDC minting fails and publish 403s.
+
+jobs:
+  release:
+    runs-on: ubuntu-latest # Do NOT change to a self-hosted runner (see above).
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.2 # matches packageManager in package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0 # trusted publishing requires Node >= 22.14.0
+          cache: pnpm
+
+      # Node 22 ships npm 10.x; OIDC token exchange needs npm >= 11.5.1.
+      - name: upgrade npm
+        run: npm install -g npm@latest
+
+      - name: install
+        run: pnpm install --frozen-lockfile
+
+      - name: svelte-check
+        run: pnpm exec svelte-check --tsconfig ./tsconfig.json
+
+      - name: review-guards
+        run: |
+          node scripts/checks/import-graph.mjs
+          node scripts/checks/token-audit.mjs
+
+      - name: build
+        run: pnpm run build
+
+      - name: check-exports
+        run: node scripts/checks/check-exports.mjs
+
+      # Merges that don't bump the version are normal. Skip cleanly rather than
+      # failing the job on "cannot publish over previously published version".
+      - name: resolve publish need
+        id: check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          if npm view "@stephen-netu/design-system@${VERSION}" version \
+               --registry=https://registry.npmjs.org/ >/dev/null 2>&1; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::${VERSION} already published — skipping."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Published with `npm`, not `pnpm` — OIDC exchange is an npm CLI feature.
+      # `--registry` is explicit on purpose: for a SCOPED package a stray
+      # `@scope:registry` entry silently outranks the default and would redirect
+      # the publish to the wrong host. Provenance attestations are generated
+      # automatically for public repos under trusted publishing.
+      - name: publish
+        if: steps.check.outputs.publish == 'true'
+        run: npm publish --access public --registry=https://registry.npmjs.org/
+
+      - name: verify
+        if: steps.check.outputs.publish == 'true'
+        run: |
+          sleep 10
+          npm view "@stephen-netu/design-system@${{ steps.check.outputs.version }}" \
+            version dist.integrity --registry=https://registry.npmjs.org/

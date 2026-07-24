@@ -1,5 +1,19 @@
 # @stephen-netu/design-system
 
+## 0.5.1
+
+### Patch Changes
+
+- Publish to npmjs.org as the single registry, via GitHub Actions trusted publishing (OIDC).
+
+  Releases previously went to a private Gitea npm registry, which left npmjs stuck at
+  0.2.2 while Gitea carried 0.3.0-0.5.0. Consumers were split across two registries with
+  disjoint contents and needed a read token to install. npmjs is now the only registry for
+  this package, installs are anonymous, and releases carry provenance attestations.
+
+  This release is cut as a new version rather than republishing 0.5.0 upstream, so no
+  version number ever refers to two different artifacts.
+
 ## 0.5.0
 
 ### Minor Changes

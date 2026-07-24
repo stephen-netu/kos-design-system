@@ -36,10 +36,17 @@ jobs:
         run: pnpm run build
       - name: check-exports
         run: node scripts/checks/check-exports.mjs
-      - name: publish
-        if: github.ref == 'refs/heads/main'
-        env:
-          GITEA_TOKEN: ${{ secrets.NPM_DESIGN_SYSTEM }}
-        run: |
-          echo "//gitea.beast.ruun.network/api/packages/K-W/npm/:_authToken=${GITEA_TOKEN}" >> "${HOME}/.npmrc"
-          pnpm publish --access public --no-git-checks
+      # NO PUBLISH STEP — this is intentional, do not re-add one.
+      #
+      # Releases are published to npmjs.org from GitHub Actions via trusted
+      # publishing (OIDC): see .github/workflows/release.yml. npm's trusted
+      # publishing does not support self-hosted runners, so the Beast runner
+      # cannot mint the credential; and long-lived npm tokens are being retired
+      # (bypass-2FA tokens lose direct publishing around Jan 2027).
+      #
+      # This repo previously published to the Gitea npm registry, which left
+      # npmjs stuck at 0.2.2 while Gitea carried 0.3.0-0.5.0 — two registries
+      # with disjoint contents, and consumers pointed at whichever one could not
+      # serve them. npmjs is now the single registry for this package.
+      #
+      # The Gitea secret NPM_DESIGN_SYSTEM is no longer used and can be revoked.

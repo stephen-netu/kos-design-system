@@ -1,11 +1,11 @@
 {
   "name": "@stephen-netu/design-system",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "KOS LEAP Design System — Neo-brutalist industrial UI with brass accent",
   "type": "module",
   "publishConfig": {
     "access": "public",
-    "registry": "https://gitea.beast.ruun.network/api/packages/K-W/npm/"
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "tokens:generate": "tsx scripts/generate-tokens-json.ts",

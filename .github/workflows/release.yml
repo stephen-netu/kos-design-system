@@ -88,9 +88,21 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         run: npm publish --access public --registry=https://registry.npmjs.org/
 
+      # Poll rather than sleeping a fixed interval: a fresh version is not
+      # immediately readable through the registry CDN, so a short fixed wait
+      # reports a false failure for a publish that actually succeeded.
       - name: verify
         if: steps.check.outputs.publish == 'true'
         run: |
-          sleep 10
-          npm view "@stephen-netu/design-system@${{ steps.check.outputs.version }}" \
-            version dist.integrity --registry=https://registry.npmjs.org/
+          VERSION="${{ steps.check.outputs.version }}"
+          for i in $(seq 1 20); do
+            if npm view "@stephen-netu/design-system@${VERSION}" \
+                 version dist.integrity --registry=https://registry.npmjs.org/ 2>/dev/null; then
+              echo "::notice::${VERSION} is live on npmjs."
+              exit 0
+            fi
+            echo "not visible yet (attempt ${i}/20); waiting..."
+            sleep 15
+          done
+          echo "::error::${VERSION} did not become visible on npmjs within 5 minutes."
+          exit 1

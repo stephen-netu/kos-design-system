@@ -34,12 +34,18 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0 # trusted publishing requires Node >= 22.14.0
+          node-version: '24' # trusted publishing requires Node >= 22.14.0
           cache: pnpm
 
-      # Node 22 ships npm 10.x; OIDC token exchange needs npm >= 11.5.1.
-      - name: upgrade npm
-        run: npm install -g npm@latest
+      # OIDC token exchange needs npm >= 11.5.1, above what older runner images
+      # bundle. Pinned to the 11 line rather than `npm@latest` on purpose:
+      # npm@latest is a moving target (now 12.x) that requires a newer Node than
+      # a pinned runner may ship, which fails the job for reasons unrelated to
+      # this repo. Bump this line deliberately, together with node-version.
+      - name: ensure npm >= 11.5.1
+        run: |
+          npm install -g npm@11
+          node --version && npm --version
 
       - name: install
         run: pnpm install --frozen-lockfile

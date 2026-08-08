@@ -19,6 +19,30 @@
 
 set -uo pipefail
 
+# True if the current repo is SOVEREIGN, worktree-safe (kos:sovereign-118799).
+# `git rev-parse --show-toplevel` returns the *worktree* path for linked
+# worktrees, so a basename check on it fails off the main checkout and Pass 3/4
+# silently no-op there. Resolve the main repo via --git-common-dir and check its
+# toplevel basename, with a remote-url fallback.
+_repo_is_sovereign() {
+  local top common main main_dir
+  top="$(git rev-parse --show-toplevel 2>/dev/null || echo)"
+  [[ "$(basename "$top")" == "SOVEREIGN" ]] && return 0
+  common="$(git rev-parse --git-common-dir 2>/dev/null || echo)"
+  [[ -z "$common" ]] && return 1
+  # git-common-dir may be absolute or relative to the (worktree) toplevel.
+  [[ "$common" == /* ]] && main_dir="$common" || main_dir="$top/$common"
+  if [[ "$common" == *"/worktrees/"* ]]; then
+    # .../<main>/.git/worktrees/<name> -> step up three to <main>
+    main="$(cd "$main_dir/../../.." 2>/dev/null && pwd)" || return 1
+  else
+    main="$(cd "$main_dir/.." 2>/dev/null && pwd)" || return 1
+  fi
+  [[ "$(basename "$main")" == "SOVEREIGN" ]] && return 0
+  git remote get-url origin 2>/dev/null | grep -qi sovereign && return 0
+  return 1
+}
+
 FAIL_LOG="${KOS_GATE_FAILURE_LOG:-$HOME/.local/share/kos/gate-failures.log}"
 HOOK_FAILED=0
 
@@ -106,18 +130,65 @@ while IFS= read -r sha; do
   fi
 done <<< "$commits"
 
-if [[ ${#close_shas[@]} -eq 0 ]]; then
-  exit 0
+if [[ ${#close_shas[@]} -gt 0 ]]; then
+  if ! command -v realm-substrate >/dev/null 2>&1; then
+    gate_fail "realm-substrate not on PATH; ${#close_shas[@]} closing commit(s) NOT recorded"
+  else
+    # ── Pass 2: execute, surfacing every failure.
+    for sha in "${close_shas[@]}"; do
+      run_completion "$sha"
+    done
+  fi
 fi
 
-if ! command -v realm-substrate >/dev/null 2>&1; then
-  gate_fail "realm-substrate not on PATH; ${#close_shas[@]} closing commit(s) NOT recorded"
-  exit 1
+# ── Pass 3: reconcile installed binaries to the freshly merged HEAD
+#    (kos:sovereign-1557 follow-up). A merge to SOVEREIGN main changes source
+#    but leaves the live binary stale until someone redeploys. Run a guarded
+#    auto-refresh of every managed binary. Non-fatal: git ignores post-merge
+#    exit codes, so we fail-LOUD to stderr + the journal when refresh is
+#    refused while binaries are stale (same contract as Pass 2), but never
+#    block the merge (the merge already happened).
+#
+# Deliberately NOT gated on close_shas being non-empty (kos:sovereign-1571):
+# KOS convention (CLAUDE.md) mandates `refs`, never `closes`/`fixes`, in
+# commit messages, so close_shas is empty on nearly every real merge — gating
+# Pass 3 on it made the binary reconcile step unreachable in practice.
+#
+# KOS_ROOT: resolve relative to THIS script's on-disk location, not by
+# walking up from the merged repo's toplevel — the previous `toplevel/../..`
+# computation assumed a fixed nesting depth and silently pointed at the
+# wrong directory (one level too high) when invoked from inside SOVEREIGN,
+# making $REFRESH resolve to a nonexistent path (kos:sovereign-1571).
+KOS_ROOT="${KOS_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+REFRESH="$KOS_ROOT/scripts/kos-binary-refresh"
+if [[ -x "$REFRESH" ]] && _repo_is_sovereign; then
+  if ! "$REFRESH" all >> "$FAIL_LOG" 2>&1; then
+    gate_fail "kos-binary-refresh all refused after merge (mem/CI guard or build failure) — live binaries may be stale"
+  else
+    echo "[post-merge] managed binaries reconciled to HEAD via kos-binary-refresh all"
+  fi
 fi
 
-# ── Pass 2: execute, surfacing every failure.
-for sha in ${close_shas[@]+"${close_shas[@]}"}; do
-  run_completion "$sha"
-done
+# ── Pass 4: surface binary freshness drift on merge (warn-only).
+#    A merge (or pull that fast-forwards) to SOVEREIGN main moves the reference
+#    commit the freshness gate compares installed binaries against; if the live
+#    binaries predate the new HEAD, a subsequent `--fail-on-drift` would gate
+#    them red. Report that drift here, unconditionally and non-fatally.
+#
+#    Deliberately output-only: `--fail-on-drift` is contaminated by daemon
+#    liveness (it also exits 1 when the daemon is unreachable), so using its
+#    exit code would trip the fail-loud contract on every down-daemon merge.
+#    We consume only its stdout (sed from 'Binary Freshness' on) and `|| true`
+#    so a missing binary / down daemon cannot fail the hook. This is the gate
+#    as a report, not as a gate. SOVEREIGN-only: drift is installed binaries
+#    vs SOVEREIGN main, so only a SOVEREIGN merge can introduce either side.
+if _repo_is_sovereign; then
+  if command -v realm-substrate >/dev/null 2>&1; then
+    echo "[post-merge] binary freshness vs merged HEAD:"
+    realm-substrate status --fail-on-drift 2>&1 | sed -n '/Binary Freshness/,$p' || true
+  else
+    echo "[post-merge] realm-substrate not on PATH; skipping freshness drift report"
+  fi
+fi
 
 exit "$HOOK_FAILED"

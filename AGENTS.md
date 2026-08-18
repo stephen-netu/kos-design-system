@@ -27,6 +27,7 @@
 - **`visibility:hidden` rule**: Use `visibility:hidden` (not `display:none`) when toggling element visibility to preserve layout flow
 - **No inline styles** — components must consume design tokens exclusively
 - **Component API**: Use `$props()` with TypeScript interfaces; prefer `$bindable()` props for two-way binding where needed
+- **UI copy (STE-strict)**: All user-facing copy (labels, tooltips, error toasts, empty states, placeholders) follows [`docs/copy.md`](./docs/copy.md) — STE-strict per `MANDATE-8` in `.gears/AGENT_MANDATES.md`. One word per concept, active voice, sentence case, no marketing adjectives. Review copy with the `ste-writing` agent skill.
 
 ## Role-Specific Notes
 
@@ -141,3 +142,28 @@ commit it to `main`.
   Renovate room to group updates while still gating major bumps.
 - **Never** publish from a consumer app's CI. Only this repo (`design-system`)
   owns the release process for the package.
+
+## KOS architecture context (merged from CLAUDE.md, 2026-08-18)
+
+This repo's `CLAUDE.md` is now an `@AGENTS.md` import stub, so this file is the
+single source for the repo. The shared KOS architecture context is canonical in
+one place, and 12 peer repos previously held a copy of it that drifted:
+
+    /Users/netu/Projects/KOS/.gears/_realm/context/kos-peer-context.md
+
+It covers the sovereignty invariants, the HDA layout, TOS, SACS, the documentation
+map, the worktree convention, and the review protocol. Read it before cross-repo
+work. Do not copy it into this repo.
+
+Sections that the shared context or the text above already covers: `KOS Ecosystem`, `Capability Placement`, `Sovereignty Invariants (Non-Negotiable)`, `HDA Architecture`, `TOS (Task Operating System)`, `SACS (Sovereign Agent Context System)`, `Documentation`, `Worktree Convention`, `Review Protocol`.
+
+### Identity
+
+**Design System** — Svelte 5 component library and design token system for KOS apps. Published as `@stephen-netu/design-system`. Not a Tauri app — it is a library. No Rust backend, no IPC.
+
+### Library Conventions
+
+- Svelte 5 runes ONLY: `$state`, `$derived`, `$effect`, `$props`
+- Design system tokens via CSS variables — NO hardcoded colors
+- No Tauri, no Rust, no IPC. Published to npm. Apps consume via `workspace:*`.
+- UI copy standard: [`docs/copy.md`](./docs/copy.md) — STE-strict, enforced by `MANDATE-8` (`.gears/AGENT_MANDATES.md`). Covers labels, tooltips, error toasts, empty states.

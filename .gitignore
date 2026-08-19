@@ -36,3 +36,6 @@ npm-debug.log*
 # No .gears/ should ever exist inside a peer repo.
 .gears/
 Cargo.lock
+
+# Local agent tooling config (not version-controlled)
+.claude/

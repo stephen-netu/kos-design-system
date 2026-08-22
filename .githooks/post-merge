@@ -107,7 +107,12 @@ fi
 # only path where landing-on-main genuinely means "complete" — kos-integrate
 # closes the task itself after a verified merge (scripts/kos-integrate).
 # closes/fixes remain the only terminal triggers, on every branch.
-closing_ref='(^|[[:space:][:punct:]])(closes|fixes)[[:space:]]+(kos:)?[a-zA-Z][a-zA-Z0-9]*-[0-9]+'
+# A project name CAN hold hyphens. 13 of the 26 projects in .realm/config.toml
+# have one, and all ten Mesa repositories are among them. The old character
+# class [a-zA-Z0-9]* matched no hyphen, so 'closes kos:mesa-engine-120860' and
+# 'fixes kos:work-with-netu-120801' matched NOTHING and those tasks never
+# closed. Same defect in 10 sites across KOS and SOVEREIGN. refs kos:sovereign-121112
+closing_ref='(^|[[:space:][:punct:]])(closes|fixes)[[:space:]]+(kos:)?[a-zA-Z][a-zA-Z0-9-]*-[0-9]+'
 
 # ── Pass 1: collect actionable work BEFORE requiring the binary, so a merge
 #    with no closing references stays silent on machines without realm-substrate,

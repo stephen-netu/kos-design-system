@@ -67,4 +67,8 @@ export { default as GrantDraftEditor } from './grant/GrantDraftEditor.svelte';
 // Layout value type + Box primitive (adr:clay-inspired-layout-layer-001)
 export { default as Box } from './Box.svelte';
 export { layoutToStyle } from './layout-to-style';
+export { useLayout } from './useLayout';
+export type { UseLayoutReturn } from './useLayout';
+export { MAX_LAYOUT_ENTRIES, layoutKey } from './state-map.svelte';
+export type { ElementState } from './state-map.svelte';
 export type { Layout, LayoutDirection, LayoutAlign, LayoutSizing } from './types';

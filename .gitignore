@@ -39,3 +39,4 @@ Cargo.lock
 
 # Local agent tooling config (not version-controlled)
 .claude/
+.kos-session-env

@@ -1,5 +1,11 @@
 # @stephen-netu/design-system
 
+## 0.5.2
+
+### Patch Changes
+
+- fix: replace dynamic import of @tauri-apps/api/core with static import in t0-transport invoke wrapper
+
 ## 0.5.1
 
 ### Patch Changes

@@ -2,13 +2,53 @@
 #
 # Post-commit hook — TOS task auto-completion (peer version)
 #
-# Attempts to auto-complete a TOS task from the commit message.
-# Safe no-op if realm-substrate is not installed.
-#
 # WARNING: CANONICAL SOURCE — edit this file, then run 'kos-repos install-peer-hooks <repo>'
 # to propagate. Hand-edits to .githooks/ will be overwritten on re-install.
 # Installed by: kos-repos install-peer-hooks <repo>
+#
+# FAIL-LOUD CONTRACT (gate-veracity 2026-07-14): if HEAD's message carries a
+# task-closing reference (closes/fixes) and the completion cannot be recorded,
+# print a "KOS GATE FAILURE" line to stderr, journal it to
+# $KOS_GATE_FAILURE_LOG (default ~/.local/share/kos/gate-failures.log), exit 1.
+# Commits without closing refs stay silent. Fixture: .gears/gates/gate-fixtures.sh.
 
-set -euo pipefail
+set -uo pipefail
 
-realm-substrate task complete-from-commit HEAD 2>/dev/null || true
+# A project name CAN hold hyphens. 13 of the 26 projects in .realm/config.toml
+# have one, and all ten Mesa repositories are among them. The old character
+# class [a-zA-Z0-9]* matched no hyphen, so 'closes kos:mesa-engine-120860' and
+# 'fixes kos:work-with-netu-120801' matched NOTHING and those tasks never
+# closed. Same defect in 10 sites across KOS and SOVEREIGN. refs kos:sovereign-121112
+closing_ref='(^|[[:space:][:punct:]])(closes|fixes)[[:space:]]+(kos:)?[a-zA-Z][a-zA-Z0-9-]*-[0-9]+'
+message="$(git log --format=%B -n 1 HEAD 2>/dev/null || true)"
+if ! printf '%s\n' "$message" | grep -Eiq "$closing_ref"; then
+  exit 0
+fi
+
+FAIL_LOG="${KOS_GATE_FAILURE_LOG:-$HOME/.local/share/kos/gate-failures.log}"
+
+gate_fail() {
+  local ts
+  ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  mkdir -p "$(dirname "$FAIL_LOG")" 2>/dev/null || true
+  printf '%s post-commit repo=%s sha=%s reason=%s\n' \
+    "$ts" "$(git rev-parse --show-toplevel 2>/dev/null || pwd)" "$(git rev-parse HEAD 2>/dev/null || echo HEAD)" "$1" >> "$FAIL_LOG" 2>/dev/null || true
+  printf 'KOS GATE FAILURE (post-commit): %s\n' "$1" >&2
+  printf '  Task completion was NOT recorded. Journal: %s\n' "$FAIL_LOG" >&2
+  exit 1
+}
+
+if ! command -v realm-substrate >/dev/null 2>&1; then
+  gate_fail "realm-substrate not on PATH; closing ref in HEAD NOT recorded"
+fi
+
+out="$(realm-substrate task complete-from-commit HEAD 2>&1)"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+  gate_fail "complete-from-commit exited $rc: $(printf '%s' "$out" | tail -n 3 | tr '\n' ' ')"
+elif printf '%s\n' "$out" | grep -q '✗'; then
+  # The binary prints per-task '✗' failures while still exiting 0
+  # (s3-realm-substrate/src/commands/task.rs run_task_complete_from_commit).
+  gate_fail "complete-from-commit per-task failure: $(printf '%s\n' "$out" | grep '✗' | tr '\n' ' ')"
+fi
+printf '%s\n' "$out"

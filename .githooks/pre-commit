@@ -73,4 +73,64 @@ if [[ -n "$kos_root" && -x "$kos_root/.gears/gates/lifecycle-validate.sh" ]]; th
   fi
 fi
 
+# Task-bound gate — kos:default-122748
+# Refuse default-branch commits when KOS_TASK_ID is unset and .kos-session-env
+# is absent. Catches sessions that work in the primary checkout and land commits
+# directly on main, bypassing the worktree lifecycle (T-02).
+gate_script="${REPO_ROOT}/.githooks/task-bound-gate.sh"
+if [[ -x "$gate_script" ]]; then
+  if ! "$gate_script"; then
+    echo "" >&2
+    echo "COMMIT BLOCKED — task-bound gate in $(basename "$REPO_ROOT") (above)." >&2
+    echo "  Set KOS_TASK_ID, work in a worktree, or bypass with --no-verify." >&2
+    exit 1
+  fi
+fi
+
+# Rust backend gate — kos:sovereign-126970.
+#
+# Every Tauri peer here is a two-language app whose gate suite only covers the
+# frontend: svelte-check never enters the Rust tree, so that half ships ungated.
+# Ryu proved the cost — kos:sovereign-126890 added two fields to
+# GetAllTasksParams, five construction sites stopped compiling, and four green
+# gates plus an open PR said nothing.
+#
+# The manifest is RESOLVED, not hardcoded. An early draft keyed on
+# "$REPO_ROOT/src-tauri/Cargo.toml" and was blind to LEAP, whose Tauri crate is
+# at shell/src-tauri/ — the largest Rust peer, silently skipped. Instead, walk up
+# from each staged .rs file to its nearest Cargo.toml and check those. That is
+# correct for every layout: ryu/src-tauri, LEAP/shell/src-tauri, and member
+# crates such as LEAP/lib/k3-logic.
+#
+# Inert where it does not apply: no staged .rs means no work, and a peer with no
+# Rust at all (design-system) never resolves a manifest.
+#
+# bash 3.2 on macOS — no mapfile, no associative arrays.
+if command -v cargo >/dev/null 2>&1; then
+  staged_rs=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null | grep '\.rs$' || true)
+  if [[ -n "$staged_rs" ]]; then
+    manifests=""
+    while IFS= read -r f; do
+      [[ -z "$f" ]] && continue
+      d="$(dirname "$REPO_ROOT/$f")"
+      while [[ "$d" != "/" && "$d" == "$REPO_ROOT"* ]]; do
+        if [[ -f "$d/Cargo.toml" ]]; then
+          manifests="$manifests$d/Cargo.toml"$'\n'
+          break
+        fi
+        d="$(dirname "$d")"
+      done
+    done <<< "$staged_rs"
+
+    for m in $(printf '%s' "$manifests" | sort -u); do
+      if ! cargo check --manifest-path "$m" >&2; then
+        echo "" >&2
+        echo "COMMIT BLOCKED — cargo check failed for ${m#"$REPO_ROOT"/} (above)." >&2
+        echo "  Fix the Rust backend, or bypass with --no-verify." >&2
+        exit 1
+      fi
+    done
+  fi
+fi
+
 exit 0

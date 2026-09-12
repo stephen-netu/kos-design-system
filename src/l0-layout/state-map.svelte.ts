@@ -52,6 +52,7 @@ interface ObserverBundle {
 interface LayoutEntry extends ElementState {
   owners: Set<number>;
   bundle: ObserverBundle | null;
+  version: number;
 }
 
 function makeZeroRect(): DOMRect {
@@ -104,6 +105,7 @@ function createEntry(): LayoutEntry {
     inView: false,
     owners: new Set<number>(),
     bundle: null,
+    version: 0,
   };
 }
 
@@ -172,6 +174,11 @@ export function setBundle(key: string, bundle: ObserverBundle): void {
   if (entry) entry.bundle = bundle;
 }
 
+export function touchEntry(key: string): void {
+  const entry = store?.get(key);
+  if (entry) entry.version++;
+}
+
 export function clearBundle(key: string): void {
   if (!store) return;
   const entry = store.get(key);
@@ -222,6 +229,7 @@ export function attachObservers(key: string, node: HTMLElement, entry: LayoutEnt
     const target = entries[0]?.target ?? node;
     const rect = (target as HTMLElement).getBoundingClientRect();
     entry.box = toRect(rect);
+    touchEntry(key);
   });
 
   const intersectionObserver = new IntersectionObserver((entries) => {

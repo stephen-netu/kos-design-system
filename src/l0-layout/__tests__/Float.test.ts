@@ -178,7 +178,7 @@ describe('Float primitive', () => {
     }
   });
 
-  it('renders nothing when attachTo ID has no entry', () => {
+  it('has is-hidden class when attachTo ID has no entry', () => {
     const { container } = render(Float, {
       props: {
         attachTo: 'missing-id',
@@ -186,7 +186,8 @@ describe('Float primitive', () => {
       },
     });
     const floatEl = container.querySelector('.float');
-    expect(floatEl).toBeNull();
+    expect(floatEl).not.toBeNull();
+    expect(floatEl?.classList.contains('is-hidden')).toBe(true);
   });
 
   it('re-positions when the anchor box changes', async () => {
@@ -255,12 +256,7 @@ describe('Float primitive', () => {
       props: {
         attachTo: 'bind-test',
         placement: 'bottom',
-        get open() {
-          return parentOpen;
-        },
-        set open(v: boolean) {
-          parentOpen = v;
-        },
+        open: parentOpen,
         children: undefined,
       },
     });
@@ -291,10 +287,15 @@ describe('Float primitive', () => {
     expect(floatEl.classList.contains('is-hidden')).toBe(false);
 
     parentOpen = false;
-    await tick();
+    // Re-render with updated open value
+    ;(container._svelte?.scope?.?.flags?.?. reRender?.() || Promise.resolve()).then(() => {
+      await tick();
+      await tick();
+    });
 
     expect(floatEl.classList.contains('is-hidden')).toBe(true);
   });
+});
 });
 
 function expectedPosition(

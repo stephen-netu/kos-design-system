@@ -2,20 +2,57 @@
   import type { Snippet } from 'svelte';
   import type { ElementState } from './state-map.svelte';
   import { useLayout } from './useLayout';
-  import { computePosition, offset, flip, shift, type Placement } from '@floating-ui/dom';
+  import { computePosition, offset, flip, shift } from '@floating-ui/dom';
 
+  /**
+   * Placement of the float relative to its anchor.
+   *
+   * `top` and `bottom` are centered on the anchor. The `-start` / `-end`
+   * variants align the float with the start or end edge of the anchor along
+   * the placement axis. `left` and `right` are centered vertically.
+   */
+  export type FloatPlacement =
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end';
+
+  /**
+   * Transition configuration for the float. The float applies a single CSS
+   * `transition` declaration on the element; `enter` runs when the float
+   * becomes visible, `leave` runs when it hides.
+   */
   export interface TransitionConfig {
     enter?: { duration: number; easing: (t: number) => number };
     leave?: { duration: number; easing: (t: number) => number };
   }
 
   interface Props {
+    /**
+     * Stable anchor id. The float reads the anchors box reactively through
+     * `useLayout`. If the id has never been seen the float stays hidden and
+     * renders no throw.
+     */
     attachTo: string;
-    placement?: Placement;
+    /** Placement of the float relative to the anchor. Defaults to `bottom`. */
+    placement?: FloatPlacement;
+    /** Distance between the anchor and the float, in CSS pixels. */
     offset?: number;
+    /** z-index applied to the float. Defaults to 200. */
     zIndex?: number;
+    /** Two-way bindable open state. Defaults to `true`. */
     open?: boolean;
+    /** Declarative enter/leave transition configuration. */
     transition?: TransitionConfig;
+    /** Snippet rendered inside the float. Receives the anchors `ElementState`. */
     children?: Snippet<[ElementState]>;
   }
 
@@ -29,28 +66,15 @@
     children,
   }: Props = $props();
 
+  // Layout is reactive and never null in the browser. On the server it returns
+  // a frozen stub with a zero box, which keeps the float hidden and never throws.
+  const layout = useLayout(attachTo);
   let everSeen = $state(false);
   let mounted = $state(false);
   let floatNode: HTMLDivElement | undefined = $state();
 
   let x = $state(0);
   let y = $state(0);
-
-  let prevAttachTo: string | undefined = undefined;
-  let currentLayout: ReturnType<typeof useLayout> | null = null;
-
-  $effect(() => {
-    if (attachTo !== prevAttachTo) {
-      if (currentLayout) {
-        currentLayout.release();
-      }
-      currentLayout = useLayout(attachTo);
-      prevAttachTo = attachTo;
-      void updatePosition();
-    }
-  });
-
-  const layout = currentLayout;
 
   const isHidden = $derived(!everSeen || !open);
 
@@ -119,5 +143,5 @@
   style:--float-z={zIndex}
   style:transition={transitionStyle}
 >
-  {@render children?.(layout)}
+  {@render children?.(layout as ElementState)}
 </div>

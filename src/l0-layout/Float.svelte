@@ -29,15 +29,17 @@
     children,
   }: Props = $props();
 
-  const layout = useLayout(attachTo);
+const layout = useLayout(attachTo);
 
-  let everSeen = $state(false);
-  let floatNode: HTMLDivElement | undefined = $state();
+let everSeen = $state(false);
+let floatNode: HTMLDivElement | undefined = $state();
 
-  let x = $state(0);
-  let y = $state(0);
+let x = $state(0);
+let y = $state(0);
 
-  const isHidden = $derived(!everSeen || !open);
+let layoutVersion = $state(0);
+
+const isHidden = $derived(!everSeen || !open);
 
   function cssEasing(fn: (t: number) => number): string {
     const steps = 4;

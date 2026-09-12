@@ -287,15 +287,11 @@ describe('Float primitive', () => {
     expect(floatEl.classList.contains('is-hidden')).toBe(false);
 
     parentOpen = false;
-    // Re-render with updated open value
-    ;(container._svelte?.scope?.?.flags?.?. reRender?.() || Promise.resolve()).then(() => {
-      await tick();
-      await tick();
-    });
+    await tick();
+    await tick();
 
     expect(floatEl.classList.contains('is-hidden')).toBe(true);
   });
-});
 });
 
 function expectedPosition(

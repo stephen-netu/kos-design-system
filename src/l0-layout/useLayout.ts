@@ -30,6 +30,7 @@ import {
 } from './state-map.svelte';
 
 export interface UseLayoutReturn extends ElementState {
+  version: number;
   release: () => void;
   action: Action<HTMLElement, void>;
 }
@@ -89,6 +90,9 @@ export function useLayout(id: string, index?: number): UseLayoutReturn {
   return {
     get box() {
       return entry.box;
+    },
+    get version() {
+      return entry.version;
     },
     get hovered() {
       return entry.hovered;

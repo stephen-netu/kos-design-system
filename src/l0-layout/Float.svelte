@@ -32,7 +32,6 @@
   const layout = useLayout(attachTo);
 
   let everSeen = $state(false);
-  let mounted = $state(false);
   let floatNode: HTMLDivElement | undefined = $state();
 
   let x = $state(0);
@@ -50,7 +49,7 @@
   }
 
   const transitionStyle = $derived.by(() => {
-    const cfg = mounted ? transitionConfig?.enter : transitionConfig?.leave;
+    const cfg = isHidden ? transitionConfig?.leave : transitionConfig?.enter;
     if (!cfg) return '';
     const easing = cssEasing(cfg.easing);
     return `opacity ${cfg.duration}ms ${easing}, transform ${cfg.duration}ms ${easing}`;
@@ -58,12 +57,12 @@
 
   async function updatePosition() {
     if (!floatNode) return;
-    const box = layout.box;
-    if (box.width === 0 && box.height === 0) return;
+    const currentBox = layout.box;
+    if (currentBox.width === 0 && currentBox.height === 0) return;
 
     const virtualReference = {
       getBoundingClientRect() {
-        return new DOMRect(box.x, box.y, box.width, box.height);
+        return new DOMRect(currentBox.x, currentBox.y, currentBox.width, currentBox.height);
       },
     };
 
@@ -78,34 +77,28 @@
   }
 
   $effect(() => {
-    const box = layout.box;
-    if (box.width > 0 || box.height > 0) {
+    const currentBox = layout.box;
+    if (currentBox.width > 0 || currentBox.height > 0) {
       everSeen = true;
     }
-    if (everSeen) {
-      void updatePosition();
-    }
+    void updatePosition();
   });
 
   $effect(() => {
-    if (open && everSeen) {
-      mounted = true;
-    } else {
-      mounted = false;
+    if (!isHidden) {
+      void updatePosition();
     }
   });
 </script>
 
-{#if everSeen}
-  <div
-    bind:this={floatNode}
-    class="float"
-    class:is-hidden={isHidden}
-    style:--float-x="{x}px"
-    style:--float-y="{y}px"
-    style:--float-z={zIndex}
-    style:transition={transitionStyle}
-  >
-    {@render children?.(layout)}
-  </div>
-{/if}
+<div
+  bind:this={floatNode}
+  class="float"
+  class:is-hidden={isHidden}
+  style:--float-x="{x}px"
+  style:--float-y="{y}px"
+  style:--float-z={zIndex}
+  style:transition={transitionStyle}
+>
+  {@render children?.(layout)}
+</div>

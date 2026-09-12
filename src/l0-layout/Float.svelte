@@ -116,6 +116,7 @@
   }
 
   $effect(() => {
+    const version = layout.version;
     const box = layout.box;
     if (box.width > 0 || box.height > 0) {
       everSeen = true;

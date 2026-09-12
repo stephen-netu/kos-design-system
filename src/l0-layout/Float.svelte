@@ -29,17 +29,30 @@
     children,
   }: Props = $props();
 
-const layout = useLayout(attachTo);
+  let everSeen = $state(false);
+  let mounted = $state(false);
+  let floatNode: HTMLDivElement | undefined = $state();
 
-let everSeen = $state(false);
-let floatNode: HTMLDivElement | undefined = $state();
+  let x = $state(0);
+  let y = $state(0);
 
-let x = $state(0);
-let y = $state(0);
+  let prevAttachTo: string | undefined = undefined;
+  let currentLayout: ReturnType<typeof useLayout> | null = null;
 
-let layoutVersion = $state(0);
+  $effect(() => {
+    if (attachTo !== prevAttachTo) {
+      if (currentLayout) {
+        currentLayout.release();
+      }
+      currentLayout = useLayout(attachTo);
+      prevAttachTo = attachTo;
+      void updatePosition();
+    }
+  });
 
-const isHidden = $derived(!everSeen || !open);
+  const layout = currentLayout;
+
+  const isHidden = $derived(!everSeen || !open);
 
   function cssEasing(fn: (t: number) => number): string {
     const steps = 4;
@@ -51,7 +64,7 @@ const isHidden = $derived(!everSeen || !open);
   }
 
   const transitionStyle = $derived.by(() => {
-    const cfg = isHidden ? transitionConfig?.leave : transitionConfig?.enter;
+    const cfg = mounted ? transitionConfig?.enter : transitionConfig?.leave;
     if (!cfg) return '';
     const easing = cssEasing(cfg.easing);
     return `opacity ${cfg.duration}ms ${easing}, transform ${cfg.duration}ms ${easing}`;
@@ -59,12 +72,12 @@ const isHidden = $derived(!everSeen || !open);
 
   async function updatePosition() {
     if (!floatNode) return;
-    const currentBox = layout.box;
-    if (currentBox.width === 0 && currentBox.height === 0) return;
+    const box = layout.box;
+    if (box.width === 0 && box.height === 0) return;
 
     const virtualReference = {
       getBoundingClientRect() {
-        return new DOMRect(currentBox.x, currentBox.y, currentBox.width, currentBox.height);
+        return new DOMRect(box.x, box.y, box.width, box.height);
       },
     };
 
@@ -79,16 +92,20 @@ const isHidden = $derived(!everSeen || !open);
   }
 
   $effect(() => {
-    const currentBox = layout.box;
-    if (currentBox.width > 0 || currentBox.height > 0) {
+    const box = layout.box;
+    if (box.width > 0 || box.height > 0) {
       everSeen = true;
     }
-    void updatePosition();
+    if (everSeen) {
+      void updatePosition();
+    }
   });
 
   $effect(() => {
-    if (!isHidden) {
-      void updatePosition();
+    if (open && everSeen) {
+      mounted = true;
+    } else {
+      mounted = false;
     }
   });
 </script>

@@ -6,7 +6,7 @@ import type { Layout } from '../types';
 const sampleLayout: Layout = {
   direction: 'row',
   gap: 8,
-  padding: { top: 4, right: 8, bottom: 4, left: 8 },
+  padding: [4, 8, 4, 8],
   align: 'center',
   childAlignment: 'start',
   sizing: 'fit',

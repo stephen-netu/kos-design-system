@@ -14,7 +14,7 @@
   const DEFAULT_LAYOUT: Layout = {
     direction: 'row',
     gap: 0,
-    padding: { top: 0, right: 0, bottom: 0, left: 0 },
+    padding: [0, 0, 0, 0],
     align: 'start',
     childAlignment: 'start',
     sizing: 'fit',

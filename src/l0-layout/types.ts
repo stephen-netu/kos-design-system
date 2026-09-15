@@ -14,7 +14,7 @@ export type LayoutSizing =
 export interface Layout {
   direction: LayoutDirection;
   gap: number;
-  padding: { top: number; right: number; bottom: number; left: number };
+  padding: [number, number, number, number];
   align: LayoutAlign;
   childAlignment: LayoutAlign;
   sizing: LayoutSizing;

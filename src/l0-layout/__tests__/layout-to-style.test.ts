@@ -5,7 +5,7 @@ import type { Layout } from '../types';
 const baseLayout: Layout = {
   direction: 'row',
   gap: 8,
-  padding: { top: 4, right: 8, bottom: 4, left: 8 },
+  padding: [4, 8, 4, 8],
   align: 'start',
   childAlignment: 'start',
   sizing: 'fit',
@@ -32,16 +32,16 @@ describe('layoutToStyle', () => {
   });
 
   describe('padding', () => {
-    it('outputs all four padding sides', () => {
-      const result = layoutToStyle({
-        ...baseLayout,
-        padding: { top: 1, right: 2, bottom: 3, left: 4 },
-      });
-      expect(result).toContain('--layout-padding-top: 1px');
-      expect(result).toContain('--layout-padding-right: 2px');
-      expect(result).toContain('--layout-padding-bottom: 3px');
-      expect(result).toContain('--layout-padding-left: 4px');
-    });
+it('outputs all four padding sides', () => {
+       const result = layoutToStyle({
+         ...baseLayout,
+         padding: [1, 2, 3, 4],
+       });
+       expect(result).toContain('--layout-padding-top: 1px');
+       expect(result).toContain('--layout-padding-right: 2px');
+       expect(result).toContain('--layout-padding-bottom: 3px');
+       expect(result).toContain('--layout-padding-left: 4px');
+     });
   });
 
   describe('align + childAlignment (row)', () => {

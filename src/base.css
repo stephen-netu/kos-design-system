@@ -136,3 +136,19 @@ body {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* --- Float primitive (adr:clay-inspired-layout-layer-001) --- */
+.float {
+  position: fixed;
+  left: var(--float-x, 0);
+  top: var(--float-y, 0);
+  z-index: var(--float-z, 200);
+  opacity: 1;
+  transform: scale(1);
+}
+.float.is-hidden {
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+}

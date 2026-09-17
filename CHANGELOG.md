@@ -1,5 +1,11 @@
 # @stephen-netu/design-system
 
+## 0.5.3
+
+### Patch Changes
+
+- Fix type resolution for deep component imports (e.g. `@stephen-netu/design-system/spatial/ZoneTiler.svelte`). TypeScript strips the `.svelte` extension from import specifiers before resolving them, so any bare-`.svelte` exports-map entry fails to resolve for an external consumer even though the file and its `.d.ts` both exist. Every bare-string `.svelte` export now points at a precompiled `.svelte.js` module instead — an extension TypeScript recognizes and won't strip. `pnpm build` now runs `scripts/precompile-dist.mjs` automatically as part of the build step, so this stays in sync on every future release. Consumers importing these deep paths need to add the `.js` suffix.
+
 ## 0.5.2
 
 ### Patch Changes

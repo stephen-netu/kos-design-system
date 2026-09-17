@@ -1,6 +1,6 @@
 {
   "name": "@stephen-netu/design-system",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "KOS LEAP Design System — Neo-brutalist industrial UI with brass accent",
   "type": "module",
   "publishConfig": {
@@ -154,7 +154,8 @@
     "./spatial/LodRenderer.svelte": "./dist/spatial/LodRenderer.svelte",
     "./spatial/ParticleAssembleMark.svelte": "./dist/spatial/ParticleAssembleMark.svelte",
     "./spatial/SnapZoomCamera.svelte": "./dist/spatial/SnapZoomCamera.svelte",
-    "./spatial/ZoneTiler.svelte": "./dist/spatial/ZoneTiler.svelte"
+    "./spatial/ZoneTiler.svelte": "./dist/spatial/ZoneTiler.svelte",
+    "./u0-primitives/input": "./dist/u0-primitives/input/index.js"
   },
   "sideEffects": [
     "**/*.css"

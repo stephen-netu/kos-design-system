@@ -55,6 +55,11 @@
    --color-accent-subtle: var(--accent-subtle);
    --color-accent-faint: var(--accent-faint);
    --color-accent-secondary: var(--accent-primary);
+
+  /* --- Float primitive --- */
+  --float-x: 0;
+  --float-y: 0;
+  --float-z: 200;
 }
 
 @supports (color-mix(in srgb, red, transparent)) {
